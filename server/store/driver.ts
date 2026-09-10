@@ -95,7 +95,12 @@ export async function openDriver(opts: OpenOptions = {}): Promise<Driver> {
   }
   const file = opts.sqlitePath ?? path.resolve("data", "runtime.sqlite");
   if (file !== ":memory:") fs.mkdirSync(path.dirname(file), { recursive: true });
-  const Database = (await import("better-sqlite3")).default;
+  // Optional dependency: a failed native build must not block a Postgres deployment.
+  const Database = (
+    await import("better-sqlite3").catch(() => {
+      throw new Error("DATABASE_URL is not set and better-sqlite3 is not installed; set DATABASE_URL or install better-sqlite3");
+    })
+  ).default;
   const db = new Database(file);
   db.pragma("journal_mode = WAL");
   db.pragma("foreign_keys = ON");
