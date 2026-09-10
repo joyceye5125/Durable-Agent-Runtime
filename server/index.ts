@@ -7,7 +7,7 @@ import { Store } from "./store/store";
 
 const root = path.resolve(import.meta.dirname, "..");
 const store = await Store.open();
-const app = createApp({ store });
+const app = createApp({ store, seedOnBoot: true });
 
 if (process.env.NODE_ENV === "development") {
   const { createServer } = await import("vite");

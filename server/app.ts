@@ -15,6 +15,8 @@ export interface AppOptions {
   store: Store;
   /** Injected in tests; defaults to recordings (or the live model when LLM_MODE=live). */
   agent?: AgentFactory;
+  /** Measure both experiments once from the recordings if the database has no results yet. */
+  seedOnBoot?: boolean;
 }
 
 class HttpError extends Error {
@@ -28,7 +30,7 @@ class HttpError extends Error {
 
 const DEFAULT_PACE_MS = 350;
 
-export function createApp({ store, agent }: AppOptions) {
+export function createApp({ store, agent, seedOnBoot }: AppOptions) {
   const app = express();
   app.use(express.json());
 
@@ -41,6 +43,7 @@ export function createApp({ store, agent }: AppOptions) {
   // and nothing here is ever read by the runtime.
   const observedCrashes = new Map<string, Array<{ afterSeq: number; point: CrashPoint }>>();
   let experimentRunning = false;
+  let seeding = false;
 
   function assertIdle() {
     // Single-tenant, one run at a time: the point is one run's reliability, not orchestration.
@@ -158,7 +161,7 @@ export function createApp({ store, agent }: AppOptions) {
   });
 
   app.get("/api/experiments/results", async (_req, res) => {
-    res.json({ crash: await store.listCrashExperiments(20), eval: await latestEvalTable(store) });
+    res.json({ crash: await store.listCrashExperiments(20), eval: await latestEvalTable(store), seeding });
   });
 
   async function exclusive<T>(fn: () => Promise<T>): Promise<T> {
@@ -170,6 +173,29 @@ export function createApp({ store, agent }: AppOptions) {
       experimentRunning = false;
     }
   }
+
+  // A fresh database (e.g. a new Repl) would otherwise open on empty cards.
+  // Every number shown still comes from running the experiments.
+  async function seed() {
+    seeding = true;
+    try {
+      const crashScenario = listScenarioIds("crash")[0];
+      if ((await store.listCrashExperiments(1)).length === 0 && crashScenario && hasRecording("baseline", crashScenario)) {
+        const summary = await exclusive(() => runCrashExperiment(store, { n: 200, agent }));
+        await store.insertCrashExperiment(summary.scenario, summary.n, summary);
+        console.log(`[seed] crash experiment: ${summary.durable.correct}/${summary.n} durable resumes correct`);
+      }
+      if ((await store.listEvalRuns(1)).length === 0 && (await latestEvalTable(store)).tasks.length > 0) {
+        await exclusive(() => runEvalExperiment(store, { agent }));
+        console.log("[seed] eval experiment done");
+      }
+    } catch (e) {
+      console.error("[seed] skipped:", (e as Error).message);
+    } finally {
+      seeding = false;
+    }
+  }
+  if (seedOnBoot) void seed();
 
   app.use("/api", (_req, _res, next) => next(new HttpError(404, "no such endpoint")));
   app.use((err: Error, _req: Request, res: Response, next: NextFunction) => {

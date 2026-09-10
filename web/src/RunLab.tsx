@@ -38,7 +38,8 @@ export function RunLab({ meta, autoDemo }: { meta: Meta; autoDemo: boolean }) {
   const [busy, setBusy] = useState(false);
   const autoRan = useRef(false);
 
-  const recorded = meta.scenarios.find((s) => s.id === scenario)?.recorded.includes("baseline") ?? false;
+  const selected = meta.scenarios.find((s) => s.id === scenario);
+  const recorded = selected?.recorded.includes("baseline") ?? false;
   const setView = useCallback((m: Mode) => (v: RunView) => setViews((prev) => ({ ...prev, [m]: v })), []);
 
   const guard = (fn: () => Promise<void>) => async () => {
@@ -139,7 +140,7 @@ export function RunLab({ meta, autoDemo }: { meta: Meta; autoDemo: boolean }) {
       {!recorded && (
         <div className="notice">
           No baseline recording for <code>{scenario}</code> yet, so there is no model output to replay. Record it once with an API key:{" "}
-          <code>npm run record-golden -- --scenario {scenario}</code> (see README).
+          <code>{selected?.kind === "crash" ? "npm run record-crash-paths" : `npm run record-golden -- --scenario ${scenario}`}</code> (see README).
         </div>
       )}
 

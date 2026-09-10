@@ -129,3 +129,15 @@ table.eval tr.base > td { color: var(--muted); }
 table.eval tr.unrecorded td { color: var(--muted); font-style: italic; }
 table.eval .tag { color: var(--amber); font-size: 10.5px; font-weight: 700; text-transform: uppercase; }
 table.eval tr.detail > td { background: var(--bg); padding: 6px 10px 12px 24px; }
+
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.card-head { display: flex; justify-content: space-between; align-items: center; }
+.card .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.card .big { font-size: 17px; line-height: 1.4; }
+.card .big b { font-size: 22px; }
+.card .sub { font-size: 12px; }
+.good { color: var(--green); }
+.bad { color: var(--red); }
+@media (max-width: 900px) { .cards { grid-template-columns: 1fr; } }
+.ledger { overflow-x: auto; }

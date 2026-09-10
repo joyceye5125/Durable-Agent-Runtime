@@ -88,6 +88,8 @@ export interface CrashSummary {
 export interface Results {
   crash: Array<{ id: number; started_at: string; summary: CrashSummary }>;
   eval: EvalTable;
+  /** The server is computing first results from the recordings after boot. */
+  seeding: boolean;
 }
 
 async function call<T>(method: string, url: string, body?: unknown): Promise<T> {
