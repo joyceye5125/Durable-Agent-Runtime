@@ -188,6 +188,9 @@ async function experiment(store: Store) {
       console.log(`  ${w}: durable ${s.durableCorrect}/${s.trials}  naive dup ${s.naiveTrialsWithDuplicates}/${s.naiveMeasured}`);
     }
     console.log(`malformed outputs blocked before any side effect: ${summary.malformed.allBlocked ? "yes" : "NO"}`);
+    console.log(
+      `\nREADME C1 result cell:\n${summary.n} crashes over W1–W4 → ${d.correctPct.toFixed(1)}% correct resume, ${d.duplicateSideEffects} duplicate side effects · naive baseline: ${nv.duplicateRatePct?.toFixed(1) ?? "n/a"}% of trials duplicated a side effect (${nv.duplicateRows} extra rows${nv.unrecorded ? `, ${nv.unrecorded} unrecorded trials excluded` : ""}) · seed ${summary.seed}`,
+    );
     for (const c of summary.malformed.cases) console.log(`  ${c.kind}/${c.variant}: ${c.status}, rejected ${c.rejected}, side effects from rejected steps ${c.sideEffectRowsFromRejectedSteps}`);
   } else if (which === "eval") {
     const run = await runEvalExperiment(store);
@@ -216,6 +219,10 @@ async function experiment(store: Store) {
     for (const c of run.changes.filter((x) => x.status === "error")) console.log(`error in ${c.label}: ${c.error}`);
     console.log(`\ncandidates the endpoint eval passes but the trajectory eval blocks: ${table.missedByEndpoint}`);
     console.log(`rows with a correct endpoint and a regressed path: ${table.pathOnlyRows}`);
+    const evaluated = table.changes.filter((c) => c.label !== "baseline" && c.status === "evaluated");
+    console.log(
+      `\nREADME C4 result cell:\n${evaluated.length} candidate changes on ${table.tasks.length} tasks → endpoint eval missed ${table.missedByEndpoint}, trajectory eval caught ${table.missedByEndpoint} · ${table.pathOnlyRows} task runs kept a correct answer on a worse path`,
+    );
   } else {
     throw new Error("usage: npm run experiment -- crash|eval");
   }
