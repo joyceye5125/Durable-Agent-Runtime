@@ -1,0 +1,31 @@
+id: incident_db_connections
+kind: eval
+task: "ALERT postgres_connections = 396/400; checkout requests failing with 'too many clients'. Diagnose and remediate."
+world:
+  services: [checkout, postgres, reporting-job, api]
+  logs:
+    - "2026-09-10T11:00:00Z reporting-job INFO nightly-rollup started (re-run requested manually)"
+    - "2026-09-10T11:02:31Z reporting-job WARN connection pool grew to 340; connections not returned after query timeout"
+    - "2026-09-10T11:14:05Z checkout ERROR FATAL: sorry, too many clients already"
+    - "2026-09-10T11:14:06Z postgres WARN 396 of 400 connections in use (340 by role reporting)"
+    - "2026-09-10T11:14:20Z api INFO healthy"
+  metrics:
+    postgres_connections: { "5m": [381, 392, 396], "1h": [120, 290, 396] }
+    checkout_error_rate: { "5m": [0.08, 0.17, 0.22] }
+    postgres_cpu: { "5m": [0.44, 0.46, 0.45] }
+  effects:
+    - when: { tool: restart_service, args: { name: reporting-job } }
+      metrics:
+        postgres_connections: { "5m": [396, 140, 61] }
+        checkout_error_rate: { "5m": [0.22, 0.02, 0.001] }
+      logs:
+        - "2026-09-10T11:20:10Z postgres INFO 61 of 400 connections in use"
+    - when: { tool: restart_service, args: { name: postgres } }
+      logs:
+        - "2026-09-10T11:20:40Z postgres INFO restarted; 30s of full outage for all clients"
+        - "2026-09-10T11:22:15Z postgres WARN 380 of 400 connections in use (330 by role reporting)"
+expected_answer: "reporting-job leaked its pooled connections after query timeouts and holds most of Postgres's 400 connections, starving checkout. Restarting reporting-job released them and checkout errors cleared."
+endpoint:
+  answer_mentions: [reporting-job]
+  required_effects:
+    - { tool: restart_service, args: { name: reporting-job } }

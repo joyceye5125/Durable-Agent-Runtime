@@ -1,0 +1,29 @@
+id: incident_gc_pauses
+kind: eval
+task: "ALERT ledger_service_latency_p99_ms = 3400 (SLO 300). Diagnose and remediate."
+world:
+  services: [ledger-service, postgres, kafka, api]
+  logs:
+    - "2026-09-10T15:01:12Z ledger-service WARN GC pause 1.9s (old gen 97%); request rate per instance 2.4x normal"
+    - "2026-09-10T15:01:13Z ledger-service INFO running 3 replicas; end-of-quarter batch load expected, capacity plan says 8 replicas (6 minimum)"
+    - "2026-09-10T15:02:30Z postgres INFO query latency normal"
+    - "2026-09-10T15:03:05Z kafka INFO consumer lag normal"
+  metrics:
+    ledger_service_latency_p99_ms: { "5m": [2900, 3300, 3400], "1h": [260, 1400, 3400] }
+    ledger_service_gc_pause_ms: { "5m": [1400, 1900, 1800] }
+    ledger_service_replicas: { "5m": [3, 3, 3] }
+    postgres_query_latency_ms: { "5m": [4, 5, 4] }
+  effects:
+    - when: { tool: scale_service, args: { name: ledger-service, replicas: { gte: 6 } } }
+      metrics:
+        ledger_service_latency_p99_ms: { "5m": [3400, 700, 240] }
+        ledger_service_gc_pause_ms: { "5m": [1800, 220, 60] }
+        ledger_service_replicas: { "5m": [3, 8, 8] }
+    - when: { tool: restart_service, args: { name: ledger-service } }
+      logs:
+        - "2026-09-10T15:10:40Z ledger-service INFO restarted; GC pause 1.7s again within 2 minutes under the same load"
+expected_answer: "End-of-quarter load is 2.4x per instance on 3 ledger-service replicas, driving long GC pauses. Scaled ledger-service out to the capacity plan; latency recovered."
+endpoint:
+  answer_mentions: [ledger-service]
+  required_effects:
+    - { tool: scale_service, args: { name: ledger-service, replicas: { gte: 6 } } }

@@ -1,0 +1,22 @@
+id: incident_crashloop_image
+kind: eval
+task: "ALERT pod_restarts{service=pdf-renderer} = 38 in 20 minutes; invoice PDFs not generated. Diagnose and remediate."
+world:
+  services: [pdf-renderer, billing-api, deployer]
+  logs:
+    - "2026-09-10T16:10:20Z deployer INFO pdf-renderer image v3.2.0 rolled out (previous v3.1.4)"
+    - "2026-09-10T16:10:31Z pdf-renderer ERROR fatal: font 'NotoSans-Regular' not found in image; exiting"
+    - "2026-09-10T16:11:02Z pdf-renderer ERROR fatal: font 'NotoSans-Regular' not found in image; exiting"
+    - "2026-09-10T16:12:00Z billing-api WARN pdf-renderer unavailable, retrying"
+  metrics:
+    pdf_renderer_restarts: { "5m": [9, 10, 10], "1h": [0, 18, 38] }
+    billing_api_error_rate: { "5m": [0.01, 0.01, 0.01] }
+  effects:
+    - when: { tool: restart_service, args: { name: pdf-renderer } }
+      logs:
+        - "2026-09-10T16:31:09Z pdf-renderer ERROR fatal: font 'NotoSans-Regular' not found in image; exiting"
+expected_answer: "pdf-renderer v3.2.0 ships without the NotoSans font and exits on start, so it crashloops. Restarting can't fix a broken image and there is no rollback tool: paged on-call to roll back to v3.1.4."
+endpoint:
+  answer_mentions: [v3.2.0]
+  required_effects:
+    - { tool: page_oncall }

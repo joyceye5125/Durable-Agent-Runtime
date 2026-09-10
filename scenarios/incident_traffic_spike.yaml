@@ -1,0 +1,27 @@
+id: incident_traffic_spike
+kind: eval
+task: "ALERT web_cpu_utilization = 97% across all web replicas, p99 latency 2.3s. Diagnose and remediate."
+world:
+  services: [web, api, postgres, marketing-mailer]
+  logs:
+    - "2026-09-10T17:00:03Z marketing-mailer INFO campaign FALL-SALE sent to 1.2M recipients"
+    - "2026-09-10T17:04:41Z web WARN request rate 3.1x baseline, 4/4 replicas saturated"
+    - "2026-09-10T17:04:42Z web INFO capacity plan for campaign peaks: 12 replicas (at least 10 to hold p99 < 500ms)"
+    - "2026-09-10T17:05:10Z api INFO request rate 1.2x baseline, healthy"
+    - "2026-09-10T17:05:30Z postgres INFO cpu 38%"
+  metrics:
+    web_cpu_utilization: { "5m": [0.91, 0.96, 0.97], "1h": [0.33, 0.52, 0.97] }
+    web_replicas: { "5m": [4, 4, 4] }
+    web_latency_p99_ms: { "5m": [1400, 2100, 2300] }
+    postgres_cpu: { "5m": [0.36, 0.38, 0.37] }
+  effects:
+    - when: { tool: scale_service, args: { name: web, replicas: { gte: 10 } } }
+      metrics:
+        web_cpu_utilization: { "5m": [0.97, 0.55, 0.41] }
+        web_replicas: { "5m": [4, 12, 12] }
+        web_latency_p99_ms: { "5m": [2300, 610, 320] }
+expected_answer: "A marketing campaign tripled traffic and the 4 web replicas are CPU-saturated. Scaled web out to the campaign capacity plan; CPU and latency recovered."
+endpoint:
+  answer_mentions: [web]
+  required_effects:
+    - { tool: scale_service, args: { name: web, replicas: { gte: 10 } } }

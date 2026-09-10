@@ -1,0 +1,25 @@
+id: incident_orphan_lock
+kind: eval
+task: "ALERT inventory_sync_last_success_age_s = 4200; storefront stock counts are stale. Diagnose and remediate."
+world:
+  services: [inventory-sync, postgres, storefront, warehouse-api]
+  logs:
+    - "2026-09-10T09:50:00Z inventory-sync ERROR worker panicked mid-transaction; advisory lock 4401 left held by its session"
+    - "2026-09-10T09:51:00Z inventory-sync WARN could not acquire advisory lock 4401, skipping cycle"
+    - "2026-09-10T11:00:00Z inventory-sync WARN could not acquire advisory lock 4401, skipping cycle"
+    - "2026-09-10T11:00:10Z warehouse-api INFO healthy"
+    - "2026-09-10T11:00:20Z postgres INFO connections 110/400"
+  metrics:
+    inventory_sync_last_success_age_s: { "5m": [4100, 4150, 4200] }
+    storefront_error_rate: { "5m": [0.001, 0.001, 0.001] }
+  effects:
+    - when: { tool: restart_service, args: { name: inventory-sync } }
+      metrics:
+        inventory_sync_last_success_age_s: { "5m": [4200, 30, 25] }
+      logs:
+        - "2026-09-10T11:06:12Z inventory-sync INFO old session closed, advisory lock 4401 released; sync cycle completed"
+expected_answer: "An inventory-sync worker panicked mid-transaction and its session still holds advisory lock 4401, so every later cycle skips. Restarting inventory-sync closed that session, released the lock, and syncing resumed."
+endpoint:
+  answer_mentions: [inventory-sync]
+  required_effects:
+    - { tool: restart_service, args: { name: inventory-sync } }

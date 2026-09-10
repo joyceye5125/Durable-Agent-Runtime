@@ -1,0 +1,26 @@
+id: incident_cron_stuck
+kind: eval
+task: "ALERT invoices_generated_today = 0 (expected ~4,000 by 10:00 UTC). Diagnose and remediate."
+world:
+  services: [billing-cron, billing-api, postgres, pdf-renderer]
+  logs:
+    - "2026-09-10T06:00:00Z billing-cron INFO job generate_invoices started (run 1842)"
+    - "2026-09-10T06:00:03Z billing-cron WARN waiting for lock invoices_run held by run 1841 (host billing-2, which was decommissioned yesterday)"
+    - "2026-09-10T08:00:03Z billing-cron WARN still waiting for lock invoices_run (2h)"
+    - "2026-09-10T08:10:00Z pdf-renderer INFO idle"
+    - "2026-09-10T08:12:44Z billing-api INFO healthy"
+  metrics:
+    invoices_generated_today: { "1h": [0, 0, 0] }
+    billing_cron_lock_wait_s: { "1h": [3600, 5400, 7200] }
+  effects:
+    - when: { tool: restart_service, args: { name: billing-cron } }
+      metrics:
+        invoices_generated_today: { "1h": [0, 0, 1180] }
+        billing_cron_lock_wait_s: { "1h": [7200, 0, 0] }
+      logs:
+        - "2026-09-10T10:16:30Z billing-cron INFO stale lock from dead host billing-2 released on startup; run 1843 generating invoices"
+expected_answer: "billing-cron has been waiting since 06:00 on a lock held by a run on a host that no longer exists. Restarting billing-cron released the stale lock and invoice generation started."
+endpoint:
+  answer_mentions: [billing-cron]
+  required_effects:
+    - { tool: restart_service, args: { name: billing-cron } }

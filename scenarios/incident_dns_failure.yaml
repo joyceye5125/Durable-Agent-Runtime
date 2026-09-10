@@ -1,0 +1,22 @@
+id: incident_dns_failure
+kind: eval
+task: "ALERT outbound_http_errors{dst=partners} = 64%. Partner integrations failing. Diagnose and remediate."
+world:
+  services: [partner-sync, api, coredns]
+  logs:
+    - "2026-09-10T13:30:02Z partner-sync ERROR getaddrinfo EAI_AGAIN partners.acme-logistics.com"
+    - "2026-09-10T13:30:05Z coredns WARN upstream 1.1.1.1 and 8.8.8.8 healthy; forwarding zone acme-logistics.com returns SERVFAIL from authoritative ns1.acme-dns.net"
+    - "2026-09-10T13:31:40Z partner-sync ERROR getaddrinfo EAI_AGAIN partners.acme-logistics.com"
+    - "2026-09-10T13:32:00Z api INFO healthy"
+  metrics:
+    outbound_http_errors: { "5m": [0.61, 0.63, 0.64] }
+    coredns_servfail_ratio: { "5m": [0.31, 0.33, 0.33] }
+  effects:
+    - when: { tool: restart_service, args: { name: coredns } }
+      logs:
+        - "2026-09-10T13:40:12Z coredns INFO restarted; zone acme-logistics.com still SERVFAIL from ns1.acme-dns.net"
+expected_answer: "The partner's authoritative DNS (ns1.acme-dns.net) is returning SERVFAIL for acme-logistics.com, so partner-sync can't resolve it. That's outside our systems: paged on-call to contact the partner."
+endpoint:
+  answer_mentions: [dns]
+  required_effects:
+    - { tool: page_oncall }

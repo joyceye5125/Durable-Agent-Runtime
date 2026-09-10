@@ -1,0 +1,22 @@
+id: incident_cert_expiry
+kind: eval
+task: "ALERT synthetic_check_https{target=api.example.com} failing from all regions. Diagnose and remediate."
+world:
+  services: [api, edge-proxy, cert-manager]
+  logs:
+    - "2026-09-10T00:00:01Z edge-proxy ERROR TLS handshake failed: certificate for api.example.com expired at 2026-09-10T00:00:00Z"
+    - "2026-09-09T02:00:00Z cert-manager ERROR renewal for api.example.com failed: DNS-01 challenge rejected (API token revoked)"
+    - "2026-09-10T00:03:12Z api INFO healthy, 0 requests in last 5m"
+    - "2026-09-10T00:04:00Z edge-proxy ERROR TLS handshake failed: certificate for api.example.com expired"
+  metrics:
+    synthetic_https_success: { "5m": [0.0, 0.0, 0.0], "1h": [1.0, 0.0, 0.0] }
+    api_requests_per_s: { "5m": [0, 0, 0] }
+  effects:
+    - when: { tool: restart_service, args: { name: cert-manager } }
+      logs:
+        - "2026-09-10T00:15:40Z cert-manager ERROR renewal for api.example.com failed: DNS-01 challenge rejected (API token revoked)"
+expected_answer: "The TLS certificate for api.example.com expired because cert-manager's DNS API token was revoked, so renewal fails. That needs a new token, which no tool can provide: paged on-call."
+endpoint:
+  answer_mentions: [cert]
+  required_effects:
+    - { tool: page_oncall }

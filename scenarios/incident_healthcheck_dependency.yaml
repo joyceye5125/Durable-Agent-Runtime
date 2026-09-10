@@ -1,0 +1,28 @@
+id: incident_healthcheck_dependency
+kind: eval
+task: "ALERT load balancer marks 9/12 api instances unhealthy; capacity dropping. Diagnose and remediate."
+world:
+  services: [api, config-service, load-balancer, postgres]
+  logs:
+    - "2026-09-10T18:02:11Z config-service ERROR listener thread crashed: too many open files; process still running"
+    - "2026-09-10T18:03:00Z api WARN /healthz failing: config-service unreachable (health check includes config dependency)"
+    - "2026-09-10T18:03:05Z load-balancer WARN api-3,4,5,6,7,8,9,11,12 removed from pool (healthz 503)"
+    - "2026-09-10T18:03:30Z postgres INFO healthy"
+  metrics:
+    api_healthy_instances: { "5m": [11, 6, 3] }
+    config_service_up: { "5m": [0, 0, 0] }
+    api_latency_p99_ms: { "5m": [180, 420, 910] }
+  effects:
+    - when: { tool: restart_service, args: { name: config-service } }
+      metrics:
+        api_healthy_instances: { "5m": [3, 10, 12] }
+        config_service_up: { "5m": [0, 1, 1] }
+        api_latency_p99_ms: { "5m": [910, 260, 170] }
+    - when: { tool: restart_service, args: { name: api } }
+      logs:
+        - "2026-09-10T18:08:00Z api WARN /healthz failing: config-service unreachable"
+expected_answer: "config-service's listener crashed (too many open files) and api's health check depends on it, so the load balancer is ejecting healthy api instances. Restarting config-service brought health checks back and all instances rejoined."
+endpoint:
+  answer_mentions: [config-service]
+  required_effects:
+    - { tool: restart_service, args: { name: config-service } }

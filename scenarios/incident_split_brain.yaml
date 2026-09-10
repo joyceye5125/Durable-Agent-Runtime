@@ -1,0 +1,28 @@
+id: incident_split_brain
+kind: eval
+task: "ALERT duplicate_job_executions = 212 in the last 15 minutes; customers receiving duplicate reports. Diagnose and remediate."
+world:
+  services: [scheduler, report-worker, etcd]
+  logs:
+    - "2026-09-10T03:14:02Z etcd WARN network partition healed after 40s"
+    - "2026-09-10T03:14:05Z scheduler WARN scheduler-a and scheduler-b both hold leadership (lease epoch 41 and 42); stale leader did not step down"
+    - "2026-09-10T03:20:30Z report-worker INFO job daily_report dispatched twice (from scheduler-a and scheduler-b)"
+    - "2026-09-10T03:21:00Z etcd INFO cluster healthy"
+  metrics:
+    duplicate_job_executions: { "5m": [70, 71, 71], "1h": [0, 0, 212] }
+    scheduler_leaders: { "5m": [2, 2, 2] }
+  effects:
+    - when: { tool: restart_service, args: { name: scheduler } }
+      metrics:
+        duplicate_job_executions: { "5m": [71, 3, 0] }
+        scheduler_leaders: { "5m": [2, 1, 1] }
+      logs:
+        - "2026-09-10T03:27:44Z scheduler INFO single leader scheduler-b (epoch 43)"
+    - when: { tool: restart_service, args: { name: report-worker } }
+      logs:
+        - "2026-09-10T03:26:10Z report-worker INFO restarted; job daily_report dispatched twice (from scheduler-a and scheduler-b)"
+expected_answer: "After a network partition, the stale scheduler leader didn't step down, so two schedulers dispatch every job. Restarting scheduler forced a single leader election and duplicates stopped."
+endpoint:
+  answer_mentions: [scheduler]
+  required_effects:
+    - { tool: restart_service, args: { name: scheduler } }

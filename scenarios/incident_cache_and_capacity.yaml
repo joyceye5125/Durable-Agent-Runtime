@@ -1,0 +1,31 @@
+id: incident_cache_and_capacity
+kind: eval
+task: "ALERT pricing_api_latency_p99_ms = 2600 and pricing_api_cpu = 96%. Diagnose and remediate."
+world:
+  services: [pricing-api, price-cache, catalog, postgres]
+  logs:
+    - "2026-09-10T11:30:02Z price-cache ERROR stuck in loading state after failed snapshot restore; serving no keys"
+    - "2026-09-10T11:30:40Z pricing-api WARN cache miss 100%, computing prices from catalog"
+    - "2026-09-10T11:31:00Z pricing-api INFO flash sale traffic 2x; runbook: 6 replicas during sales (currently 3)"
+    - "2026-09-10T11:31:30Z catalog INFO p99 90ms"
+  metrics:
+    pricing_api_latency_p99_ms: { "5m": [2100, 2500, 2600] }
+    pricing_api_cpu: { "5m": [0.93, 0.95, 0.96] }
+    price_cache_hit_ratio: { "5m": [0.0, 0.0, 0.0] }
+    pricing_api_replicas: { "5m": [3, 3, 3] }
+  effects:
+    - when: { tool: restart_service, args: { name: price-cache } }
+      metrics:
+        price_cache_hit_ratio: { "5m": [0.0, 0.71, 0.9] }
+        pricing_api_latency_p99_ms: { "5m": [2600, 1300, 900] }
+        pricing_api_cpu: { "5m": [0.96, 0.84, 0.81] }
+    - when: { tool: scale_service, args: { name: pricing-api, replicas: { gte: 6 } } }
+      metrics:
+        pricing_api_cpu: { "5m": [0.81, 0.52, 0.44] }
+        pricing_api_replicas: { "5m": [3, 6, 6] }
+expected_answer: "Two problems: price-cache was stuck after a failed snapshot restore (0% hits), and flash-sale traffic needs 6 pricing-api replicas, not 3. Restarted price-cache and scaled pricing-api to 6; latency and CPU recovered."
+endpoint:
+  answer_mentions: [price-cache, pricing-api]
+  required_effects:
+    - { tool: restart_service, args: { name: price-cache } }
+    - { tool: scale_service, args: { name: pricing-api, replicas: { gte: 6 } } }

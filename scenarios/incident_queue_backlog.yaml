@@ -1,0 +1,27 @@
+id: incident_queue_backlog
+kind: eval
+task: "ALERT email_queue_depth = 91000 and growing; password-reset emails delayed. Diagnose and remediate."
+world:
+  services: [email-worker, smtp-relay, api, redis-queue]
+  logs:
+    - "2026-09-10T06:11:02Z redis-queue WARN brief network partition (4s) between az-1 and az-2"
+    - "2026-09-10T06:11:09Z email-worker ERROR consumer thread blocked on stale connection; no messages processed since 06:11"
+    - "2026-09-10T06:40:00Z email-worker INFO heartbeat ok (process alive)"
+    - "2026-09-10T07:05:13Z smtp-relay INFO accepted 0 messages in last 5m"
+    - "2026-09-10T07:06:40Z api INFO enqueued password_reset email for user 55231"
+  metrics:
+    email_queue_depth: { "5m": [88000, 90000, 91000], "1h": [1200, 45000, 91000] }
+    email_worker_throughput: { "5m": [0, 0, 0] }
+    smtp_relay_errors: { "5m": [0, 0, 0] }
+  effects:
+    - when: { tool: restart_service, args: { name: email-worker } }
+      metrics:
+        email_queue_depth: { "5m": [91000, 62000, 30000] }
+        email_worker_throughput: { "5m": [0, 1900, 2100] }
+      logs:
+        - "2026-09-10T07:12:44Z email-worker INFO reconnected to redis-queue, draining backlog"
+expected_answer: "After a short network partition the email-worker consumer blocked on a stale connection and stopped consuming while still heartbeating. Restarting email-worker reconnected it and the queue is draining."
+endpoint:
+  answer_mentions: [email-worker]
+  required_effects:
+    - { tool: restart_service, args: { name: email-worker } }

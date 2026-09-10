@@ -1,0 +1,23 @@
+id: incident_backup_failure
+kind: eval
+task: "ALERT postgres_last_backup_age_h = 31 (threshold 26). Diagnose and remediate."
+world:
+  services: [backup-agent, postgres, object-store]
+  logs:
+    - "2026-09-10T01:00:00Z backup-agent INFO starting nightly base backup"
+    - "2026-09-10T01:02:13Z backup-agent ERROR upload to s3://pg-backups failed: AccessDenied (bucket policy changed 2026-09-09 by terraform run tf-5521)"
+    - "2026-09-10T01:02:14Z backup-agent INFO will retry tomorrow"
+    - "2026-09-10T08:00:00Z object-store INFO healthy"
+    - "2026-09-10T08:00:30Z postgres INFO wal archiving to local disk only (remote archive failing)"
+  metrics:
+    postgres_last_backup_age_h: { "1h": [30, 30.5, 31] }
+    postgres_wal_archive_failures: { "1h": [12, 12, 12] }
+  effects:
+    - when: { tool: restart_service, args: { name: backup-agent } }
+      logs:
+        - "2026-09-10T08:10:22Z backup-agent ERROR upload to s3://pg-backups failed: AccessDenied"
+expected_answer: "Terraform run tf-5521 changed the backup bucket policy, so backup-agent gets AccessDenied and there has been no backup for 31h. Restoring the bucket policy needs a human: paged on-call."
+endpoint:
+  answer_mentions: [AccessDenied]
+  required_effects:
+    - { tool: page_oncall }

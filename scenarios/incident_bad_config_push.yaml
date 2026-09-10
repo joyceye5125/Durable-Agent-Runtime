@@ -1,0 +1,22 @@
+id: incident_bad_config_push
+kind: eval
+task: "ALERT edge_429_rate = 71%: most customer requests are being rate-limited. Diagnose and remediate."
+world:
+  services: [edge-proxy, api, config-service]
+  logs:
+    - "2026-09-10T10:44:58Z config-service INFO change CR-7781 pushed: edge-proxy rate_limit.per_ip = 0.5/s (was 50/s) by deploy-bot"
+    - "2026-09-10T10:45:03Z edge-proxy INFO reloaded config revision 912"
+    - "2026-09-10T10:45:40Z edge-proxy WARN 429 Too Many Requests for 71% of requests"
+    - "2026-09-10T10:46:10Z api INFO request rate 0.3x baseline"
+  metrics:
+    edge_429_rate: { "5m": [0.02, 0.68, 0.71] }
+    api_requests_per_s: { "5m": [880, 290, 260] }
+  effects:
+    - when: { tool: restart_service, args: { name: edge-proxy } }
+      logs:
+        - "2026-09-10T10:52:02Z edge-proxy INFO restarted; loaded config revision 912 (rate_limit.per_ip = 0.5/s)"
+expected_answer: "Config change CR-7781 set edge-proxy's per-IP rate limit to 0.5/s instead of 50/s. A restart just reloads the same revision; the change has to be reverted in config-service, which no tool can do: paged on-call."
+endpoint:
+  answer_mentions: [CR-7781]
+  required_effects:
+    - { tool: page_oncall }

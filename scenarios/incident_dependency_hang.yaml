@@ -1,0 +1,27 @@
+id: incident_dependency_hang
+kind: eval
+task: "ALERT gateway_5xx_rate = 12%, gateway thread pool at 100%. Diagnose and remediate."
+world:
+  services: [gateway, recommendations, catalog, cart]
+  logs:
+    - "2026-09-10T12:20:31Z gateway WARN thread pool exhausted (200/200); 180 threads waiting on recommendations"
+    - "2026-09-10T12:18:02Z recommendations ERROR deadlock detected in model refresh; request handlers blocked"
+    - "2026-09-10T12:20:40Z catalog INFO p99 42ms"
+    - "2026-09-10T12:20:41Z cart INFO p99 35ms"
+  metrics:
+    gateway_5xx_rate: { "5m": [0.06, 0.10, 0.12] }
+    recommendations_latency_p99_ms: { "5m": [30000, 30000, 30000] }
+    catalog_latency_p99_ms: { "5m": [41, 43, 42] }
+  effects:
+    - when: { tool: restart_service, args: { name: recommendations } }
+      metrics:
+        gateway_5xx_rate: { "5m": [0.12, 0.03, 0.002] }
+        recommendations_latency_p99_ms: { "5m": [30000, 180, 95] }
+    - when: { tool: restart_service, args: { name: gateway } }
+      logs:
+        - "2026-09-10T12:26:03Z gateway WARN thread pool exhausted again (200/200) 90s after restart; threads waiting on recommendations"
+expected_answer: "recommendations deadlocked during a model refresh, so gateway threads pile up waiting on it until the pool is exhausted. Restarting recommendations cleared the deadlock and gateway errors dropped."
+endpoint:
+  answer_mentions: [recommendations]
+  required_effects:
+    - { tool: restart_service, args: { name: recommendations } }

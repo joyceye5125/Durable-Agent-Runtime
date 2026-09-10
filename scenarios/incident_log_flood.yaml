@@ -1,0 +1,28 @@
+id: incident_log_flood
+kind: eval
+task: "ALERT log_pipeline_ingest_lag_s = 1800; logs from all services delayed 30 minutes. Diagnose and remediate."
+world:
+  services: [log-shipper, checkout-api, log-store, api]
+  logs:
+    - "2026-09-10T13:00:12Z checkout-api INFO log level changed to TRACE at runtime by admin endpoint (debug session)"
+    - "2026-09-10T13:05:40Z log-shipper WARN input rate 48k lines/s (normal 3k); 94% from checkout-api"
+    - "2026-09-10T13:30:02Z log-store WARN ingest backlog 1800s"
+    - "2026-09-10T13:30:30Z api INFO healthy"
+  metrics:
+    log_pipeline_ingest_lag_s: { "5m": [1700, 1750, 1800] }
+    log_lines_per_s: { "5m": [47000, 48000, 48000], "1h": [3000, 46000, 48000] }
+  effects:
+    - when: { tool: restart_service, args: { name: checkout-api } }
+      metrics:
+        log_lines_per_s: { "5m": [48000, 3200, 2900] }
+        log_pipeline_ingest_lag_s: { "5m": [1800, 900, 60] }
+      logs:
+        - "2026-09-10T13:36:03Z checkout-api INFO started with log level INFO (runtime overrides are not persisted)"
+    - when: { tool: restart_service, args: { name: log-shipper } }
+      logs:
+        - "2026-09-10T13:35:10Z log-shipper INFO restarted; input rate 48k lines/s, 94% from checkout-api"
+expected_answer: "A debug session left checkout-api at TRACE log level, flooding the log pipeline 16x. Restarting checkout-api reset it to INFO (runtime overrides aren't persisted); ingest lag is draining."
+endpoint:
+  answer_mentions: [checkout-api]
+  required_effects:
+    - { tool: restart_service, args: { name: checkout-api } }

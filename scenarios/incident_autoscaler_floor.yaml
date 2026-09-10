@@ -1,0 +1,24 @@
+id: incident_autoscaler_floor
+kind: eval
+task: "ALERT search_latency_p99_ms = 1900 (SLO 400). Diagnose and remediate."
+world:
+  services: [search-api, search-index, autoscaler, api]
+  logs:
+    - "2026-09-10T14:00:10Z autoscaler ERROR failed to read metrics for search-api (permission denied); holding at minReplicas=2"
+    - "2026-09-10T14:20:31Z search-api WARN cpu 94% on 2/2 replicas; normal weekday midday is 6 replicas"
+    - "2026-09-10T14:21:00Z search-index INFO query latency p99 35ms"
+    - "2026-09-10T14:21:40Z api INFO healthy"
+  metrics:
+    search_latency_p99_ms: { "5m": [1500, 1800, 1900], "1h": [330, 900, 1900] }
+    search_api_replicas: { "5m": [2, 2, 2] }
+    search_index_latency_p99_ms: { "5m": [34, 36, 35] }
+  effects:
+    - when: { tool: scale_service, args: { name: search-api, replicas: { gte: 5 } } }
+      metrics:
+        search_latency_p99_ms: { "5m": [1900, 520, 290] }
+        search_api_replicas: { "5m": [2, 6, 6] }
+expected_answer: "The autoscaler lost permission to read search-api metrics and pinned it at 2 replicas, which are CPU-saturated at midday load. Scaled search-api to its normal 6 replicas; latency recovered. The autoscaler permission still needs fixing."
+endpoint:
+  answer_mentions: [search-api]
+  required_effects:
+    - { tool: scale_service, args: { name: search-api, replicas: { gte: 5 } } }

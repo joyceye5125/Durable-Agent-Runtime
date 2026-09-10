@@ -1,0 +1,24 @@
+id: incident_replica_lag
+kind: eval
+task: "ALERT postgres_replica_lag_s = 910 on replica-1; dashboards show stale data. Diagnose and remediate."
+world:
+  services: [postgres, postgres-replica, analytics-etl, dashboards]
+  logs:
+    - "2026-09-10T02:00:00Z analytics-etl INFO job full_refresh started against postgres-replica"
+    - "2026-09-10T02:04:12Z postgres-replica WARN replay paused: conflict with long-running query (pid 8812, analytics-etl, 58 min)"
+    - "2026-09-10T02:58:40Z dashboards WARN data freshness 15m"
+    - "2026-09-10T02:59:00Z postgres INFO wal generation normal"
+  metrics:
+    postgres_replica_lag_s: { "5m": [840, 880, 910], "1h": [2, 400, 910] }
+    postgres_primary_cpu: { "5m": [0.40, 0.41, 0.39] }
+  effects:
+    - when: { tool: restart_service, args: { name: analytics-etl } }
+      metrics:
+        postgres_replica_lag_s: { "5m": [910, 300, 4] }
+      logs:
+        - "2026-09-10T03:05:31Z postgres-replica INFO replay resumed; caught up"
+expected_answer: "A 58-minute analytics-etl query on the replica is blocking WAL replay, so replica lag keeps growing. Restarting analytics-etl cancelled the query and the replica caught up."
+endpoint:
+  answer_mentions: [analytics-etl]
+  required_effects:
+    - { tool: restart_service, args: { name: analytics-etl } }

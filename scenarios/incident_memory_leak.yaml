@@ -1,0 +1,26 @@
+id: incident_memory_leak
+kind: eval
+task: "ALERT container_oom_kills{namespace=media} = 14 in the last hour. Diagnose and remediate."
+world:
+  services: [api, thumbnailer, media-store, cdn-purger]
+  logs:
+    - "2026-09-10T08:02:11Z media-store INFO upload batch complete (2,114 objects)"
+    - "2026-09-10T08:40:52Z thumbnailer WARN rss 3.6G/4G, cache entries 1.9M (unbounded LRU after v5.3 config change)"
+    - "2026-09-10T08:41:07Z thumbnailer ERROR OOMKilled, container restarted by kubelet"
+    - "2026-09-10T09:12:30Z thumbnailer ERROR OOMKilled, container restarted by kubelet"
+    - "2026-09-10T09:13:02Z api WARN thumbnail requests timing out, serving placeholder"
+    - "2026-09-10T09:14:40Z cdn-purger INFO purge queue empty"
+  metrics:
+    thumbnailer_memory_ratio: { "5m": [0.88, 0.94, 0.99], "1h": [0.41, 0.77, 0.99] }
+    api_error_rate: { "5m": [0.004, 0.005, 0.004] }
+  effects:
+    - when: { tool: restart_service, args: { name: thumbnailer } }
+      metrics:
+        thumbnailer_memory_ratio: { "5m": [0.99, 0.12, 0.14] }
+      logs:
+        - "2026-09-10T09:20:18Z thumbnailer INFO restarted with cache bound 200k entries (config reload); rss 480M"
+expected_answer: "thumbnailer's LRU cache became unbounded after a config change and it keeps getting OOM-killed. Restarting thumbnailer reloads the bounded cache config; memory is back to normal."
+endpoint:
+  answer_mentions: [thumbnailer]
+  required_effects:
+    - { tool: restart_service, args: { name: thumbnailer } }

@@ -1,0 +1,24 @@
+id: incident_flag_sync
+kind: eval
+task: "ALERT feature_flag_staleness_s = 5400; the kill switch for the new pricing page was flipped 40 minutes ago but users still see it. Diagnose and remediate."
+world:
+  services: [flag-sync, web, flag-store, api]
+  logs:
+    - "2026-09-10T09:02:11Z flag-sync ERROR watch stream to flag-store closed (EOF); not reconnecting"
+    - "2026-09-10T10:05:00Z flag-store INFO flag new_pricing_page set to false by j.doe"
+    - "2026-09-10T10:44:30Z web INFO serving flag snapshot from 09:02"
+    - "2026-09-10T10:45:00Z api INFO healthy"
+  metrics:
+    feature_flag_staleness_s: { "5m": [5300, 5350, 5400] }
+    web_error_rate: { "5m": [0.002, 0.002, 0.002] }
+  effects:
+    - when: { tool: restart_service, args: { name: flag-sync } }
+      metrics:
+        feature_flag_staleness_s: { "5m": [5400, 3, 2] }
+      logs:
+        - "2026-09-10T10:51:02Z flag-sync INFO watch stream established; pushed 214 flag updates to web"
+expected_answer: "flag-sync lost its watch stream to flag-store at 09:02 and never reconnected, so web kept serving a stale flag snapshot. Restarting flag-sync re-established the stream and the kill switch took effect."
+endpoint:
+  answer_mentions: [flag-sync]
+  required_effects:
+    - { tool: restart_service, args: { name: flag-sync } }

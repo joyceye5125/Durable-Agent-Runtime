@@ -1,0 +1,27 @@
+id: incident_model_server_hang
+kind: eval
+task: "ALERT checkout_fraud_check_timeouts = 41%; orders held for manual review. Diagnose and remediate."
+world:
+  services: [fraud-check, fraud-model, checkout, feature-store]
+  logs:
+    - "2026-09-10T20:05:12Z fraud-model ERROR CUDA error: device-side assert triggered; inference worker hung"
+    - "2026-09-10T20:05:40Z fraud-check WARN timeout calling fraud-model after 2000ms"
+    - "2026-09-10T20:06:02Z checkout INFO order held for manual review (fraud check unavailable)"
+    - "2026-09-10T20:06:30Z feature-store INFO p99 8ms"
+  metrics:
+    fraud_check_timeout_rate: { "5m": [0.30, 0.38, 0.41] }
+    fraud_model_latency_p99_ms: { "5m": [2000, 2000, 2000] }
+    feature_store_latency_p99_ms: { "5m": [8, 8, 9] }
+  effects:
+    - when: { tool: restart_service, args: { name: fraud-model } }
+      metrics:
+        fraud_check_timeout_rate: { "5m": [0.41, 0.06, 0.001] }
+        fraud_model_latency_p99_ms: { "5m": [2000, 120, 45] }
+    - when: { tool: restart_service, args: { name: fraud-check } }
+      logs:
+        - "2026-09-10T20:12:02Z fraud-check INFO restarted; timeout calling fraud-model after 2000ms"
+expected_answer: "fraud-model's inference worker hung after a CUDA error, so fraud-check times out and checkout holds orders. Restarting fraud-model restored inference and timeouts cleared."
+endpoint:
+  answer_mentions: [fraud-model]
+  required_effects:
+    - { tool: restart_service, args: { name: fraud-model } }
