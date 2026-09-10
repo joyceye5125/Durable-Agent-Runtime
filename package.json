@@ -5,6 +5,9 @@
   "type": "module",
   "description": "Event-sourced LLM agent runtime: exactly-once tool side effects across crashes, and trajectory-level regression eval.",
   "scripts": {
+    "dev": "NODE_ENV=development tsx watch --exclude 'web/**' server/index.ts",
+    "build": "vite build",
+    "start": "vite build && tsx server/index.ts",
     "test": "vitest run",
     "typecheck": "tsc -p ."
   },
