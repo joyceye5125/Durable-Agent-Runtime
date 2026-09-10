@@ -9,7 +9,11 @@
     "build": "vite build",
     "start": "vite build && tsx server/index.ts",
     "test": "vitest run",
-    "typecheck": "tsc -p ."
+    "typecheck": "tsc -p .",
+    "record-golden": "tsx scripts/cli.ts",
+    "record": "tsx scripts/cli.ts",
+    "record-crash-paths": "tsx scripts/cli.ts",
+    "experiment": "tsx scripts/cli.ts"
   },
   "engines": {
     "node": ">=20"

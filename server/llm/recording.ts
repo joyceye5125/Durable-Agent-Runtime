@@ -93,6 +93,15 @@ export class RecordingLLM implements LLM {
     const cached = this.file.entries.find((e) => e.key === key);
     if (cached) return cached.response;
     const response = await this.inner.complete(req);
+    // Re-read before writing: another RecordingLLM for the same (config,
+    // task) may have appended since this one was created (e.g. a resume).
+    const onDisk = hasRecording(this.file.config_label, this.file.task_id)
+      ? loadRecording(this.file.config_label, this.file.task_id)
+      : undefined;
+    if (onDisk?.config_hash === this.file.config_hash) {
+      const known = new Set(this.file.entries.map((e) => e.key));
+      this.file.entries.push(...onDisk.entries.filter((e) => !known.has(e.key)));
+    }
     this.file.entries.push({ key, turn: req.messages.length, response });
     this.file.recorded_at = new Date().toISOString();
     const out = recordingPath(this.file.config_label, this.file.task_id);

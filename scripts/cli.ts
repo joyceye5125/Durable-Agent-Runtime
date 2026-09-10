@@ -1,0 +1,237 @@
+/**
+ * Offline workflow for producing everything the web app replays.
+ *
+ *   npm run record-golden -- --scenario <id> | --pilot | --all   baseline run -> you review -> golden written to YAML
+ *   npm run record -- --config <label,...> | --candidates        record candidate configs on every golden task
+ *   npm run record-crash-paths                                   record what naive restarts see after each crash point
+ *   npm run experiment -- crash [--n 200] [--seed 1]             run experiment 1 on recordings, persist the result
+ *   npm run experiment -- eval                                   run experiment 4 on recordings, persist the result
+ *
+ * record-* commands call the real model (ANTHROPIC_API_KEY or OPENAI_API_KEY)
+ * and write recordings/; responses already recorded for an identical request
+ * are reused, so re-running is cheap.
+ */
+import fs from "node:fs";
+import readline from "node:readline/promises";
+import { canonicalJSON } from "../server/core/canonical";
+import { fold, trajectoryOf } from "../server/core/events";
+import { runCrashExperiment } from "../server/experiments/crash";
+import { MALFORMED_KINDS, MalformedInjectingLLM } from "../server/experiments/malformed";
+import { latestEvalTable, runEvalExperiment } from "../server/eval/experiment";
+import { endpointOk } from "../server/eval/trajectory";
+import { CANDIDATES, getConfig } from "../server/llm/configs";
+import { hasRecording, openAgentLLM, recordingPath, type LlmMode } from "../server/llm/recording";
+import { CRASH_WINDOWS } from "../server/runtime/crash";
+import { buildRuntime, createRun, prepareResume, type AgentFactory } from "../server/runtime/runs";
+import { listScenarioIds, loadScenario, writeGolden } from "../server/scenarios";
+import { Store } from "../server/store/store";
+
+/** Run these first to validate the pipeline before recording all 30. */
+const PILOT = [
+  "incident_disk_full",
+  "incident_bad_deploy",
+  "incident_memory_leak",
+  "incident_traffic_spike",
+  "incident_db_connections",
+  "incident_cert_expiry",
+  "incident_dependency_hang",
+  "incident_cache_and_capacity",
+];
+
+const args = process.argv.slice(2);
+const flag = (name: string) => args.includes(`--${name}`);
+const opt = (name: string) => {
+  const i = args.indexOf(`--${name}`);
+  return i >= 0 ? args[i + 1] : undefined;
+};
+
+const live: AgentFactory = (label, task) => openAgentLLM(label, task, "live");
+const agentFor = (mode: LlmMode): AgentFactory => (label, task) => openAgentLLM(label, task, mode);
+
+function requireKey() {
+  if (!process.env.ANTHROPIC_API_KEY && !process.env.OPENAI_API_KEY) {
+    console.error("This command calls the model: set ANTHROPIC_API_KEY or OPENAI_API_KEY.");
+    process.exit(1);
+  }
+}
+
+async function pool<T>(items: T[], n: number, fn: (x: T) => Promise<void>) {
+  const queue = items.slice();
+  await Promise.all(
+    Array.from({ length: Math.max(1, n) }, async () => {
+      for (let x = queue.shift(); x !== undefined; x = queue.shift()) await fn(x);
+    }),
+  );
+}
+
+const short = (v: unknown, n = 110) => {
+  const s = typeof v === "string" ? v : JSON.stringify(v);
+  return s.length > n ? `${s.slice(0, n)}…` : s;
+};
+
+async function recordGolden(store: Store) {
+  const ids = flag("all")
+    ? listScenarioIds("eval").filter((id) => !loadScenario(id).golden_trajectory?.length)
+    : flag("pilot")
+      ? PILOT
+      : [opt("scenario") ?? ""];
+  if (!ids[0]) throw new Error("pass --scenario <id>, --pilot or --all");
+  if (!process.stdin.isTTY) throw new Error("golden trajectories need a human decision: run this in an interactive terminal");
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+
+  for (const id of ids) {
+    const scenario = loadScenario(id);
+    if (flag("fresh") && hasRecording("baseline", id)) fs.rmSync(recordingPath("baseline", id));
+    const mode: LlmMode = hasRecording("baseline", id) && !flag("live") ? "replay" : "live";
+    if (mode === "live") requireKey();
+    const agent = agentFor(mode);
+    const runId = await createRun(store, { scenario: id, mode: "durable" }, { agent });
+    await (await buildRuntime(store, runId, { agent })).drive();
+    const state = fold(await store.listEvents(runId));
+    const ledger = await store.listSideEffects(runId);
+    const calls = trajectoryOf(state);
+
+    console.log(`\n━━ ${id}  (${mode === "live" ? "recorded just now" : "from existing recording"})`);
+    console.log(`task: ${scenario.task}\n`);
+    for (const st of state.steps) {
+      if (!st) continue;
+      if (st.outcome?.kind === "rejected") console.log(`  ${String(st.step).padStart(2)}  REJECTED ${st.llm?.tool_name}: ${st.outcome.reason}`);
+      else if (st.invoked) {
+        const out = st.outcome?.kind === "committed" ? short(st.outcome.result) : st.outcome?.kind === "failed" ? `ERROR ${st.outcome.error}` : "";
+        console.log(`  ${String(st.step).padStart(2)}  ${st.invoked.tool_name}(${canonicalJSON(st.invoked.args)})\n        → ${out}`);
+      }
+    }
+    console.log(`\nfinal answer: ${state.finalAnswer ?? `<none: ${state.status} ${state.error ?? ""}>`}`);
+    const ok = endpointOk(scenario, { status: state.status, finalAnswer: state.finalAnswer, ledger });
+    console.log(`endpoint check: ${ok ? "PASS" : "FAIL"}  (mentions ${scenario.endpoint.answer_mentions.join(", ")}; required effects ${scenario.endpoint.required_effects.map((e) => e.tool).join(", ")})`);
+    if (!ok) {
+      console.log("✗ Baseline did not solve this task, so it has no golden trajectory. Fix the scenario or the baseline prompt");
+      console.log("  (without leaking the solution into the prompt), then re-run with --fresh.");
+      continue;
+    }
+    const answer = (await rl.question(`Accept these ${calls.length} calls as the golden trajectory for ${id}? [y/N] `)).trim().toLowerCase();
+    if (answer === "y" || answer === "yes") {
+      writeGolden(id, calls.map((c) => ({ tool: c.tool, args: c.args })), state.finalAnswer ?? "");
+      console.log(`✓ wrote golden_trajectory to scenarios/${id}.yaml`);
+    } else {
+      console.log("skipped");
+    }
+  }
+  rl.close();
+}
+
+async function recordConfigs(store: Store) {
+  requireKey();
+  const labels = flag("candidates") ? CANDIDATES.map((c) => c.label) : (opt("config") ?? "").split(",").filter(Boolean);
+  if (!labels.length) throw new Error("pass --config <label,...> or --candidates");
+  labels.forEach(getConfig);
+  const tasks = opt("scenario") ? [opt("scenario")!] : listScenarioIds("eval").filter((id) => loadScenario(id).golden_trajectory?.length);
+  if (!tasks.length) throw new Error("no task has a golden trajectory yet; run record-golden first");
+  const jobs = labels.flatMap((label) => tasks.map((task) => ({ label, task })));
+  let done = 0;
+  await pool(jobs, Number(opt("concurrency") ?? 4), async ({ label, task }) => {
+    if (flag("fresh") && hasRecording(label, task)) fs.rmSync(recordingPath(label, task));
+    const runId = await createRun(store, { scenario: task, mode: "durable", configLabel: label }, { agent: live });
+    const out = await (await buildRuntime(store, runId, { agent: live })).drive();
+    const n = trajectoryOf(fold(await store.listEvents(runId))).length;
+    console.log(`[${++done}/${jobs.length}] ${label.padEnd(20)} ${task.padEnd(32)} ${out.status} (${n} calls)`);
+  });
+}
+
+async function recordCrashPaths(store: Store) {
+  requireKey();
+  const scenario = opt("scenario") ?? listScenarioIds("crash")[0];
+  const refId = await createRun(store, { scenario, mode: "durable" }, { agent: live });
+  const ref = await (await buildRuntime(store, refId, { agent: live })).drive();
+  const refState = fold(await store.listEvents(refId));
+  const toolCalls = trajectoryOf(refState).length;
+  console.log(`reference run: ${ref.status}, ${toolCalls} tool calls`);
+  if (ref.status !== "completed") throw new Error("baseline does not complete the crash scenario; fix it before recording crash paths");
+
+  // A naive restart after a crash can see a world its first attempt already
+  // changed, so it asks the model new questions. Record every crash point.
+  for (let index = 0; index < toolCalls; index++) {
+    for (const window of CRASH_WINDOWS) {
+      const id = await createRun(store, { scenario, mode: "naive" }, { agent: live });
+      await (await buildRuntime(store, id, { agent: live, crash: { window, target: { kind: "tool_call", index } } })).drive();
+      await prepareResume(store, id);
+      const out = await (await buildRuntime(store, id, { agent: live })).drive();
+      console.log(`naive crash at call ${index} ${window}: ${out.status}`);
+    }
+  }
+  const firstEffect = refState.steps.findIndex((s) => s?.invoked && ["restart_service", "scale_service", "page_oncall", "post_status"].includes(s.invoked.tool_name));
+  for (const kind of MALFORMED_KINDS) {
+    const injected: AgentFactory = (label, task) => {
+      const base = live(label, task);
+      return { config: base.config, llm: new MalformedInjectingLLM(base.llm, kind, Math.max(0, firstEffect), 1) };
+    };
+    const id = await createRun(store, { scenario, mode: "durable" }, { agent: injected });
+    const out = await (await buildRuntime(store, id, { agent: injected })).drive();
+    console.log(`malformed ${kind} then self-correct: ${out.status}`);
+  }
+}
+
+async function experiment(store: Store) {
+  const which = args[0];
+  if (which === "crash") {
+    const summary = await runCrashExperiment(store, { n: Number(opt("n") ?? 200), seed: opt("seed") ? Number(opt("seed")) : undefined, scenario: opt("scenario") });
+    await store.insertCrashExperiment(summary.scenario, summary.n, summary);
+    const d = summary.durable;
+    const nv = summary.naive;
+    console.log(`crash experiment on ${summary.scenario}, n=${summary.n}, seed=${summary.seed}`);
+    console.log(`durable: ${d.correct}/${d.trials} correct resumes (${d.correctPct.toFixed(1)}%), ${d.duplicateSideEffects} duplicate side effects`);
+    console.log(
+      `naive:   ${nv.trialsWithDuplicates}/${nv.measured} trials with duplicate side effects (${nv.duplicateRatePct?.toFixed(1) ?? "n/a"}%), ${nv.duplicateRows} duplicate rows, ${nv.unrecorded} unrecorded`,
+    );
+    for (const w of CRASH_WINDOWS) {
+      const s = summary.byWindow[w];
+      console.log(`  ${w}: durable ${s.durableCorrect}/${s.trials}  naive dup ${s.naiveTrialsWithDuplicates}/${s.naiveMeasured}`);
+    }
+    console.log(`malformed outputs blocked before any side effect: ${summary.malformed.allBlocked ? "yes" : "NO"}`);
+    for (const c of summary.malformed.cases) console.log(`  ${c.kind}/${c.variant}: ${c.status}, rejected ${c.rejected}, side effects from rejected steps ${c.sideEffectRowsFromRejectedSteps}`);
+  } else if (which === "eval") {
+    const run = await runEvalExperiment(store);
+    const table = await latestEvalTable(store);
+    if (table.tasks.length === 0) {
+      console.log("No scenario has a golden trajectory yet: run `npm run record-golden -- --pilot` first.");
+      return;
+    }
+    console.log(`tasks with golden: ${table.tasks.length}; without: ${table.tasksWithoutGolden.length}`);
+    console.log("change".padEnd(22), "endpoint".padEnd(9), "edit".padEnd(6), "extra".padEnd(6), "wrong→ok".padEnd(9), "path-only".padEnd(10), "endpoint-eval / trajectory-eval");
+    for (const c of table.changes) {
+      if (c.status !== "evaluated") {
+        console.log(c.label.padEnd(22), `not recorded (${c.missing?.length ?? 0} tasks missing)`);
+        continue;
+      }
+      console.log(
+        c.label.padEnd(22),
+        `${c.endpointPass}/${c.total}`.padEnd(9),
+        c.meanEditDist!.toFixed(2).padEnd(6),
+        String(c.extraCalls).padEnd(6),
+        String(c.wrongRecover).padEnd(9),
+        String(c.pathOnlyRegressions).padEnd(10),
+        `${c.endpointVerdict} / ${c.trajectoryVerdict}`,
+      );
+    }
+    for (const c of run.changes.filter((x) => x.status === "error")) console.log(`error in ${c.label}: ${c.error}`);
+    console.log(`\ncandidates the endpoint eval passes but the trajectory eval blocks: ${table.missedByEndpoint}`);
+    console.log(`rows with a correct endpoint and a regressed path: ${table.pathOnlyRows}`);
+  } else {
+    throw new Error("usage: npm run experiment -- crash|eval");
+  }
+}
+
+const store = await Store.open({ log: () => {} });
+const command = process.env.npm_lifecycle_event ?? "";
+try {
+  if (command === "record-golden") await recordGolden(store);
+  else if (command === "record") await recordConfigs(store);
+  else if (command === "record-crash-paths") await recordCrashPaths(store);
+  else if (command === "experiment") await experiment(store);
+  else throw new Error(`run through npm: record-golden | record | record-crash-paths | experiment`);
+} catch (e) {
+  console.error(`error: ${(e as Error).message}`);
+  process.exitCode = 1;
+} finally {
+  await store.close();
+}
