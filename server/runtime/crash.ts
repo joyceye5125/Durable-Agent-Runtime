@@ -26,7 +26,9 @@ export type CrashTarget =
   /** The n-th dispatched tool call of the attempt (0-based). */
   | { kind: "tool_call"; index: number }
   | { kind: "next_tool_call" }
-  | { kind: "next_side_effect" };
+  | { kind: "next_side_effect" }
+  /** The next call to a specific tool. */
+  | { kind: "tool"; tool: string };
 
 export interface CrashPlan {
   window: CrashWindow;
@@ -69,7 +71,8 @@ export class CrashInjector {
     const hit =
       p.target.kind === "next_tool_call" ||
       (p.target.kind === "next_side_effect" && point.sideEffect) ||
-      (p.target.kind === "tool_call" && p.target.index === point.dispatchIndex);
+      (p.target.kind === "tool_call" && p.target.index === point.dispatchIndex) ||
+      (p.target.kind === "tool" && p.target.tool === point.tool);
     if (!hit) return;
     this.plan = undefined;
     throw new CrashInjected(point);
