@@ -1,0 +1,45 @@
+# Long scenario for the crash experiment: at least 10 steps and at least 3
+# side-effecting tool calls, so crashes land on many different steps.
+id: incident_checkout_cascade
+kind: crash
+# Allows the extra steps this multi-alert incident needs.
+max_steps: 20
+task: "Three alerts are firing on the checkout path: checkout_latency_p99_ms = 4800 (SLO 800), orders_queue_depth = 52000 and rising, payments_error_rate = 6%. Investigate each alert, remediate what you can, and escalate what you cannot."
+world:
+  services: [checkout, session-cache, order-worker, payments-gateway, postgres]
+  logs:
+    - "2026-09-10T09:12:44Z session-cache WARN used_memory 7.9G/8G, evicting keys (maxmemory reached)"
+    - "2026-09-10T09:12:51Z session-cache ERROR OOM command not allowed when used memory > maxmemory"
+    - "2026-09-10T09:13:02Z checkout WARN session lookup fell back to postgres (cache error), +3.9s"
+    - "2026-09-10T09:14:30Z order-worker WARN consumer lag 48000 messages; running 2/2 replicas"
+    - "2026-09-10T09:14:31Z order-worker INFO autoscaler disabled for this service; capacity plan for peak is 8 replicas"
+    - "2026-09-10T09:15:10Z payments-gateway ERROR upstream PSP returned 503 Service Unavailable (provider incident PSP-2231)"
+    - "2026-09-10T09:15:12Z payments-gateway ERROR upstream PSP returned 503 Service Unavailable (provider incident PSP-2231)"
+    - "2026-09-10T09:15:40Z postgres INFO connections 180/400"
+  metrics:
+    checkout_latency_p99_ms: { "5m": [4100, 4600, 4800], "1h": [620, 2900, 4800] }
+    session_cache_memory_ratio: { "5m": [0.99, 0.99, 0.99] }
+    orders_queue_depth: { "5m": [44000, 48000, 52000], "1h": [3000, 21000, 52000] }
+    order_worker_replicas: { "5m": [2, 2, 2] }
+    payments_error_rate: { "5m": [0.058, 0.061, 0.060] }
+    postgres_cpu: { "5m": [0.52, 0.55, 0.54] }
+  effects:
+    - when: { tool: restart_service, args: { name: session-cache } }
+      metrics:
+        checkout_latency_p99_ms: { "5m": [4800, 2100, 640] }
+        session_cache_memory_ratio: { "5m": [0.99, 0.18, 0.21] }
+      logs:
+        - "2026-09-10T09:21:05Z session-cache INFO restarted; used_memory 1.4G/8G"
+    - when: { tool: scale_service, args: { name: order-worker, replicas: { gte: 6 } } }
+      metrics:
+        orders_queue_depth: { "5m": [52000, 41000, 23000] }
+        order_worker_replicas: { "5m": [2, 8, 8] }
+      logs:
+        - "2026-09-10T09:24:40Z order-worker INFO scaled out; consumer lag falling"
+expected_answer: "session-cache hit maxmemory and was failing, pushing checkout onto postgres: restarted session-cache and latency recovered. order-worker was pinned at 2 replicas: scaled it out and the queue is draining. Payment errors come from the external PSP incident PSP-2231, which is outside our control: paged on-call."
+endpoint:
+  answer_mentions: [session-cache, order-worker]
+  required_effects:
+    - { tool: restart_service, args: { name: session-cache } }
+    - { tool: scale_service, args: { name: order-worker, replicas: { gte: 6 } } }
+    - { tool: page_oncall }

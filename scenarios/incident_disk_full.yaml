@@ -1,0 +1,28 @@
+id: incident_disk_full
+kind: eval
+task: "ALERT disk_usage_data{host=storage-1} = 96% (threshold 90%) on the /data partition. Diagnose and remediate."
+world:
+  services: [api, log-rotator, storage-agent, postgres]
+  logs:
+    - "2026-09-10T02:10:04Z log-rotator ERROR rotation job failed: lock file /data/logs/.rotate.lock held by pid 4412 (stale, process not running)"
+    - "2026-09-10T02:10:04Z log-rotator WARN skipping compression of /data/logs/api/*.log"
+    - "2026-09-10T03:40:11Z storage-agent WARN /data at 91% used"
+    - "2026-09-10T04:15:22Z postgres INFO checkpoint complete"
+    - "2026-09-10T05:02:37Z storage-agent WARN /data at 96% used; largest directory /data/logs/api (212G)"
+    - "2026-09-10T05:03:00Z api INFO request volume normal"
+  metrics:
+    disk_usage_data: { "5m": [0.95, 0.96, 0.96], "1h": [0.91, 0.93, 0.96], "24h": [0.71, 0.80, 0.88, 0.96] }
+    log_rotator_last_success_age_s: { "1h": [86400, 88200, 90000] }
+    api_error_rate: { "5m": [0.001, 0.001, 0.001] }
+  effects:
+    - when: { tool: restart_service, args: { name: log-rotator } }
+      metrics:
+        disk_usage_data: { "5m": [0.96, 0.81, 0.62], "1h": [0.93, 0.96, 0.62] }
+        log_rotator_last_success_age_s: { "1h": [88200, 90000, 12] }
+      logs:
+        - "2026-09-10T05:07:41Z log-rotator INFO stale lock cleared on start; rotated and compressed 188G under /data/logs/api"
+expected_answer: "A stale lock file made log-rotator fail since 02:10, so API logs filled /data. Restarting log-rotator cleared the lock, rotated the logs, and /data fell back under the threshold."
+endpoint:
+  answer_mentions: [log-rotator]
+  required_effects:
+    - { tool: restart_service, args: { name: log-rotator } }
