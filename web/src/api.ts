@@ -39,6 +39,57 @@ export interface RunView {
   ledger: LedgerRow[];
 }
 
+export interface EvalRow {
+  task: string;
+  endpoint_ok: boolean;
+  path_exact: boolean;
+  edit_dist: number;
+  extra_calls: number;
+  wrong_recover: boolean;
+  path_regressed: boolean;
+  tokens: number;
+}
+
+export interface ChangeResult {
+  label: string;
+  description: string;
+  status: "evaluated" | "not_recorded" | "error";
+  missing?: string[];
+  endpointPass?: number;
+  total?: number;
+  pathOnlyRegressions?: number;
+  meanEditDist?: number;
+  extraCalls?: number;
+  wrongRecover?: number;
+  endpointVerdict?: "PASS" | "BLOCKED";
+  trajectoryVerdict?: "PASS" | "BLOCKED";
+  rows?: EvalRow[];
+}
+
+export interface EvalTable {
+  tasks: string[];
+  tasksWithoutGolden: string[];
+  changes: ChangeResult[];
+  missedByEndpoint: number;
+  pathOnlyRows: number;
+  evaluatedAt?: string;
+}
+
+export interface CrashSummary {
+  scenario: string;
+  n: number;
+  seed: number;
+  reference: { steps: number; toolCalls: number; sideEffects: number };
+  durable: { trials: number; correct: number; correctPct: number; duplicateSideEffects: number };
+  naive: { trials: number; measured: number; unrecorded: number; trialsWithDuplicates: number; duplicateRatePct: number | null; duplicateRows: number };
+  malformed: { cases: Array<{ kind: string; variant: string; status: string; rejected: number }>; allBlocked: boolean };
+}
+
+export interface Results {
+  crash: Array<{ id: number; started_at: string; summary: CrashSummary }>;
+  eval: EvalTable;
+}
+
 async function call<T>(method: string, url: string, body?: unknown): Promise<T> {
   const res = await fetch(url, {
     method,
@@ -57,7 +108,9 @@ export const api = {
   crash: (id: string, window: Window, target: CrashTarget) => call("POST", `/api/runs/${id}/crash`, { window, target }),
   resume: (id: string, paceMs?: number) => call("POST", `/api/runs/${id}/resume`, { paceMs }),
   run: (id: string) => call<RunView>("GET", `/api/runs/${id}`),
-  results: () => call<Record<string, unknown>>("GET", "/api/experiments/results"),
+  results: () => call<Results>("GET", "/api/experiments/results"),
+  runCrashExperiment: (n: number) => call<{ summary: CrashSummary }>("POST", "/api/experiments/crash", { n }),
+  runEval: () => call<{ errors: Array<{ label: string; error: string }>; table: EvalTable }>("POST", "/api/experiments/eval", {}),
 };
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));

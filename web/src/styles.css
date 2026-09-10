@@ -113,3 +113,19 @@ tr.dup td { background: rgba(248, 81, 73, 0.14); color: #ffd7d5; }
   .timeline { border-right: 0; border-bottom: 1px solid var(--line); }
 }
 .kept { display: block; color: var(--blue); font-size: 11px; }
+
+.section-head.row { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+.table-wrap { overflow-x: auto; }
+table.eval th { white-space: nowrap; }
+table.eval td { padding: 5px 8px; }
+table.eval .desc { color: var(--muted); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 11.5px; }
+table.eval td.ok { color: var(--green); }
+table.eval td.bad { color: var(--red); font-weight: 600; }
+table.eval tr.clickable { cursor: pointer; }
+table.eval tr.clickable:hover td { background: var(--panel-2); }
+table.eval tr.missed > td { background: rgba(210, 153, 34, 0.16); }
+table.eval tr.missed > td:first-child { box-shadow: inset 3px 0 0 var(--amber); }
+table.eval tr.base > td { color: var(--muted); }
+table.eval tr.unrecorded td { color: var(--muted); font-style: italic; }
+table.eval .tag { color: var(--amber); font-size: 10.5px; font-weight: 700; text-transform: uppercase; }
+table.eval tr.detail > td { background: var(--bg); padding: 6px 10px 12px 24px; }
