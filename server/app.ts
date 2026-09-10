@@ -1,5 +1,6 @@
 import express, { type NextFunction, type Request, type Response } from "express";
 import { fold, nextAction, trajectoryOf } from "./core/events";
+import { latestEvalTable, runEvalExperiment } from "./eval/experiment";
 import { ExperimentError, runCrashExperiment } from "./experiments/crash";
 import { CONFIGS } from "./llm/configs";
 import { hasRecording, llmMode, NotRecordedError, RecordingMissError, RecordingStaleError } from "./llm/recording";
@@ -150,8 +151,14 @@ export function createApp({ store, agent }: AppOptions) {
     res.json({ id, summary });
   });
 
+  app.post("/api/experiments/eval", async (_req, res) => {
+    const run = await exclusive(() => runEvalExperiment(store, { agent }));
+    const errors = run.changes.filter((c) => c.status === "error").map((c) => ({ label: c.label, error: c.error }));
+    res.json({ errors, table: await latestEvalTable(store) });
+  });
+
   app.get("/api/experiments/results", async (_req, res) => {
-    res.json({ crash: await store.listCrashExperiments(20) });
+    res.json({ crash: await store.listCrashExperiments(20), eval: await latestEvalTable(store) });
   });
 
   async function exclusive<T>(fn: () => Promise<T>): Promise<T> {

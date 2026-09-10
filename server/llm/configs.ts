@@ -55,7 +55,66 @@ export const BASELINE: AgentConfig = {
   maxInvalidRetries: 2,
 };
 
-export const CONFIGS: AgentConfig[] = [BASELINE];
+const lines = BASELINE_PROMPT.split("\n");
+const withoutLine = (startsWith: string) => {
+  if (!lines.some((l) => l.startsWith(startsWith))) throw new Error(`baseline prompt has no line "${startsWith}"`);
+  return lines.filter((l) => !l.startsWith(startsWith)).join("\n");
+};
+const withExtra = (extra: string) => lines.map((l) => (l === "Call one tool at a time." ? `${extra}\n${l}` : l)).join("\n");
+
+const candidate = (label: string, description: string, patch: Partial<AgentConfig>): AgentConfig => ({
+  ...BASELINE,
+  label,
+  description,
+  ...patch,
+});
+
+/**
+ * Candidate changes a team might plausibly ship: model swaps, prompt edits,
+ * trimmed instructions, a tighter step budget. Whether each one degrades the
+ * path, the endpoint, both or neither is measured, not assumed.
+ */
+export const CANDIDATES: AgentConfig[] = [
+  candidate("weak-model", "Same prompt on the smaller model.", { modelTier: "weak" }),
+  candidate("weak-model-terse", "Smaller model with a one-line prompt.", {
+    modelTier: "weak",
+    systemPrompt: "You are an SRE agent. Use the tools to resolve the alert, then summarize what you did.",
+  }),
+  candidate("terse-prompt", "Strong model, one-line prompt.", {
+    systemPrompt: "You are an SRE agent. Use the tools to resolve the alert, then summarize what you did.",
+  }),
+  candidate("no-investigate-first", "Drops the investigate-before-acting rule.", { systemPrompt: withoutLine("- Investigate before you act") }),
+  candidate("no-root-cause", "Drops the fix-the-root-cause rule.", { systemPrompt: withoutLine("- Fix the root cause") }),
+  candidate("no-verify", "Drops the confirm-the-fix rule.", { systemPrompt: withoutLine("- After remediating") }),
+  candidate("no-status-update", "Drops the post-a-status-update rule.", { systemPrompt: withoutLine("- Once the incident is handled") }),
+  candidate("no-escalation", "Drops the page-when-you-cannot-fix rule.", { systemPrompt: withoutLine("- If the root cause is something") }),
+  candidate("no-caution", "Drops the production-changes-are-irreversible rule.", { systemPrompt: withoutLine("- Tools that change production") }),
+  candidate("double-check", "Adds: re-run each read-only check before changing production.", {
+    systemPrompt: withExtra("- Be thorough: before any production change, repeat each read-only check once to confirm the evidence."),
+  }),
+  candidate("both-windows", "Adds: read every metric at both the 5m and 1h windows.", {
+    systemPrompt: withExtra("- Whenever you read a metric, read it at both the 5m and the 1h window."),
+  }),
+  candidate("act-fast", "Adds: restart unhealthy-looking services immediately, investigate after.", {
+    systemPrompt: withExtra("- Speed matters more than certainty: if a service looks unhealthy, restart it right away, then keep investigating."),
+  }),
+  candidate("status-early", "Adds: post a status update when you start, and again when resolved.", {
+    systemPrompt: withExtra("- Post a status update as soon as you start investigating, and another one once the incident is resolved."),
+  }),
+  candidate("vague-tool-docs", "Replaces tool descriptions with one-word ones.", {
+    toolDescriptions: {
+      search_logs: "Logs.",
+      get_metric: "Metrics.",
+      restart_service: "Restart.",
+      scale_service: "Scale.",
+      page_oncall: "Page.",
+      post_status: "Status.",
+    },
+  }),
+  candidate("max-steps-6", "Step budget cut from 12 to 6.", { maxSteps: 6 }),
+];
+
+export const CONFIGS: AgentConfig[] = [BASELINE, ...CANDIDATES];
 
 export function getConfig(label: string): AgentConfig {
   const c = CONFIGS.find((x) => x.label === label);
