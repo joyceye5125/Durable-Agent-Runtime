@@ -21,3 +21,9 @@ endpoint:
   answer_mentions: [AccessDenied]
   required_effects:
     - { tool: page_oncall }
+golden_trajectory:
+  - { tool: search_logs, args: { query: backup-agent } }
+  - { tool: get_metric, args: { name: postgres_last_backup_age_h, window: 1h } }
+  - { tool: page_oncall, args: { message: (predicted) } }
+  - { tool: post_status, args: { message: (predicted) } }
+golden_source: predicted

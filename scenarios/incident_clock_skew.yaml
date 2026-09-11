@@ -23,3 +23,10 @@ endpoint:
   answer_mentions: [ntp-agent]
   required_effects:
     - { tool: restart_service, args: { name: ntp-agent } }
+golden_trajectory:
+  - { tool: search_logs, args: { query: auth token not yet valid } }
+  - { tool: get_metric, args: { name: auth_clock_offset_s, window: 5m } }
+  - { tool: restart_service, args: { name: ntp-agent } }
+  - { tool: get_metric, args: { name: auth_401_rate, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
+golden_source: predicted

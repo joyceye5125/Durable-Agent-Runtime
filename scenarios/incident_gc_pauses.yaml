@@ -27,3 +27,10 @@ endpoint:
   answer_mentions: [ledger-service]
   required_effects:
     - { tool: scale_service, args: { name: ledger-service, replicas: { gte: 6 } } }
+golden_trajectory:
+  - { tool: search_logs, args: { query: ledger-service latency } }
+  - { tool: get_metric, args: { name: ledger_service_latency_p99_ms, window: 5m } }
+  - { tool: scale_service, args: { name: ledger-service, replicas: 8 } }
+  - { tool: get_metric, args: { name: ledger_service_latency_p99_ms, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
+golden_source: predicted

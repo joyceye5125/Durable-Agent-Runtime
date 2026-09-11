@@ -23,3 +23,9 @@ endpoint:
   answer_mentions: [inventory-sync]
   required_effects:
     - { tool: restart_service, args: { name: inventory-sync } }
+golden_trajectory:
+  - { tool: search_logs, args: { query: inventory-sync lock } }
+  - { tool: restart_service, args: { name: inventory-sync } }
+  - { tool: get_metric, args: { name: inventory_sync_last_success_age_s, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
+golden_source: predicted

@@ -35,6 +35,8 @@ export interface EvalSummary {
   missedByEndpoint: number;
   /** Rows with endpoint_ok and a regressed path (the completion criterion counts these). */
   pathOnlyRows: number;
+  /** Tasks whose golden trajectory is still a provisional prediction, not a reviewed baseline run. */
+  provisionalGolden: string[];
 }
 
 /**
@@ -107,6 +109,7 @@ export async function runEvalExperiment(
     changes,
     missedByEndpoint: candidates.filter((c) => c.endpointVerdict === "PASS" && c.trajectoryVerdict === "BLOCKED").length,
     pathOnlyRows: candidates.reduce((s, c) => s + (c.pathOnlyRegressions ?? 0), 0),
+    provisionalGolden: tasks.filter((t) => t.golden_source === "predicted").map((t) => t.id),
   };
 }
 
@@ -172,6 +175,7 @@ export async function latestEvalTable(store: Store): Promise<EvalSummary & { eva
     changes,
     missedByEndpoint: candidates.filter((c) => c.endpointVerdict === "PASS" && c.trajectoryVerdict === "BLOCKED").length,
     pathOnlyRows: candidates.reduce((s, c) => s + (c.pathOnlyRegressions ?? 0), 0),
+    provisionalGolden: tasks.filter((t) => t.golden_source === "predicted").map((t) => t.id),
     evaluatedAt,
   };
 }

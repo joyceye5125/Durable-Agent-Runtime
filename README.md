@@ -9,6 +9,8 @@
 | **C1** | With crashes injected at all four commit windows, durable resume matches the crash-free run every time with zero duplicate side effects. A from-scratch baseline duplicates at a measurable rate. | _not measured yet: see [Producing the numbers](#producing-the-numbers)_ |
 | **C4** | A trajectory-level eval catches config changes that keep every final answer correct but degrade the path. An endpoint-level eval passes all of them. | _not measured yet: see [Producing the numbers](#producing-the-numbers)_ |
 
+**Status:** the golden trajectories in `scenarios/` are currently provisional predictions (`golden_source: predicted`). They are pending replacement by reviewed baseline runs via `npm run record-golden -- --all`.
+
 The two cards at the top of the page show the same numbers, computed live from the committed recordings. Every number comes from a run: nothing is hard-coded, and nothing was tuned to hit a target.
 
 ## Reproduce in 60 seconds
@@ -67,7 +69,7 @@ A trajectory is the ordered list of executed tool calls, with canonical (key-sor
 |---|---|
 | `endpoint_ok` | run completed, final answer mentions the key facts, and the required remediation is in the side-effect ledger |
 | `path_exact` | identical calls and args to the golden trajectory |
-| `edit_dist` | Levenshtein distance to golden over call tokens. Side-effecting calls are compared with their args, read-only calls by tool name only, so rewording a log query is not a regression. |
+| `edit_dist` | Levenshtein distance to golden over call tokens. Side-effecting calls are compared on the args that identify the action (which service, how many replicas); read-only calls and free-text messages by tool name only, so rewording a query or a page is not a regression. |
 | `extra_calls` | calls not in the LCS alignment with golden (redundant or repeated) |
 | `wrong_recover` | a side-effecting call that golden never makes, followed later by one it does |
 

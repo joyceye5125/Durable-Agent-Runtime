@@ -26,3 +26,10 @@ endpoint:
   answer_mentions: [scheduler]
   required_effects:
     - { tool: restart_service, args: { name: scheduler } }
+golden_trajectory:
+  - { tool: search_logs, args: { query: duplicate job scheduler } }
+  - { tool: get_metric, args: { name: scheduler_leaders, window: 5m } }
+  - { tool: restart_service, args: { name: scheduler } }
+  - { tool: get_metric, args: { name: duplicate_job_executions, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
+golden_source: predicted

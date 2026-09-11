@@ -43,9 +43,15 @@ export interface Scenario {
     /** Each effect must be present in the run's side-effect ledger at the end. */
     required_effects: EffectMatch[];
   };
-  /** Produced by `npm run record-golden` from a real baseline run and human-reviewed. Never hand-written. */
+  /** Produced by `npm run record-golden` from a real baseline run and human-reviewed. */
   golden_trajectory?: GoldenCall[];
   golden_final_answer?: string;
+  /**
+   * "baseline": written by record-golden after review. "predicted": a
+   * provisional placeholder predicted before any baseline was recorded;
+   * record-golden replaces it.
+   */
+  golden_source?: "baseline" | "predicted";
 }
 
 export const SCENARIO_DIR = path.resolve(import.meta.dirname, "../scenarios");
@@ -82,6 +88,7 @@ export function writeGolden(id: string, golden: GoldenCall[], finalAnswer: strin
   });
   doc.set("golden_trajectory", doc.createNode(flow));
   doc.set("golden_final_answer", finalAnswer);
+  doc.set("golden_source", "baseline");
   fs.writeFileSync(file, doc.toString({ lineWidth: 0 }));
 }
 

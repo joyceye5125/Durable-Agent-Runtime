@@ -26,3 +26,10 @@ endpoint:
   answer_mentions: [config-service]
   required_effects:
     - { tool: restart_service, args: { name: config-service } }
+golden_trajectory:
+  - { tool: search_logs, args: { query: healthz api unhealthy } }
+  - { tool: get_metric, args: { name: config_service_up, window: 5m } }
+  - { tool: restart_service, args: { name: config-service } }
+  - { tool: get_metric, args: { name: api_healthy_instances, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
+golden_source: predicted

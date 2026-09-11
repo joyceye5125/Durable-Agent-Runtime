@@ -25,3 +25,10 @@ endpoint:
   answer_mentions: [fraud-model]
   required_effects:
     - { tool: restart_service, args: { name: fraud-model } }
+golden_trajectory:
+  - { tool: search_logs, args: { query: fraud check timeout } }
+  - { tool: get_metric, args: { name: checkout_fraud_check_timeouts, window: 5m } }
+  - { tool: restart_service, args: { name: fraud-model } }
+  - { tool: get_metric, args: { name: fraud_check_timeout_rate, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
+golden_source: predicted

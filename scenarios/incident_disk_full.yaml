@@ -26,3 +26,10 @@ endpoint:
   answer_mentions: [log-rotator]
   required_effects:
     - { tool: restart_service, args: { name: log-rotator } }
+golden_trajectory:
+  - { tool: search_logs, args: { query: /data disk usage } }
+  - { tool: get_metric, args: { name: disk_usage_data, window: 1h } }
+  - { tool: restart_service, args: { name: log-rotator } }
+  - { tool: get_metric, args: { name: disk_usage_data, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
+golden_source: predicted

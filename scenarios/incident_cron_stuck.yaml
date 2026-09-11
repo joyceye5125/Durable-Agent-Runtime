@@ -24,3 +24,10 @@ endpoint:
   answer_mentions: [billing-cron]
   required_effects:
     - { tool: restart_service, args: { name: billing-cron } }
+golden_trajectory:
+  - { tool: search_logs, args: { query: billing-cron invoices } }
+  - { tool: get_metric, args: { name: billing_cron_lock_wait_s, window: 1h } }
+  - { tool: restart_service, args: { name: billing-cron } }
+  - { tool: get_metric, args: { name: invoices_generated_today, window: 1h } }
+  - { tool: post_status, args: { message: (predicted) } }
+golden_source: predicted

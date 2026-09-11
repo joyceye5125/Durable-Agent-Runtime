@@ -26,3 +26,10 @@ endpoint:
   answer_mentions: [checkout-api]
   required_effects:
     - { tool: restart_service, args: { name: checkout-api } }
+golden_trajectory:
+  - { tool: search_logs, args: { query: log-shipper input rate } }
+  - { tool: get_metric, args: { name: log_lines_per_s, window: 1h } }
+  - { tool: restart_service, args: { name: checkout-api } }
+  - { tool: get_metric, args: { name: log_lines_per_s, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
+golden_source: predicted

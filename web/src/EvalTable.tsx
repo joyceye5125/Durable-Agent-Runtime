@@ -19,6 +19,12 @@ export function EvalTable({ table, busy, onRerun }: { table: Table | null; busy:
           {busy ? "running…" : "Re-run eval"}
         </button>
       </div>
+      {table && table.provisionalGolden.length > 0 && (
+        <div className="notice">
+          {table.provisionalGolden.length}/{n} golden trajectories are provisional predictions, not yet replaced by reviewed baseline runs
+          (<code>npm run record-golden -- --all</code> replaces them).
+        </div>
+      )}
       {!table ? null : n === 0 ? (
         <div className="notice">
           No task has a golden trajectory yet, so there is nothing to compare against. Record and review them with{" "}

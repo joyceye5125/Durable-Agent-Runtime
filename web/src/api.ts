@@ -72,6 +72,7 @@ export interface EvalTable {
   changes: ChangeResult[];
   missedByEndpoint: number;
   pathOnlyRows: number;
+  provisionalGolden: string[];
   evaluatedAt?: string;
 }
 

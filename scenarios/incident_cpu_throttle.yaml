@@ -25,3 +25,10 @@ endpoint:
   answer_mentions: [image-api]
   required_effects:
     - { tool: scale_service, args: { name: image-api, replicas: { gte: 5 } } }
+golden_trajectory:
+  - { tool: search_logs, args: { query: image-api } }
+  - { tool: get_metric, args: { name: image_api_latency_p99_ms, window: 5m } }
+  - { tool: scale_service, args: { name: image-api, replicas: 5 } }
+  - { tool: get_metric, args: { name: image_api_latency_p99_ms, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
+golden_source: predicted

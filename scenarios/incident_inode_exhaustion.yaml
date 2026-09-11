@@ -24,3 +24,10 @@ endpoint:
   answer_mentions: [tmp-cleaner]
   required_effects:
     - { tool: restart_service, args: { name: tmp-cleaner } }
+golden_trajectory:
+  - { tool: search_logs, args: { query: No space left on device } }
+  - { tool: get_metric, args: { name: inode_usage_var, window: 5m } }
+  - { tool: restart_service, args: { name: tmp-cleaner } }
+  - { tool: get_metric, args: { name: inode_usage_var, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
+golden_source: predicted

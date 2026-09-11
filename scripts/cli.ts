@@ -71,7 +71,10 @@ const short = (v: unknown, n = 110) => {
 
 async function recordGolden(store: Store) {
   const ids = flag("all")
-    ? listScenarioIds("eval").filter((id) => !loadScenario(id).golden_trajectory?.length)
+    ? listScenarioIds("eval").filter((id) => {
+        const s = loadScenario(id);
+        return !s.golden_trajectory?.length || s.golden_source === "predicted";
+      })
     : flag("pilot")
       ? PILOT
       : [opt("scenario") ?? ""];

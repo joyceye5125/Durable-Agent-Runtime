@@ -23,3 +23,10 @@ endpoint:
   answer_mentions: [realtime]
   required_effects:
     - { tool: scale_service, args: { name: realtime, replicas: { gte: 6 } } }
+golden_trajectory:
+  - { tool: search_logs, args: { query: realtime connections } }
+  - { tool: get_metric, args: { name: realtime_connections, window: 5m } }
+  - { tool: scale_service, args: { name: realtime, replicas: 8 } }
+  - { tool: get_metric, args: { name: realtime_connection_rejections, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
+golden_source: predicted

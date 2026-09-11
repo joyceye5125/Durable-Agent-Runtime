@@ -23,3 +23,10 @@ endpoint:
   answer_mentions: [geo-cache]
   required_effects:
     - { tool: restart_service, args: { name: geo-cache } }
+golden_trajectory:
+  - { tool: search_logs, args: { query: geo-service 429 } }
+  - { tool: get_metric, args: { name: geo_cache_hit_ratio, window: 5m } }
+  - { tool: restart_service, args: { name: geo-cache } }
+  - { tool: get_metric, args: { name: geo_service_error_rate, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
+golden_source: predicted
