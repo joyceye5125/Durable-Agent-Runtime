@@ -114,8 +114,10 @@ npm run record -- --candidates --concurrency 4
 npm run record-crash-paths
 
 # 4. Measure (replay mode, no key used) and persist; this prints the numbers for the Results table
-npm run experiment -- crash --n 200
-npm run experiment -- eval
+# Each command prints the sentence for its Results row; --write-readme puts it
+# in the table, so the table can only contain numbers that were measured.
+npm run experiment -- crash --n 200 --write-readme
+npm run experiment -- eval --write-readme
 
 git add recordings scenarios && git commit -m "Record baseline, candidates and crash paths"
 ```

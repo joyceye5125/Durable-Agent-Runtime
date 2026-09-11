@@ -7,6 +7,9 @@
  *   npm run experiment -- crash [--n 200] [--seed 1]             run experiment 1 on recordings, persist the result
  *   npm run experiment -- eval                                   run experiment 4 on recordings, persist the result
  *
+ * Both experiments print the sentence that belongs in the README results
+ * table; --write-readme puts it there, so the table is never typed by hand.
+ *
  * record-* commands call the real model (ANTHROPIC_API_KEY or OPENAI_API_KEY)
  * and write recordings/; responses already recorded for an identical request
  * are reused, so re-running is cheap.
@@ -62,6 +65,26 @@ async function pool<T>(items: T[], n: number, fn: (x: T) => Promise<void>) {
       for (let x = queue.shift(); x !== undefined; x = queue.shift()) await fn(x);
     }),
   );
+}
+
+/**
+ * Replaces one claim's cell in the README results table. The text written is
+ * exactly what the experiment printed, so the table can only ever contain
+ * numbers that were measured.
+ */
+function writeReadmeCell(claim: "C1" | "C4", result: string): void {
+  const file = new URL("../README.md", import.meta.url).pathname;
+  const lines = fs.readFileSync(file, "utf8").split("\n");
+  const i = lines.findIndex((l) => l.startsWith(`| **${claim}** |`));
+  if (i < 0) {
+    console.log(`\n(could not find the ${claim} row in README.md; copy the cell above by hand)`);
+    return;
+  }
+  const cells = lines[i].split("|");
+  cells[cells.length - 2] = ` ${result} `;
+  lines[i] = cells.join("|");
+  fs.writeFileSync(file, lines.join("\n"));
+  console.log(`\n✓ wrote the ${claim} result into README.md`);
 }
 
 const short = (v: unknown, n = 110) => {
@@ -191,9 +214,9 @@ async function experiment(store: Store) {
       console.log(`  ${w}: durable ${s.durableCorrect}/${s.trials}  naive dup ${s.naiveTrialsWithDuplicates}/${s.naiveMeasured}`);
     }
     console.log(`malformed outputs blocked before any side effect: ${summary.malformed.allBlocked ? "yes" : "NO"}`);
-    console.log(
-      `\nREADME C1 result cell:\n${summary.n} crashes over W1–W4 → ${d.correctPct.toFixed(1)}% correct resume, ${d.duplicateSideEffects} duplicate side effects · naive baseline: ${nv.duplicateRatePct?.toFixed(1) ?? "n/a"}% of trials duplicated a side effect (${nv.duplicateRows} extra rows${nv.unrecorded ? `, ${nv.unrecorded} unrecorded trials excluded` : ""}) · seed ${summary.seed}`,
-    );
+    const cell = `${summary.n} crashes over W1–W4 → **${d.correctPct.toFixed(1)}%** correct resume, **${d.duplicateSideEffects}** duplicate side effects. Naive baseline: **${nv.duplicateRatePct?.toFixed(1) ?? "n/a"}%** of trials duplicated a side effect (${nv.duplicateRows} extra rows${nv.unrecorded ? `, ${nv.unrecorded} unrecorded trials excluded` : ""}). Seed ${summary.seed}.`;
+    console.log(`\nREADME C1 result cell:\n${cell}`);
+    if (flag("write-readme")) writeReadmeCell("C1", cell);
     for (const c of summary.malformed.cases) console.log(`  ${c.kind}/${c.variant}: ${c.status}, rejected ${c.rejected}, side effects from rejected steps ${c.sideEffectRowsFromRejectedSteps}`);
   } else if (which === "eval") {
     const run = await runEvalExperiment(store);
@@ -223,9 +246,10 @@ async function experiment(store: Store) {
     console.log(`\ncandidates the endpoint eval passes but the trajectory eval blocks: ${table.missedByEndpoint}`);
     console.log(`rows with a correct endpoint and a regressed path: ${table.pathOnlyRows}`);
     const evaluated = table.changes.filter((c) => c.label !== "baseline" && c.status === "evaluated");
-    console.log(
-      `\nREADME C4 result cell:\n${evaluated.length} candidate changes on ${table.tasks.length} tasks → endpoint eval missed ${table.missedByEndpoint}, trajectory eval caught ${table.missedByEndpoint} · ${table.pathOnlyRows} task runs kept a correct answer on a worse path`,
-    );
+    const cell = `${evaluated.length} candidate changes on ${table.tasks.length} tasks → endpoint eval missed **${table.missedByEndpoint}**, trajectory eval caught **${table.missedByEndpoint}**. ${table.pathOnlyRows} task runs kept a correct answer on a worse path.${table.provisionalGolden.length ? ` (${table.provisionalGolden.length} golden trajectories still provisional.)` : ""}`;
+    console.log(`\nREADME C4 result cell:\n${cell}`);
+    // Nothing was measured if no candidate had recordings; leave the table alone.
+    if (flag("write-readme") && evaluated.length > 0) writeReadmeCell("C4", cell);
   } else {
     throw new Error("usage: npm run experiment -- crash|eval");
   }
