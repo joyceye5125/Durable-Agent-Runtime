@@ -13,13 +13,27 @@ export interface TrajectoryScore {
 }
 
 /**
- * Token used for path comparison. Side-effecting calls are compared with
- * their exact arguments (restarting the wrong service is a different action);
- * read-only calls by tool name only, so rewording a log query is not a
- * regression but an extra or missing query is.
+ * Arguments that decide *which* action a side-effecting call is. Free-text
+ * arguments (a page or status message) are wording, not identity.
+ */
+const IDENTITY_ARGS: Record<string, string[]> = {
+  restart_service: ["name"],
+  scale_service: ["name", "replicas"],
+  page_oncall: [],
+  post_status: [],
+};
+
+/**
+ * Token used for path comparison. Side-effecting calls are compared on their
+ * identity arguments (restarting the wrong service is a different action);
+ * read-only calls and free-text arguments by tool name only, so rewording a
+ * query or a message is not a regression but an extra or missing call is.
  */
 export function pathToken(c: GoldenCall): string {
-  return isSideEffecting(c.tool) ? `${c.tool}(${canonicalJSON(c.args)})` : c.tool;
+  if (!isSideEffecting(c.tool)) return c.tool;
+  const keys = IDENTITY_ARGS[c.tool] ?? Object.keys(c.args);
+  const identity = Object.fromEntries(keys.map((k) => [k, c.args[k]]));
+  return `${c.tool}(${canonicalJSON(identity)})`;
 }
 
 export function levenshtein(a: string[], b: string[]): number {

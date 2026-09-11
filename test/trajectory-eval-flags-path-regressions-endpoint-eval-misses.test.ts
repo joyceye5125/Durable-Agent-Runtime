@@ -32,8 +32,10 @@ const scripts: Record<string, ScriptStep[]> = {
 const agent: AgentFactory = (label) => ({ config: resolveConfig(label, "anthropic", "scripted"), llm: new ScriptedLLM(scripts[label]) });
 
 describe("trajectory eval", () => {
-  it("scores edit distance on side-effect targets, not read-query wording", () => {
-    const reworded = task.golden_trajectory!.map((c) => (c.tool === "search_logs" ? { ...c, args: { query: "data partition" } } : c));
+  it("scores edit distance on side-effect targets, not on query or message wording", () => {
+    const reworded = task.golden_trajectory!.map((c) =>
+      c.tool === "search_logs" ? { ...c, args: { query: "data partition" } } : c.tool === "post_status" ? { ...c, args: { message: "resolved" } } : c,
+    );
     const s = scoreTrajectory(task, { status: "completed", finalAnswer: "log-rotator restarted", calls: reworded, ledger: [{ tool: "restart_service", args: { name: "log-rotator" } }] });
     expect(s).toMatchObject({ endpoint_ok: true, path_exact: false, edit_dist: 0, extra_calls: 0, path_regressed: false });
     expect(levenshtein(["a", "b", "c"], ["a", "c"])).toBe(1);
