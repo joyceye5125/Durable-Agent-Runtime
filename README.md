@@ -4,14 +4,16 @@
 
 ## Results
 
-| | Claim | Result |
-|---|---|---|
-| **C1** | With crashes injected at all four commit windows, durable resume matches the crash-free run every time with zero duplicate side effects. A from-scratch baseline duplicates at a measurable rate. | _not measured yet: see [Producing the numbers](#producing-the-numbers)_ |
-| **C4** | A trajectory-level eval catches config changes that keep every final answer correct but degrade the path. An endpoint-level eval passes all of them. | _not measured yet: see [Producing the numbers](#producing-the-numbers)_ |
+Both claims are experiments you can run, not assertions in a README. The numbers come from `npm run experiment`, which replays committed recordings; the cells stay empty until that has run against real recorded model output.
 
-**Status:** the golden trajectories in `scenarios/` are currently provisional predictions (`golden_source: predicted`). They are pending replacement by reviewed baseline runs via `npm run record-golden -- --all`.
+| | Claim | How it is measured | Result |
+|---|---|---|---|
+| **C1** | Crash the agent in any of the four commit windows and a durable resume reproduces the crash-free run with no repeated side effect. A from-scratch baseline repeats them. | 200 seeded crashes spread over W1–W4 on a 10-call incident. Each trial resumes a durable run and a naive run from the same crash point, then compares the final answer and the side-effect ledger against a crash-free reference. | _pending recording_ |
+| **C4** | Trajectory-level eval catches config changes that keep every final answer correct while the path degrades. Endpoint-level eval passes them. | 15 candidate changes (model swaps, prompt edits, a smaller step budget) × 30 incidents, each replayed against the same deterministic tools and scored against a reviewed golden trajectory. | _pending recording_ |
 
-The two cards at the top of the page show the same numbers, computed live from the committed recordings. Every number comes from a run: nothing is hard-coded, and nothing was tuned to hit a target.
+Two things are worth separating. That one `idem_key` can produce at most one ledger row is structural, not statistical: it is the table's primary key, and `test/resume-after-crash-uses-only-the-event-log.test.ts` pins it for all four windows without needing a model. What the experiment measures is whether the whole loop preserves that under crashes, and how often the from-scratch baseline duplicates — the second number is purely empirical and depends on where the crashes land.
+
+**Status:** the golden trajectories in `scenarios/` are currently provisional predictions (`golden_source: predicted`), pending replacement by reviewed baseline runs via `npm run record-golden -- --all`. The tests, the runtime and the eval pipeline are complete and run today; what is missing is the recorded model output that turns the pipeline into numbers.
 
 ## Reproduce in 60 seconds
 
