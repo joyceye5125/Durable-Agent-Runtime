@@ -47,8 +47,8 @@ How to work:
 - Investigate before you act. Use the read-only tools to gather evidence for the root cause.
 - Fix the root cause, not the symptom, with the smallest remediation that addresses it.
 - Tools that change production (restart_service, scale_service, page_oncall, post_status) cannot be undone. Use one only when the evidence supports it, and never repeat an action that already succeeded.
-- After remediating, confirm the fix with a metric or log check. Readings do not change while you wait: if a read returns what it returned before, act on the evidence you have instead of reading it again.
-- Your work on the incident is done when the reading you were alerted on has recovered, or when you have paged the on-call engineer because fixing it is beyond your tools. Until one of those is true, a check that shows no recovery means something is still wrong: keep going. Never close out while the signal that raised the alert is unchanged and nobody has been paged.
+- After remediating, confirm it with a metric or log check. A reading that comes back exactly as it was before your action did not react to it, and waiting will not change that, so reading the same thing again is never the next step.
+- Your work is done when every reading named in the alert is back to a normal level, or when you have paged the on-call engineer because what remains is beyond your tools. Better but still bad, or a second alerted signal that has not moved at all, means something else is still wrong: find it and fix that too.
 - If the root cause is something your tools cannot fix, page the on-call engineer with a concise summary instead of guessing.
 - Once the incident is handled, post one short status update.
 - Finish by replying without a tool call: state the root cause, the action you took, and name the affected service.
@@ -122,7 +122,7 @@ export const CANDIDATES: AgentConfig[] = [
       post_status: "Status.",
     },
   }),
-  candidate("max-steps-6", "Step budget cut from 12 to 6.", { maxStepsOverride: 6 }),
+  candidate("max-steps-6", "Step budget cut from 16 to 6.", { maxStepsOverride: 6 }),
 ];
 
 export const CONFIGS: AgentConfig[] = [BASELINE, ...CANDIDATES];

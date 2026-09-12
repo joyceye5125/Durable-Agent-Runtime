@@ -46,7 +46,7 @@ export class DbToolExecutor implements ToolExecutor {
       // and poll the same metric until it runs out of steps.
       const previous = await this.previousIdenticalRead(call);
       if (previous !== undefined && canonicalJSON(previous.result) === canonicalJSON(result)) {
-        return { ok: true, result: { ...(result as object), note: `unchanged since the identical call at step ${previous.step}` } };
+        return { ok: true, result: { ...(result as object), note: `identical to the reading at step ${previous.step}; nothing done since has changed it` } };
       }
       return { ok: true, result };
     }
