@@ -1,6 +1,6 @@
 id: incident_queue_backlog
 kind: eval
-task: "ALERT email_queue_depth = 91000 and growing; password-reset emails delayed. Diagnose and remediate."
+task: "ALERT email_queue_depth = 91000 and growing; password-reset emails delayed. Diagnose and remediate. Services in this namespace: email-worker, smtp-relay, api, redis-queue. Metrics available: email_queue_depth, email_worker_throughput, smtp_relay_errors."
 world:
   services: [email-worker, smtp-relay, api, redis-queue]
   logs:

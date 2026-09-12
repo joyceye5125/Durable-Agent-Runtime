@@ -1,6 +1,6 @@
 id: incident_healthcheck_dependency
 kind: eval
-task: "ALERT api_healthy_instances = 3 of 12: the load balancer is ejecting instances and capacity is dropping. Diagnose and remediate."
+task: "ALERT api_healthy_instances = 3 of 12: the load balancer is ejecting instances and capacity is dropping. Diagnose and remediate. Services in this namespace: api, config-service, load-balancer, postgres. Metrics available: api_healthy_instances, config_service_up, api_latency_p99_ms."
 world:
   services: [api, config-service, load-balancer, postgres]
   logs:

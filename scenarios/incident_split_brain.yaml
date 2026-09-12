@@ -1,6 +1,6 @@
 id: incident_split_brain
 kind: eval
-task: "ALERT duplicate_job_executions = 212 in the last 15 minutes; customers receiving duplicate reports. Diagnose and remediate."
+task: "ALERT duplicate_job_executions = 212 in the last 15 minutes; customers receiving duplicate reports. Diagnose and remediate. Services in this namespace: scheduler, report-worker, etcd. Metrics available: duplicate_job_executions, scheduler_leaders."
 world:
   services: [scheduler, report-worker, etcd]
   logs:

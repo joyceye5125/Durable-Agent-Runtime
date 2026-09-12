@@ -1,6 +1,6 @@
 id: incident_autoscaler_floor
 kind: eval
-task: "ALERT search_latency_p99_ms = 1900 (SLO 400). Diagnose and remediate."
+task: "ALERT search_latency_p99_ms = 1900 (SLO 400). Diagnose and remediate. Services in this namespace: search-api, search-index, autoscaler, api. Metrics available: search_latency_p99_ms, search_api_replicas, search_index_latency_p99_ms."
 world:
   services: [search-api, search-index, autoscaler, api]
   logs:

@@ -1,6 +1,6 @@
 id: incident_websocket_limit
 kind: eval
-task: "ALERT realtime_connection_rejections = 3,800/min; live updates failing for users. Diagnose and remediate."
+task: "ALERT realtime_connection_rejections = 3,800/min; live updates failing for users. Diagnose and remediate. Services in this namespace: realtime, api, redis-pubsub. Metrics available: realtime_connection_rejections, realtime_connections, realtime_replicas."
 world:
   services: [realtime, api, redis-pubsub]
   logs:

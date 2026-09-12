@@ -1,6 +1,6 @@
 id: incident_replica_lag
 kind: eval
-task: "ALERT postgres_replica_lag_s = 910 on replica-1; dashboards show stale data. Diagnose and remediate."
+task: "ALERT postgres_replica_lag_s = 910 on replica-1; dashboards show stale data. Diagnose and remediate. Services in this namespace: postgres, postgres-replica, analytics-etl, dashboards. Metrics available: postgres_replica_lag_s, postgres_primary_cpu."
 world:
   services: [postgres, postgres-replica, analytics-etl, dashboards]
   logs:

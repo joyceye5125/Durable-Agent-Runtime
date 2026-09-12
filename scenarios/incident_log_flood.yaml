@@ -1,6 +1,6 @@
 id: incident_log_flood
 kind: eval
-task: "ALERT log_pipeline_ingest_lag_s = 1800; logs from all services delayed 30 minutes. Diagnose and remediate."
+task: "ALERT log_pipeline_ingest_lag_s = 1800; logs from all services delayed 30 minutes. Diagnose and remediate. Services in this namespace: log-shipper, checkout-api, log-store, api. Metrics available: log_pipeline_ingest_lag_s, log_lines_per_s."
 world:
   services: [log-shipper, checkout-api, log-store, api]
   logs:

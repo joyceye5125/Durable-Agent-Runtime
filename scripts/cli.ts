@@ -27,7 +27,7 @@ import { CANDIDATES, getConfig } from "../server/llm/configs";
 import { hasRecording, openAgentLLM, recordingPath, type LlmMode } from "../server/llm/recording";
 import { CRASH_WINDOWS } from "../server/runtime/crash";
 import { buildRuntime, createRun, prepareResume, type AgentFactory } from "../server/runtime/runs";
-import { listScenarioIds, loadScenario, writeGolden } from "../server/scenarios";
+import { goldenIsCurrent, listScenarioIds, loadScenario, writeGolden } from "../server/scenarios";
 import { Store } from "../server/store/store";
 
 /** Run these first to validate the pipeline before recording all 30. */
@@ -96,10 +96,7 @@ const short = (v: unknown, n = 110) => {
 
 async function recordGolden(store: Store) {
   const ids = flag("all")
-    ? listScenarioIds("eval").filter((id) => {
-        const s = loadScenario(id);
-        return !s.golden_trajectory?.length || s.golden_source === "predicted";
-      })
+    ? listScenarioIds("eval").filter((id) => !goldenIsCurrent(loadScenario(id)))
     : flag("pilot")
       ? PILOT
       : [opt("scenario") ?? ""];
@@ -318,7 +315,7 @@ async function experiment(store: Store) {
     if (table.provisionalGolden.length > 0) {
       // Scoring against a predicted golden measures agreement with a guess,
       // not divergence from a real baseline run. It must never reach the table.
-      console.log(`\n${table.provisionalGolden.length}/${table.tasks.length} golden trajectories are still provisional predictions.`);
+      console.log(`\n${table.provisionalGolden.length}/${table.tasks.length} golden trajectories are not from a reviewed baseline run of this exact scenario.`);
       console.log("Numbers scored against those are not a result: replace them with reviewed baseline runs first");
       console.log("  npm run record-golden -- --all        (README left alone until then)");
       return;

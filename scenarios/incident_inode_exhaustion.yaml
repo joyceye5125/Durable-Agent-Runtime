@@ -1,6 +1,6 @@
 id: incident_inode_exhaustion
 kind: eval
-task: "ALERT inode_usage_var = 100% on app-3: writes fail with 'No space left on device' while disk_usage_var is only 41%. Diagnose and remediate."
+task: "ALERT inode_usage_var = 100% on app-3: writes fail with 'No space left on device' while disk_usage_var is only 41%. Diagnose and remediate. Services in this namespace: app, tmp-cleaner, php-sessions, nginx. Metrics available: disk_usage_var, inode_usage_var, app_error_rate."
 world:
   services: [app, tmp-cleaner, php-sessions, nginx]
   logs:

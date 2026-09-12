@@ -1,6 +1,6 @@
 id: incident_flag_sync
 kind: eval
-task: "ALERT feature_flag_staleness_s = 5400; the kill switch for the new pricing page was flipped 40 minutes ago but users still see it. Diagnose and remediate."
+task: "ALERT feature_flag_staleness_s = 5400; the kill switch for the new pricing page was flipped 40 minutes ago but users still see it. Diagnose and remediate. Services in this namespace: flag-sync, web, flag-store, api. Metrics available: feature_flag_staleness_s, web_error_rate."
 world:
   services: [flag-sync, web, flag-store, api]
   logs:

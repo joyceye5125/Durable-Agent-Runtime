@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import YAML from "yaml";
+import { canonicalJSON, sha256 } from "./core/canonical";
 
 export type ArgMatcher = unknown | { gte?: number; lte?: number };
 
@@ -52,6 +53,12 @@ export interface Scenario {
    * record-golden replaces it.
    */
   golden_source?: "baseline" | "predicted";
+  /**
+   * Fingerprint of the task and world the golden was recorded against. Editing
+   * either one makes the stored path a record of a run that can no longer
+   * happen, and this is what makes that visible instead of silent.
+   */
+  golden_scenario_hash?: string;
 }
 
 export const SCENARIO_DIR = path.resolve(import.meta.dirname, "../scenarios");
@@ -77,6 +84,20 @@ export function listScenarioIds(kind?: Scenario["kind"]): string[] {
     .sort();
 }
 
+/** Everything a run sees: change any of it and a recorded path no longer applies. */
+export function scenarioFingerprint(s: Scenario): string {
+  return sha256(canonicalJSON({ task: s.task, max_steps: s.max_steps, world: s.world })).slice(0, 16);
+}
+
+/**
+ * True only for a golden that came from a reviewed baseline run of exactly
+ * this scenario. A predicted placeholder, or one left behind by an edit to the
+ * task or the world, is not a measurement and must not be scored against.
+ */
+export function goldenIsCurrent(s: Scenario): boolean {
+  return !!s.golden_trajectory?.length && s.golden_source === "baseline" && s.golden_scenario_hash === scenarioFingerprint(s);
+}
+
 /** Writes the reviewed golden trajectory back into the YAML file, preserving comments and layout. */
 export function writeGolden(id: string, golden: GoldenCall[], finalAnswer: string): void {
   const file = scenarioPath(id);
@@ -89,6 +110,7 @@ export function writeGolden(id: string, golden: GoldenCall[], finalAnswer: strin
   doc.set("golden_trajectory", doc.createNode(flow));
   doc.set("golden_final_answer", finalAnswer);
   doc.set("golden_source", "baseline");
+  doc.set("golden_scenario_hash", scenarioFingerprint(loadScenario(id)));
   fs.writeFileSync(file, doc.toString({ lineWidth: 0 }));
 }
 

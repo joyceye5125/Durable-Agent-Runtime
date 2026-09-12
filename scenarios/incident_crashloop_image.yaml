@@ -1,6 +1,6 @@
 id: incident_crashloop_image
 kind: eval
-task: "ALERT pdf_renderer_restarts = 38 in 20 minutes; invoice PDFs not generated. Diagnose and remediate."
+task: "ALERT pdf_renderer_restarts = 38 in 20 minutes; invoice PDFs not generated. Diagnose and remediate. Services in this namespace: pdf-renderer, billing-api, deployer. Metrics available: pdf_renderer_restarts, billing_api_error_rate."
 world:
   services: [pdf-renderer, billing-api, deployer]
   logs:

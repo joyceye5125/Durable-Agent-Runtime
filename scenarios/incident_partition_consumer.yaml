@@ -1,6 +1,6 @@
 id: incident_partition_consumer
 kind: eval
-task: "ALERT kafka_consumer_lag_p7 = 1.4M; the other partitions are normal. Diagnose and remediate."
+task: "ALERT kafka_consumer_lag_p7 = 1.4M; the other partitions are normal. Diagnose and remediate. Services in this namespace: events-consumer, kafka, analytics-sink. Metrics available: kafka_consumer_lag_p7, kafka_consumer_lag_other."
 world:
   services: [events-consumer, kafka, analytics-sink]
   logs:

@@ -1,6 +1,6 @@
 id: incident_model_server_hang
 kind: eval
-task: "ALERT fraud_check_timeout_rate = 41%; orders held for manual review. Diagnose and remediate."
+task: "ALERT fraud_check_timeout_rate = 41%; orders held for manual review. Diagnose and remediate. Services in this namespace: fraud-check, fraud-model, checkout, feature-store. Metrics available: fraud_check_timeout_rate, fraud_model_latency_p99_ms, feature_store_latency_p99_ms."
 world:
   services: [fraud-check, fraud-model, checkout, feature-store]
   logs:

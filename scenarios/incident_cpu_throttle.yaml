@@ -1,6 +1,6 @@
 id: incident_cpu_throttle
 kind: eval
-task: "ALERT image_api_latency_p99_ms = 5200; uploads timing out. Diagnose and remediate."
+task: "ALERT image_api_latency_p99_ms = 5200; uploads timing out. Diagnose and remediate. Services in this namespace: image-api, object-store, api, thumbnailer. Metrics available: image_api_latency_p99_ms, image_api_cpu_throttled_ratio, image_api_replicas, object_store_put_latency_ms."
 world:
   services: [image-api, object-store, api, thumbnailer]
   logs:

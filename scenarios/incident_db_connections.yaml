@@ -1,6 +1,6 @@
 id: incident_db_connections
 kind: eval
-task: "ALERT postgres_connections = 396/400; checkout requests failing with 'too many clients'. Diagnose and remediate."
+task: "ALERT postgres_connections = 396/400; checkout requests failing with 'too many clients'. Diagnose and remediate. Services in this namespace: checkout, postgres, reporting-job, api. Metrics available: postgres_connections, checkout_error_rate, postgres_cpu."
 world:
   services: [checkout, postgres, reporting-job, api]
   logs:

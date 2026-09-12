@@ -1,6 +1,6 @@
 id: incident_cert_expiry
 kind: eval
-task: "ALERT synthetic_https_success{target=api.example.com} = 0 from every region. Diagnose and remediate."
+task: "ALERT synthetic_https_success{target=api.example.com} = 0 from every region. Diagnose and remediate. Services in this namespace: api, edge-proxy, cert-manager. Metrics available: synthetic_https_success, api_requests_per_s."
 world:
   services: [api, edge-proxy, cert-manager]
   logs:

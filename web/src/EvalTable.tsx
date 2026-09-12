@@ -29,8 +29,8 @@ export function EvalTable({ table, busy, onRerun }: { table: Table | null; busy:
       )}
       {table && table.provisionalGolden.length > 0 && (
         <div className="notice">
-          {table.provisionalGolden.length}/{n} golden trajectories are still provisional predictions, not reviewed baseline runs
-          (<code>npm run record-golden -- --all</code> replaces them).
+          {table.provisionalGolden.length}/{n} golden trajectories did not come from a reviewed baseline run of this exact scenario —
+          still a prediction, or left behind by an edit to the task or world (<code>npm run record-golden -- --all</code> replaces them).
         </div>
       )}
       {!table ? null : n === 0 ? (

@@ -1,6 +1,6 @@
 id: incident_upstream_quota
 kind: eval
-task: "ALERT geo_service_error_rate = 34%, upstream maps API answering 429. Diagnose and remediate."
+task: "ALERT geo_service_error_rate = 34%, upstream maps API answering 429. Diagnose and remediate. Services in this namespace: geo-service, geo-cache, api. Metrics available: geo_service_error_rate, geo_cache_hit_ratio, maps_api_calls_per_min."
 world:
   services: [geo-service, geo-cache, api]
   logs:

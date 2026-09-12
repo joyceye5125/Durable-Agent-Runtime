@@ -1,6 +1,6 @@
 id: incident_clock_skew
 kind: eval
-task: "ALERT auth_401_rate = 23%: users are being logged out with 'token not yet valid'. Diagnose and remediate."
+task: "ALERT auth_401_rate = 23%: users are being logged out with 'token not yet valid'. Diagnose and remediate. Services in this namespace: auth, api, ntp-agent, session-cache. Metrics available: auth_401_rate, auth_clock_offset_s."
 world:
   services: [auth, api, ntp-agent, session-cache]
   logs:

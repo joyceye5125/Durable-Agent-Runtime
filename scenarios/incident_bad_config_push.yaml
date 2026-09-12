@@ -1,6 +1,6 @@
 id: incident_bad_config_push
 kind: eval
-task: "ALERT edge_429_rate = 71%: most customer requests are being rate-limited. Diagnose and remediate."
+task: "ALERT edge_429_rate = 71%: most customer requests are being rate-limited. Diagnose and remediate. Services in this namespace: edge-proxy, api, config-service. Metrics available: edge_429_rate, api_requests_per_s."
 world:
   services: [edge-proxy, api, config-service]
   logs:

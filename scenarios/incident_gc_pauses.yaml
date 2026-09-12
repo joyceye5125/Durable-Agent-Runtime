@@ -1,6 +1,6 @@
 id: incident_gc_pauses
 kind: eval
-task: "ALERT ledger_service_latency_p99_ms = 3400 (SLO 300). Diagnose and remediate."
+task: "ALERT ledger_service_latency_p99_ms = 3400 (SLO 300). Diagnose and remediate. Services in this namespace: ledger-service, postgres, kafka, api. Metrics available: ledger_service_latency_p99_ms, ledger_service_gc_pause_ms, ledger_service_replicas, postgres_query_latency_ms."
 world:
   services: [ledger-service, postgres, kafka, api]
   logs:

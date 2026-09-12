@@ -1,6 +1,6 @@
 id: incident_traffic_spike
 kind: eval
-task: "ALERT web_cpu_utilization = 97% across all web replicas, p99 latency 2.3s. Diagnose and remediate."
+task: "ALERT web_cpu_utilization = 97% across all web replicas, p99 latency 2.3s. Diagnose and remediate. Services in this namespace: web, api, postgres, marketing-mailer. Metrics available: web_cpu_utilization, web_replicas, web_latency_p99_ms, postgres_cpu."
 world:
   services: [web, api, postgres, marketing-mailer]
   logs:

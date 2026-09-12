@@ -1,6 +1,6 @@
 id: incident_memory_leak
 kind: eval
-task: "ALERT container_oom_kills{namespace=media} = 14 in the last hour. Diagnose and remediate."
+task: "ALERT container_oom_kills{namespace=media} = 14 in the last hour. Diagnose and remediate. Services in this namespace: api, thumbnailer, media-store, cdn-purger. Metrics available: thumbnailer_memory_ratio, api_error_rate, container_oom_kills."
 world:
   services: [api, thumbnailer, media-store, cdn-purger]
   logs:

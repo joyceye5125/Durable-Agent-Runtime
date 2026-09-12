@@ -1,6 +1,6 @@
 id: incident_backup_failure
 kind: eval
-task: "ALERT postgres_last_backup_age_h = 31 (threshold 26). Diagnose and remediate."
+task: "ALERT postgres_last_backup_age_h = 31 (threshold 26). Diagnose and remediate. Services in this namespace: backup-agent, postgres, object-store. Metrics available: postgres_last_backup_age_h, postgres_wal_archive_failures."
 world:
   services: [backup-agent, postgres, object-store]
   logs:

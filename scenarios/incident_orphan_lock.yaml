@@ -1,6 +1,6 @@
 id: incident_orphan_lock
 kind: eval
-task: "ALERT inventory_sync_last_success_age_s = 4200; storefront stock counts are stale. Diagnose and remediate."
+task: "ALERT inventory_sync_last_success_age_s = 4200; storefront stock counts are stale. Diagnose and remediate. Services in this namespace: inventory-sync, postgres, storefront, warehouse-api. Metrics available: inventory_sync_last_success_age_s, storefront_error_rate."
 world:
   services: [inventory-sync, postgres, storefront, warehouse-api]
   logs:

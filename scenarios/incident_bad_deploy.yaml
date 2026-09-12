@@ -1,8 +1,8 @@
 id: incident_bad_deploy
 kind: eval
-task: "ALERT api_error_rate = 18% (SLO 1%) since 14:02 UTC. Diagnose and remediate."
+task: "ALERT api_error_rate = 18% (SLO 1%) since 14:02 UTC. Diagnose and remediate. Services in this namespace: api, postgres, session-cache, deployer. Metrics available: api_error_rate, api_latency_p99_ms, postgres_cpu."
 world:
-  services: [api, postgres, session-cache, deployer]
+  services: [ api, postgres, session-cache, deployer ]
   logs:
     - "2026-09-10T13:58:12Z postgres INFO autovacuum finished on table orders"
     - "2026-09-10T14:01:30Z deployer INFO api v2.41.0 rolled out to 100% of instances (previous: v2.40.3)"
@@ -11,9 +11,9 @@ world:
     - "2026-09-10T14:03:40Z session-cache INFO hit ratio 0.97"
     - "2026-09-10T14:05:02Z api ERROR 500 on POST /checkout (api v2.41.0)"
   metrics:
-    api_error_rate: { "5m": [0.004, 0.17, 0.18], "1h": [0.003, 0.004, 0.18], "24h": [0.001, 0.001, 0.003, 0.18] }
-    api_latency_p99_ms: { "5m": [210, 230, 225], "1h": [198, 210, 225], "24h": [79, 79, 198, 225] }
-    postgres_cpu: { "5m": [0.31, 0.3, 0.33], "1h": [0.294, 0.31, 0.33], "24h": [0.118, 0.118, 0.294, 0.33] }
+    api_error_rate: { "5m": [ 0.004, 0.17, 0.18 ], "1h": [ 0.003, 0.004, 0.18 ], "24h": [ 0.001, 0.001, 0.003, 0.18 ] }
+    api_latency_p99_ms: { "5m": [ 210, 230, 225 ], "1h": [ 198, 210, 225 ], "24h": [ 79, 79, 198, 225 ] }
+    postgres_cpu: { "5m": [ 0.31, 0.3, 0.33 ], "1h": [ 0.294, 0.31, 0.33 ], "24h": [ 0.118, 0.118, 0.294, 0.33 ] }
   effects:
     - when: { tool: restart_service, args: { name: api } }
       logs:
@@ -21,12 +21,6 @@ world:
         - "2026-09-10T14:09:20Z api ERROR NullPointerException at CheckoutHandler.applyCoupon (api v2.41.0)"
 expected_answer: "api v2.41.0, deployed at 14:01, throws a NullPointerException in the coupon path. There is no rollback tool, so the fix is to page on-call to roll back to v2.40.3."
 endpoint:
-  answer_mentions: [v2.41.0]
+  answer_mentions: [ v2.41.0 ]
   required_effects:
     - { tool: page_oncall }
-golden_trajectory:
-  - { tool: search_logs, args: { query: api error } }
-  - { tool: get_metric, args: { name: api_error_rate, window: 5m } }
-  - { tool: page_oncall, args: { message: (predicted) } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted

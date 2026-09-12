@@ -1,7 +1,7 @@
 id: incident_cache_and_capacity
 kind: eval
 max_steps: 16
-task: "ALERT pricing_api_latency_p99_ms = 2600 and pricing_api_cpu = 96%. Diagnose and remediate."
+task: "ALERT pricing_api_latency_p99_ms = 2600 and pricing_api_cpu = 96%. Diagnose and remediate. Services in this namespace: pricing-api, price-cache, catalog, postgres. Metrics available: pricing_api_latency_p99_ms, pricing_api_cpu, price_cache_hit_ratio, pricing_api_replicas."
 world:
   services: [pricing-api, price-cache, catalog, postgres]
   logs:

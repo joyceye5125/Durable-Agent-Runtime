@@ -1,6 +1,6 @@
 id: incident_cron_stuck
 kind: eval
-task: "ALERT invoices_generated_today = 0 (expected ~4,000 by 10:00 UTC). Diagnose and remediate."
+task: "ALERT invoices_generated_today = 0 (expected ~4,000 by 10:00 UTC). Diagnose and remediate. Services in this namespace: billing-cron, billing-api, postgres, pdf-renderer. Metrics available: invoices_generated_today, billing_cron_lock_wait_s."
 world:
   services: [billing-cron, billing-api, postgres, pdf-renderer]
   logs:

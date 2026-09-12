@@ -1,6 +1,6 @@
 id: incident_dns_failure
 kind: eval
-task: "ALERT outbound_http_errors{dst=partners} = 64%. Partner integrations failing. Diagnose and remediate."
+task: "ALERT outbound_http_errors{dst=partners} = 64%. Partner integrations failing. Diagnose and remediate. Services in this namespace: partner-sync, api, coredns. Metrics available: outbound_http_errors, coredns_servfail_ratio."
 world:
   services: [partner-sync, api, coredns]
   logs:
