@@ -26,9 +26,9 @@ endpoint:
   required_effects:
     - { tool: restart_service, args: { name: email-worker } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: "email queue" } }
-  - { tool: get_metric, args: { name: email_queue_depth, window: "5m" } }
+  - { tool: search_logs, args: { query: email queue } }
+  - { tool: get_metric, args: { name: email_queue_depth, window: 5m } }
   - { tool: restart_service, args: { name: email-worker } }
-  - { tool: get_metric, args: { name: email_queue_depth, window: "5m" } }
-  - { tool: post_status, args: { message: "(predicted)" } }
+  - { tool: get_metric, args: { name: email_queue_depth, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
 golden_source: predicted

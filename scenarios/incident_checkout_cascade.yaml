@@ -1,5 +1,8 @@
+# Long scenario for the crash experiment: at least 10 tool calls and at least
+# 3 side-effecting ones, so injected crashes land on many different steps.
 id: incident_checkout_cascade
 kind: crash
+# Three alerts, each investigated, remediated or escalated, then verified.
 max_steps: 26
 task: "Three alerts are firing on the checkout path: checkout_latency_p99_ms = 4800 (SLO 800), orders_queue_depth = 52000 and rising, payments_error_rate = 6%. Investigate each alert, remediate what you can, and escalate what you cannot."
 world:
@@ -28,6 +31,8 @@ world:
         session_cache_memory_ratio: { "5m": [0.99, 0.18, 0.21] }
       logs:
         - "2026-09-10T09:21:05Z session-cache INFO restarted; used_memory 1.4G/8G"
+    # An under-sized scale-out must be visible: the queue drains slowly rather
+    # than not at all, so the agent gets feedback either way.
     - when: { tool: scale_service, args: { name: order-worker, replicas: { gte: 3 } } }
       metrics:
         orders_queue_depth: { "5m": [52000, 51000, 50000] }

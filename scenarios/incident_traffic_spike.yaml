@@ -33,9 +33,9 @@ endpoint:
   required_effects:
     - { tool: scale_service, args: { name: web, replicas: { gte: 10 } } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: "web cpu" } }
-  - { tool: get_metric, args: { name: web_cpu_utilization, window: "5m" } }
+  - { tool: search_logs, args: { query: web cpu } }
+  - { tool: get_metric, args: { name: web_cpu_utilization, window: 5m } }
   - { tool: scale_service, args: { name: web, replicas: 12 } }
-  - { tool: get_metric, args: { name: web_latency_p99_ms, window: "5m" } }
-  - { tool: post_status, args: { message: "(predicted)" } }
+  - { tool: get_metric, args: { name: web_latency_p99_ms, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
 golden_source: predicted

@@ -37,11 +37,11 @@ endpoint:
     - { tool: restart_service, args: { name: price-cache } }
     - { tool: scale_service, args: { name: pricing-api, replicas: { gte: 6 } } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: "pricing-api cache" } }
-  - { tool: get_metric, args: { name: price_cache_hit_ratio, window: "5m" } }
+  - { tool: search_logs, args: { query: pricing-api cache } }
+  - { tool: get_metric, args: { name: price_cache_hit_ratio, window: 5m } }
   - { tool: restart_service, args: { name: price-cache } }
-  - { tool: get_metric, args: { name: pricing_api_cpu, window: "5m" } }
+  - { tool: get_metric, args: { name: pricing_api_cpu, window: 5m } }
   - { tool: scale_service, args: { name: pricing-api, replicas: 6 } }
-  - { tool: get_metric, args: { name: pricing_api_latency_p99_ms, window: "5m" } }
-  - { tool: post_status, args: { message: "(predicted)" } }
+  - { tool: get_metric, args: { name: pricing_api_latency_p99_ms, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
 golden_source: predicted

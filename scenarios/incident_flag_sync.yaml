@@ -24,8 +24,8 @@ endpoint:
     - { tool: restart_service, args: { name: flag-sync } }
 golden_trajectory:
   - { tool: search_logs, args: { query: flag-sync } }
-  - { tool: get_metric, args: { name: feature_flag_staleness_s, window: "5m" } }
+  - { tool: get_metric, args: { name: feature_flag_staleness_s, window: 5m } }
   - { tool: restart_service, args: { name: flag-sync } }
-  - { tool: get_metric, args: { name: feature_flag_staleness_s, window: "5m" } }
-  - { tool: post_status, args: { message: "(predicted)" } }
+  - { tool: get_metric, args: { name: feature_flag_staleness_s, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
 golden_source: predicted

@@ -30,9 +30,9 @@ endpoint:
   required_effects:
     - { tool: restart_service, args: { name: reporting-job } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: "too many clients postgres" } }
-  - { tool: get_metric, args: { name: postgres_connections, window: "1h" } }
+  - { tool: search_logs, args: { query: too many clients postgres } }
+  - { tool: get_metric, args: { name: postgres_connections, window: 1h } }
   - { tool: restart_service, args: { name: reporting-job } }
-  - { tool: get_metric, args: { name: checkout_error_rate, window: "5m" } }
-  - { tool: post_status, args: { message: "(predicted)" } }
+  - { tool: get_metric, args: { name: checkout_error_rate, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
 golden_source: predicted

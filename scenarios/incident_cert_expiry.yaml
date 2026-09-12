@@ -21,8 +21,8 @@ endpoint:
   required_effects:
     - { tool: page_oncall }
 golden_trajectory:
-  - { tool: search_logs, args: { query: "TLS certificate api.example.com" } }
-  - { tool: get_metric, args: { name: synthetic_check_https, window: "5m" } }
-  - { tool: page_oncall, args: { message: "(predicted)" } }
-  - { tool: post_status, args: { message: "(predicted)" } }
+  - { tool: search_logs, args: { query: TLS certificate api.example.com } }
+  - { tool: get_metric, args: { name: synthetic_https_success, window: 5m } }
+  - { tool: page_oncall, args: { message: (predicted) } }
+  - { tool: post_status, args: { message: (predicted) } }
 golden_source: predicted

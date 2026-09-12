@@ -23,9 +23,9 @@ endpoint:
   required_effects:
     - { tool: restart_service, args: { name: analytics-etl } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: "replica lag" } }
-  - { tool: get_metric, args: { name: postgres_replica_lag_s, window: "5m" } }
+  - { tool: search_logs, args: { query: replica lag } }
+  - { tool: get_metric, args: { name: postgres_replica_lag_s, window: 5m } }
   - { tool: restart_service, args: { name: analytics-etl } }
-  - { tool: get_metric, args: { name: postgres_replica_lag_s, window: "5m" } }
-  - { tool: post_status, args: { message: "(predicted)" } }
+  - { tool: get_metric, args: { name: postgres_replica_lag_s, window: 5m } }
+  - { tool: post_status, args: { message: (predicted) } }
 golden_source: predicted

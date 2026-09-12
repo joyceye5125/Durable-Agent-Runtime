@@ -22,7 +22,7 @@ endpoint:
     - { tool: page_oncall }
 golden_trajectory:
   - { tool: search_logs, args: { query: pdf-renderer } }
-  - { tool: get_metric, args: { name: pod_restarts, window: "1h" } }
-  - { tool: page_oncall, args: { message: "(predicted)" } }
-  - { tool: post_status, args: { message: "(predicted)" } }
+  - { tool: get_metric, args: { name: pdf_renderer_restarts, window: 1h } }
+  - { tool: page_oncall, args: { message: (predicted) } }
+  - { tool: post_status, args: { message: (predicted) } }
 golden_source: predicted
