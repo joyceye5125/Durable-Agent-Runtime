@@ -27,6 +27,7 @@ import { CANDIDATES, getConfig } from "../server/llm/configs";
 import { hasRecording, openAgentLLM, recordingPath, type LlmMode } from "../server/llm/recording";
 import { CRASH_WINDOWS } from "../server/runtime/crash";
 import { buildRuntime, createRun, prepareResume, type AgentFactory } from "../server/runtime/runs";
+import { actionIdentity, isSideEffecting } from "../server/tools/registry";
 import { goldenIsUsable } from "../server/eval/golden";
 import { listScenarioIds, loadScenario, writeGolden } from "../server/scenarios";
 import { Store } from "../server/store/store";
@@ -88,6 +89,31 @@ function writeReadmeCell(claim: "C1" | "C4", result: string): void {
   lines[i] = cells.join("|");
   fs.writeFileSync(file, lines.join("\n"));
   console.log(`\n✓ wrote the ${claim} result into README.md`);
+}
+
+/**
+ * Properties that make a trajectory unusable as a yardstick, whatever a human
+ * thinks of it. A failed call never happened, so it would put a phantom action
+ * in the reference; a repeated action makes "the candidate repeated an action"
+ * unmeasurable. Judgment about whether the run is sensible stays with the
+ * person; these two are decidable, so they are decided here.
+ */
+function corruptionInGolden(calls: Array<{ tool: string; args: Record<string, unknown>; outcome: string }>): string[] {
+  const problems: string[] = [];
+  const failed = calls.filter((c) => c.outcome === "failed");
+  if (failed.length) {
+    problems.push(`${failed.length} call(s) the tool rejected (${failed.map((c) => c.tool).join(", ")}): an action that never happened cannot be part of the reference path`);
+  }
+  const counts = new Map<string, number>();
+  for (const c of calls.filter((c) => isSideEffecting(c.tool))) {
+    const key = actionIdentity(c.tool, c.args);
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  const repeated = [...counts].filter(([, n]) => n > 1);
+  if (repeated.length) {
+    problems.push(`repeated action(s) ${repeated.map(([k, n]) => `${k} ×${n}`).join(", ")}: a reference that repeats an action cannot measure a candidate that repeats one`);
+  }
+  return problems;
 }
 
 const short = (v: unknown, n = 110) => {
@@ -154,6 +180,12 @@ async function recordGolden(store: Store) {
     if (!ok) {
       console.log("✗ Baseline did not solve this task, so it has no golden trajectory. Fix the scenario or the baseline prompt");
       console.log("  (without leaking the solution into the prompt), then re-run with --fresh.");
+      return;
+    }
+    const corrupt = corruptionInGolden(calls);
+    if (corrupt.length) {
+      console.log(`✗ Not offered as a golden:\n  - ${corrupt.join("\n  - ")}`);
+      console.log("  A golden is the yardstick every candidate is scored against; these make the score mean nothing.");
       return;
     }
     const answer = (await rl.question(`Accept these ${calls.length} calls as the golden trajectory for ${id}? [y/N] `)).trim().toLowerCase();

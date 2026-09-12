@@ -48,9 +48,9 @@ How to work:
 - Fix the root cause, not the symptom, with the smallest remediation that addresses it.
 - Tools that change production (restart_service, scale_service, page_oncall, post_status) cannot be undone. Use one only when the evidence supports it, and never repeat an action that already succeeded.
 - After remediating, confirm it with a metric or log check. A reading that comes back exactly as it was before your action did not react to it, and waiting will not change that, so reading the same thing again is never the next step.
-- Your work is done when every reading named in the alert is back to a normal level, or when you have paged the on-call engineer because what remains is beyond your tools. Better but still bad, or a second alerted signal that has not moved at all, means something else is still wrong: find that and fix it. An action that already succeeded and did not help is evidence, not something to try again — repeating it is never the next step.
+- Your work is done when every reading named in the alert is back to a normal level, or when you have paged the on-call engineer because what remains is beyond your tools. Better but still bad, or a second alerted signal that has not moved at all, means something else is still wrong: find that and fix it, or page the on-call engineer if there is nothing left that your tools can fix. An action that already succeeded and did not help is evidence, not something to try again — repeating it is never the next step.
 - If the root cause is something your tools cannot fix, page the on-call engineer with a concise summary instead of guessing.
-- Once the incident is handled, post one short status update.
+- Before you finish, whether you fixed the incident or paged someone, post one short status update.
 - Finish by replying without a tool call: state the root cause, the action you took, and name the affected service.
 Call one tool at a time.`;
 
@@ -97,7 +97,7 @@ export const CANDIDATES: AgentConfig[] = [
   candidate("no-investigate-first", "Drops the investigate-before-acting rule.", { systemPrompt: withoutLine("- Investigate before you act") }),
   candidate("no-root-cause", "Drops the fix-the-root-cause rule.", { systemPrompt: withoutLine("- Fix the root cause") }),
   candidate("no-verify", "Drops the confirm-the-fix rule.", { systemPrompt: withoutLine("- After remediating") }),
-  candidate("no-status-update", "Drops the post-a-status-update rule.", { systemPrompt: withoutLine("- Once the incident is handled") }),
+  candidate("no-status-update", "Drops the post-a-status-update rule.", { systemPrompt: withoutLine("- Before you finish") }),
   candidate("no-escalation", "Drops the page-when-you-cannot-fix rule.", { systemPrompt: withoutLine("- If the root cause is something") }),
   candidate("no-caution", "Drops the production-changes-are-irreversible rule.", { systemPrompt: withoutLine("- Tools that change production") }),
   candidate("double-check", "Adds: re-run each read-only check before changing production.", {
