@@ -82,7 +82,16 @@ export interface CrashSummary {
   seed: number;
   reference: { steps: number; toolCalls: number; sideEffects: number };
   durable: { trials: number; correct: number; correctPct: number; duplicateSideEffects: number };
-  naive: { trials: number; measured: number; unrecorded: number; trialsWithDuplicates: number; duplicateRatePct: number | null; duplicateRows: number };
+  naive: {
+    trials: number;
+    measured: number;
+    unrecorded: number;
+    exposed: number;
+    trialsWithDuplicates: number;
+    duplicateRatePct: number | null;
+    duplicateRateWhenExposedPct: number | null;
+    duplicateRows: number;
+  };
   malformed: { cases: Array<{ kind: string; variant: string; status: string; rejected: number }>; allBlocked: boolean };
 }
 

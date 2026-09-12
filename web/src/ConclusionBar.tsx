@@ -37,9 +37,10 @@ export function ConclusionBar({
               effects
             </div>
             <div className="sub mono">
-              naive baseline: <b className="bad">{pct(crash.naive.duplicateRatePct)}</b> of trials repeated a side effect (
-              {crash.naive.trialsWithDuplicates}/{crash.naive.measured}, {crash.naive.duplicateRows} extra rows)
-              {crash.naive.unrecorded > 0 && <> · {crash.naive.unrecorded} naive trials unrecorded, excluded</>}
+              naive baseline: <b className="bad">{pct(crash.naive.duplicateRateWhenExposedPct)}</b> of the {crash.naive.exposed} trials that
+              crashed after a side effect repeated one ({crash.naive.duplicateRows} extra actions · {pct(crash.naive.duplicateRatePct)} of all{" "}
+              {crash.naive.measured} trials)
+              {crash.naive.unrecorded > 0 && <> · {crash.naive.unrecorded} unrecorded, excluded</>}
             </div>
             <div className="sub mono muted">
               malformed model output: {crash.malformed.cases.length} injections, {crash.malformed.allBlocked ? "none reached a tool" : "SOME REACHED A TOOL"} ·

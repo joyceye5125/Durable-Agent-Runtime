@@ -3,6 +3,7 @@ import { fold, trajectoryOf } from "../core/events";
 import { CRASH_WINDOWS, type CrashPlan, type CrashWindow } from "../runtime/crash";
 import { buildRuntime, createRun, defaultAgentFactory, prepareResume, type AgentFactory } from "../runtime/runs";
 import { loadScenario } from "../scenarios";
+import { actionIdentity, isSideEffecting } from "../tools/registry";
 import type { Store } from "../store/store";
 import { MALFORMED_KINDS, MalformedInjectingLLM, type MalformedKind } from "./malformed";
 
@@ -18,6 +19,8 @@ interface WindowStats {
   durableCorrect: number;
   durableDuplicateRows: number;
   naiveMeasured: number;
+  /** Trials whose crash landed after a side effect had already happened: the only ones that can duplicate. */
+  naiveExposed: number;
   naiveTrialsWithDuplicates: number;
   naiveDuplicateRows: number;
   naiveUnrecorded: number;
@@ -44,8 +47,11 @@ export interface CrashSummary {
     trials: number;
     measured: number;
     unrecorded: number;
+    exposed: number;
     trialsWithDuplicates: number;
     duplicateRatePct: number | null;
+    /** Share of the trials that could duplicate at all, which is the honest denominator. */
+    duplicateRateWhenExposedPct: number | null;
     duplicateRows: number;
   };
   byWindow: Record<CrashWindow, WindowStats>;
@@ -70,9 +76,17 @@ function mulberry32(seed: number) {
 const signature = (rows: Array<{ step: number; tool: string; args: unknown }>) =>
   rows.map((r) => `${r.step}|${r.tool}|${canonicalJSON(r.args)}`).join("\n");
 
-function duplicateRows(rows: Array<{ tool: string; args_hash: string }>): number {
+/**
+ * A repeated side effect is the same *action* twice, not the same bytes twice:
+ * a restarted agent that pages on-call again writes a differently worded
+ * message, and the human is still paged twice.
+ */
+function duplicateRows(rows: Array<{ tool: string; args: Record<string, unknown> }>): number {
   const seen = new Map<string, number>();
-  for (const r of rows) seen.set(`${r.tool}|${r.args_hash}`, (seen.get(`${r.tool}|${r.args_hash}`) ?? 0) + 1);
+  for (const r of rows) {
+    const key = actionIdentity(r.tool, r.args);
+    seen.set(key, (seen.get(key) ?? 0) + 1);
+  }
   return [...seen.values()].reduce((sum, c) => sum + (c - 1), 0);
 }
 
@@ -95,12 +109,13 @@ export async function runCrashExperiment(store: Store, opts: CrashExperimentOpti
   const refState = fold(await store.listEvents(refId));
   const refLedger = await store.listSideEffects(refId);
   const refSig = signature(refLedger);
-  const toolCalls = trajectoryOf(refState).length;
+  const refTrajectory = trajectoryOf(refState);
+  const toolCalls = refTrajectory.length;
 
   const byWindow = Object.fromEntries(
     CRASH_WINDOWS.map((w) => [
       w,
-      { trials: 0, durableCorrect: 0, durableDuplicateRows: 0, naiveMeasured: 0, naiveTrialsWithDuplicates: 0, naiveDuplicateRows: 0, naiveUnrecorded: 0 },
+      { trials: 0, durableCorrect: 0, durableDuplicateRows: 0, naiveMeasured: 0, naiveExposed: 0, naiveTrialsWithDuplicates: 0, naiveDuplicateRows: 0, naiveUnrecorded: 0 },
     ]),
   ) as Record<CrashWindow, WindowStats>;
 
@@ -140,8 +155,17 @@ export async function runCrashExperiment(store: Store, opts: CrashExperimentOpti
     }
     const dup = duplicateRows(await store.listNaiveSideEffects(nId));
     stats.naiveMeasured++;
+    // Could this trial have duplicated at all? Only if a side effect had
+    // already been performed when the crash hit.
+    const index = plan.target.kind === "tool_call" ? plan.target.index : 0;
+    const performedBefore =
+      refTrajectory.slice(0, index).filter((c) => isSideEffecting(c.tool)).length +
+      (isSideEffecting(refTrajectory[index]?.tool ?? "") && (window === "W3" || window === "W4") ? 1 : 0);
+    if (performedBefore > 0) {
+      stats.naiveExposed++;
+      if (dup > 0) stats.naiveTrialsWithDuplicates++;
+    }
     stats.naiveDuplicateRows += dup;
-    if (dup > 0) stats.naiveTrialsWithDuplicates++;
   }
 
   const sum = (k: keyof WindowStats) => CRASH_WINDOWS.reduce((s, w) => s + byWindow[w][k], 0);
@@ -163,8 +187,10 @@ export async function runCrashExperiment(store: Store, opts: CrashExperimentOpti
       trials: opts.n,
       measured: naiveMeasured,
       unrecorded: sum("naiveUnrecorded"),
+      exposed: sum("naiveExposed"),
       trialsWithDuplicates: sum("naiveTrialsWithDuplicates"),
       duplicateRatePct: naiveMeasured ? (100 * sum("naiveTrialsWithDuplicates")) / naiveMeasured : null,
+      duplicateRateWhenExposedPct: sum("naiveExposed") ? (100 * sum("naiveTrialsWithDuplicates")) / sum("naiveExposed") : null,
       duplicateRows: sum("naiveDuplicateRows"),
     },
     byWindow,

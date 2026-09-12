@@ -1,6 +1,6 @@
 import { canonicalJSON } from "../core/canonical";
 import { effectMatches, type GoldenCall, type Scenario } from "../scenarios";
-import { isSideEffecting } from "../tools/registry";
+import { actionIdentity, isSideEffecting } from "../tools/registry";
 
 export interface TrajectoryScore {
   endpoint_ok: boolean;
@@ -13,27 +13,13 @@ export interface TrajectoryScore {
 }
 
 /**
- * Arguments that decide *which* action a side-effecting call is. Free-text
- * arguments (a page or status message) are wording, not identity.
- */
-const IDENTITY_ARGS: Record<string, string[]> = {
-  restart_service: ["name"],
-  scale_service: ["name", "replicas"],
-  page_oncall: [],
-  post_status: [],
-};
-
-/**
- * Token used for path comparison. Side-effecting calls are compared on their
- * identity arguments (restarting the wrong service is a different action);
- * read-only calls and free-text arguments by tool name only, so rewording a
- * query or a message is not a regression but an extra or missing call is.
+ * Token used for path comparison. Side-effecting calls are compared on the
+ * arguments that identify the action (restarting the wrong service is a
+ * different action); read-only calls by tool name only, so rewording a query
+ * is not a regression but an extra or missing call is.
  */
 export function pathToken(c: GoldenCall): string {
-  if (!isSideEffecting(c.tool)) return c.tool;
-  const keys = IDENTITY_ARGS[c.tool] ?? Object.keys(c.args);
-  const identity = Object.fromEntries(keys.map((k) => [k, c.args[k]]));
-  return `${c.tool}(${canonicalJSON(identity)})`;
+  return isSideEffecting(c.tool) ? actionIdentity(c.tool, c.args) : c.tool;
 }
 
 export function levenshtein(a: string[], b: string[]): number {

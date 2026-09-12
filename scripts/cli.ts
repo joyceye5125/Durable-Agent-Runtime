@@ -210,14 +210,14 @@ async function experiment(store: Store) {
     console.log(`crash experiment on ${summary.scenario}, n=${summary.n}, seed=${summary.seed}`);
     console.log(`durable: ${d.correct}/${d.trials} correct resumes (${d.correctPct.toFixed(1)}%), ${d.duplicateSideEffects} duplicate side effects`);
     console.log(
-      `naive:   ${nv.trialsWithDuplicates}/${nv.measured} trials with duplicate side effects (${nv.duplicateRatePct?.toFixed(1) ?? "n/a"}%), ${nv.duplicateRows} duplicate rows, ${nv.unrecorded} unrecorded`,
+      `naive:   ${nv.trialsWithDuplicates}/${nv.exposed} trials that crashed after a side effect repeated one (${nv.duplicateRateWhenExposedPct?.toFixed(1) ?? "n/a"}%), ${nv.duplicateRows} duplicate rows, ${nv.unrecorded} unrecorded`,
     );
     for (const w of CRASH_WINDOWS) {
       const s = summary.byWindow[w];
       console.log(`  ${w}: durable ${s.durableCorrect}/${s.trials}  naive dup ${s.naiveTrialsWithDuplicates}/${s.naiveMeasured}`);
     }
     console.log(`malformed outputs blocked before any side effect: ${summary.malformed.allBlocked ? "yes" : "NO"}`);
-    const cell = `${summary.n} crashes over W1–W4 → **${d.correctPct.toFixed(1)}%** correct resume, **${d.duplicateSideEffects}** duplicate side effects. Naive baseline: **${nv.duplicateRatePct?.toFixed(1) ?? "n/a"}%** of trials duplicated a side effect (${nv.duplicateRows} extra rows${nv.unrecorded ? `, ${nv.unrecorded} unrecorded trials excluded` : ""}). Seed ${summary.seed}.`;
+    const cell = `${summary.n} crashes over W1–W4 → **${d.correctPct.toFixed(1)}%** correct resume, **${d.duplicateSideEffects}** duplicate side effects. Naive baseline: **${nv.duplicateRateWhenExposedPct?.toFixed(1) ?? "n/a"}%** of the ${nv.exposed} trials that crashed after a side effect repeated one (${nv.duplicateRows} extra actions; ${nv.duplicateRatePct?.toFixed(1) ?? "n/a"}% of all ${nv.measured} trials${nv.unrecorded ? `, ${nv.unrecorded} unrecorded excluded` : ""}). Seed ${summary.seed}.`;
     console.log(`\nREADME C1 result cell:\n${cell}`);
     if (flag("write-readme")) writeReadmeCell("C1", cell);
     for (const c of summary.malformed.cases) console.log(`  ${c.kind}/${c.variant}: ${c.status}, rejected ${c.rejected}, side effects from rejected steps ${c.sideEffectRowsFromRejectedSteps}`);

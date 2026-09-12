@@ -169,6 +169,23 @@ const TOOLS: ToolDef[] = [
   },
 ];
 
+/**
+ * The arguments that decide *which* action a call is. A page and a status
+ * update carry free text: rewording one does not make it a different action,
+ * so paging twice with different wording is still paging twice.
+ */
+const IDENTITY_ARGS: Record<string, string[]> = {
+  restart_service: ["name"],
+  scale_service: ["name", "replicas"],
+  page_oncall: [],
+  post_status: [],
+};
+
+export function actionIdentity(tool: string, args: Record<string, unknown>): string {
+  const keys = IDENTITY_ARGS[tool] ?? Object.keys(args);
+  return `${tool}(${canonicalJSON(Object.fromEntries(keys.map((k) => [k, args[k]])))})`;
+}
+
 export function getTool(name: string): ToolDef | undefined {
   return TOOLS.find((t) => t.name === name);
 }
