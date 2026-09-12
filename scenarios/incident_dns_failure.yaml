@@ -2,27 +2,33 @@ id: incident_dns_failure
 kind: eval
 task: "ALERT outbound_http_errors{dst=partners} = 64%. Partner integrations failing. Diagnose and remediate. Services in this namespace: partner-sync, api, coredns. Metrics available: outbound_http_errors, coredns_servfail_ratio."
 world:
-  services: [partner-sync, api, coredns]
+  services: [ partner-sync, api, coredns ]
   logs:
     - "2026-09-10T13:30:02Z partner-sync ERROR getaddrinfo EAI_AGAIN partners.acme-logistics.com"
     - "2026-09-10T13:30:05Z coredns WARN upstream 1.1.1.1 and 8.8.8.8 healthy; forwarding zone acme-logistics.com returns SERVFAIL from authoritative ns1.acme-dns.net"
     - "2026-09-10T13:31:40Z partner-sync ERROR getaddrinfo EAI_AGAIN partners.acme-logistics.com"
     - "2026-09-10T13:32:00Z api INFO healthy"
   metrics:
-    outbound_http_errors: { "5m": [0.61, 0.63, 0.64], "1h": [0.586, 0.61, 0.64], "24h": [0.234, 0.234, 0.586, 0.64] }
-    coredns_servfail_ratio: { "5m": [0.31, 0.33, 0.33], "1h": [0.294, 0.31, 0.33], "24h": [0.118, 0.118, 0.294, 0.33] }
+    outbound_http_errors: { "5m": [ 0.61, 0.63, 0.64 ], "1h": [ 0.586, 0.61, 0.64 ], "24h": [ 0.234, 0.234, 0.586, 0.64 ] }
+    coredns_servfail_ratio: { "5m": [ 0.31, 0.33, 0.33 ], "1h": [ 0.294, 0.31, 0.33 ], "24h": [ 0.118, 0.118, 0.294, 0.33 ] }
   effects:
     - when: { tool: restart_service, args: { name: coredns } }
       logs:
         - "2026-09-10T13:40:12Z coredns INFO restarted; zone acme-logistics.com still SERVFAIL from ns1.acme-dns.net"
 expected_answer: "The partner's authoritative DNS (ns1.acme-dns.net) is returning SERVFAIL for acme-logistics.com, so partner-sync can't resolve it. That's outside our systems: paged on-call to contact the partner."
 endpoint:
-  answer_mentions: [dns]
+  answer_mentions: [ dns ]
   required_effects:
     - { tool: page_oncall }
 golden_trajectory:
-  - { tool: search_logs, args: { query: partners getaddrinfo } }
   - { tool: get_metric, args: { name: outbound_http_errors, window: 5m } }
-  - { tool: page_oncall, args: { message: (predicted) } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: search_logs, args: { query: partner-sync error } }
+  - { tool: search_logs, args: { query: coredns error } }
+  - { tool: get_metric, args: { name: coredns_servfail_ratio, window: 5m } }
+  - { tool: restart_service, args: { name: coredns } }
+  - { tool: get_metric, args: { name: coredns_servfail_ratio, window: 5m } }
+  - { tool: page_oncall, args: { message: Partner integration failures are due to DNS SERVFAILs from authoritative nameservers for partners.acme-logistics.com. Restarting coredns did not help. The root cause is likely external DNS issues beyond our control. Manual intervention or escalation to the partner's DNS provider may be required. } }
+  - { tool: post_status, args: { message: We are experiencing elevated partner integration failures due to upstream DNS issues affecting partner domains. Our engineering team is investigating with external providers. } }
+golden_source: baseline
+golden_final_answer: The root cause is DNS SERVFAILs from the authoritative nameserver for partners.acme-logistics.com, which is causing outbound HTTP errors in the partner-sync service. Restarting coredns did not resolve the issue, indicating the problem is external and likely with the partner's DNS provider. The on-call engineer has been paged. The affected service is partner-sync.
+golden_scenario_hash: ce6b7a981a59adff

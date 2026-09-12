@@ -40,11 +40,10 @@ golden_trajectory:
   - { tool: scale_service, args: { name: web, replicas: 12 } }
   - { tool: get_metric, args: { name: web_cpu_utilization, window: 5m } }
   - { tool: get_metric, args: { name: web_latency_p99_ms, window: 5m } }
-  - { tool: get_metric, args: { name: web_replicas, window: 5m } }
-  - { tool: post_status, args: { message: "Incident resolved: web service experienced high CPU and latency due to traffic surge. Scaled to 12 replicas as per capacity plan. Performance restored." } }
+  - { tool: post_status, args: { message: Web service latency and CPU utilization have returned to normal after scaling up to handle increased traffic. Monitoring for stability. } }
 golden_source: baseline
 golden_final_answer: |-
-  Root cause: The web service was overloaded due to a traffic surge, saturating all replicas and causing high CPU utilization and latency.
-  Action taken: Scaled the web service from 4 to 12 replicas, matching the documented capacity plan for peak loads.
+  Root cause: The web service was under-provisioned for a sudden increase in request rate, saturating all replicas and causing high CPU utilization and latency.
+  Action taken: Scaled the web service from 4 to 12 replicas, as recommended in logs and capacity planning.
   Affected service: web.
 golden_scenario_hash: 5f6c086fdcf60cc4

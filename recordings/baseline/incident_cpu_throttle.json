@@ -1,0 +1,136 @@
+{
+  "config_label": "baseline",
+  "task_id": "incident_cpu_throttle",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "854531d02168c4f4c621266a1375a5f0393b9e1f23133d9ccac4955ff6cf63f1",
+  "recorded_at": "2026-09-12T22:01:46.472Z",
+  "entries": [
+    {
+      "key": "e7671bcb814a3fc34b5361ff28ee12fcb10c74be6cc1c55063fbc7371a4d2c0f",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 805,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "e78db5c99b6f82f50034534dd169399aa1ce504afbd2fb899e2576fcd08082b9",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"object_store_put_latency_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 863,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "1f83cb4d33df394b8219a15250ad18de801b8ccfec4c615527c2891014711f88",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_cpu_throttled_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 916,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "8ec0c93135b99f1b9a4b208ad09d7f931721e8648dcf118844cd96cc02f5675d",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 979,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "c68bec0fc5f12365b2327db50995760c1e3fdd468fbb53f91567cf30cd8a80b5",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"image-api error\"}"
+        },
+        "tokensIn": 1032,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "3905d37d910c2605b1384b1c367c6bbdec8f2a89b3dfa2aee9061e96334713d9",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"image-api\",\"replicas\":5}"
+        },
+        "tokensIn": 1157,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "0d58cc7fd41287c3af8cca88420695790115269f2cc6c2f4f0abc70091688fd9",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1200,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "62317664df8854a2a3e53450d65cb57147eacaf69f9094f58c902120fe4f1993",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_cpu_throttled_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1257,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "0b904c1ee7fa4a81b84542d9c9b95b82aa18429216e69276f45ade24e9c03984",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Image uploads are operating normally after scaling up image-api to handle a bulk import. Latency and CPU throttling have returned to normal levels.\"}"
+        },
+        "tokensIn": 1320,
+        "tokensOut": 41
+      }
+    },
+    {
+      "key": "6509364a6107df70390caf77acc1f28d2303744ebe6f9f3bce97492a9a9424b0",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The image-api service was CPU throttled due to insufficient replicas during a bulk import, causing high latency and upload timeouts.\nAction taken: Scaled image-api from 2 to 5 replicas, as recommended in the runbook and logs.\nAffected service: image-api.",
+        "tokensIn": 1374,
+        "tokensOut": 59
+      }
+    }
+  ]
+}

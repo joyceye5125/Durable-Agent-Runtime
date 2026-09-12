@@ -2,42 +2,52 @@ id: incident_gc_pauses
 kind: eval
 task: "ALERT ledger_service_latency_p99_ms = 3400 (SLO 300). Diagnose and remediate. Services in this namespace: ledger-service, postgres, kafka, api. Metrics available: ledger_service_latency_p99_ms, ledger_service_gc_pause_ms, ledger_service_replicas, postgres_query_latency_ms."
 world:
-  services: [ledger-service, postgres, kafka, api]
+  services: [ ledger-service, postgres, kafka, api ]
   logs:
     - "2026-09-10T15:01:12Z ledger-service WARN GC pause 1.9s (old gen 97%); request rate per instance 2.4x normal"
     - "2026-09-10T15:01:13Z ledger-service INFO running 3 replicas; end-of-quarter batch load expected, capacity plan says 8 replicas (6 minimum)"
     - "2026-09-10T15:02:30Z postgres INFO query latency normal"
     - "2026-09-10T15:03:05Z kafka INFO consumer lag normal"
   metrics:
-    ledger_service_latency_p99_ms: { "5m": [2900, 3300, 3400], "1h": [260, 1400, 3400], "24h": [104, 104, 260, 3400] }
-    ledger_service_gc_pause_ms: { "5m": [1400, 1900, 1800], "1h": [1080, 1400, 1800], "24h": [432, 432, 1080, 1800] }
-    ledger_service_replicas: { "5m": [3, 3, 3], "1h": [3, 3, 3], "24h": [3, 3, 3, 3] }
-    postgres_query_latency_ms: { "5m": [4, 5, 4], "1h": [4, 4, 4], "24h": [4, 4, 4, 4] }
+    ledger_service_latency_p99_ms: { "5m": [ 2900, 3300, 3400 ], "1h": [ 260, 1400, 3400 ], "24h": [ 104, 104, 260, 3400 ] }
+    ledger_service_gc_pause_ms: { "5m": [ 1400, 1900, 1800 ], "1h": [ 1080, 1400, 1800 ], "24h": [ 432, 432, 1080, 1800 ] }
+    ledger_service_replicas: { "5m": [ 3, 3, 3 ], "1h": [ 3, 3, 3 ], "24h": [ 3, 3, 3, 3 ] }
+    postgres_query_latency_ms: { "5m": [ 4, 5, 4 ], "1h": [ 4, 4, 4 ], "24h": [ 4, 4, 4, 4 ] }
   effects:
     - when: { tool: scale_service, args: { name: ledger-service, replicas: { gte: 4 } } }
       metrics:
-        ledger_service_latency_p99_ms: { "5m": [3400, 2200, 2000] }
-        ledger_service_gc_pause_ms: { "5m": [1800, 950, 900] }
-        ledger_service_replicas: { "5m": [3, 4, 4] }
+        ledger_service_latency_p99_ms: { "5m": [ 3400, 2200, 2000 ] }
+        ledger_service_gc_pause_ms: { "5m": [ 1800, 950, 900 ] }
+        ledger_service_replicas: { "5m": [ 3, 4, 4 ] }
       logs:
         - "2026-09-10T15:12:05Z ledger-service INFO scaled out; GC pauses shorter but still far above the 300ms SLO at this replica count"
     - when: { tool: scale_service, args: { name: ledger-service, replicas: { gte: 6 } } }
       metrics:
-        ledger_service_latency_p99_ms: { "5m": [3400, 700, 240] }
-        ledger_service_gc_pause_ms: { "5m": [1800, 220, 60] }
-        ledger_service_replicas: { "5m": [3, 8, 8] }
+        ledger_service_latency_p99_ms: { "5m": [ 3400, 700, 240 ] }
+        ledger_service_gc_pause_ms: { "5m": [ 1800, 220, 60 ] }
+        ledger_service_replicas: { "5m": [ 3, 8, 8 ] }
     - when: { tool: restart_service, args: { name: ledger-service } }
       logs:
         - "2026-09-10T15:10:40Z ledger-service INFO restarted; GC pause 1.7s again within 2 minutes under the same load"
 expected_answer: "End-of-quarter load is 2.4x per instance on 3 ledger-service replicas, driving long GC pauses. Scaled ledger-service out to the capacity plan; latency recovered."
 endpoint:
-  answer_mentions: [ledger-service]
+  answer_mentions: [ ledger-service ]
   required_effects:
     - { tool: scale_service, args: { name: ledger-service, replicas: { gte: 6 } } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: ledger-service latency } }
-  - { tool: get_metric, args: { name: ledger_service_latency_p99_ms, window: 5m } }
+  - { tool: get_metric, args: { name: ledger_service_gc_pause_ms, window: 5m } }
+  - { tool: get_metric, args: { name: postgres_query_latency_ms, window: 5m } }
+  - { tool: get_metric, args: { name: ledger_service_replicas, window: 5m } }
+  - { tool: search_logs, args: { query: ledger-service error } }
   - { tool: scale_service, args: { name: ledger-service, replicas: 8 } }
   - { tool: get_metric, args: { name: ledger_service_latency_p99_ms, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: get_metric, args: { name: ledger_service_gc_pause_ms, window: 5m } }
+  - { tool: post_status, args: { message: Ledger service latency has returned to normal after scaling up to handle increased load. Monitoring for stability. } }
+golden_source: baseline
+golden_final_answer: |-
+  Root cause: The ledger-service was under-provisioned during a period of high load, leading to excessive GC pauses and high latency. 
+
+  Action taken: Scaled the ledger-service from 3 to 8 replicas as per capacity planning guidance.
+
+  Affected service: ledger-service.
+golden_scenario_hash: 6a7739de6c4998e2

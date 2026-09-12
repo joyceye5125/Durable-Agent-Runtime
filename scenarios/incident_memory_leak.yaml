@@ -2,7 +2,7 @@ id: incident_memory_leak
 kind: eval
 task: "ALERT container_oom_kills{namespace=media} = 14 in the last hour. Diagnose and remediate. Services in this namespace: api, thumbnailer, media-store, cdn-purger. Metrics available: thumbnailer_memory_ratio, api_error_rate, container_oom_kills."
 world:
-  services: [api, thumbnailer, media-store, cdn-purger]
+  services: [ api, thumbnailer, media-store, cdn-purger ]
   logs:
     - "2026-09-10T08:02:11Z media-store INFO upload batch complete (2,114 objects)"
     - "2026-09-10T08:40:52Z thumbnailer WARN rss 3.6G/4G, cache entries 1.9M (unbounded LRU after v5.3 config change)"
@@ -11,25 +11,39 @@ world:
     - "2026-09-10T09:13:02Z api WARN thumbnail requests timing out, serving placeholder"
     - "2026-09-10T09:14:40Z cdn-purger INFO purge queue empty"
   metrics:
-    thumbnailer_memory_ratio: { "5m": [0.88, 0.94, 0.99], "1h": [0.41, 0.77, 0.99], "24h": [0.164, 0.164, 0.41, 0.99] }
-    api_error_rate: { "5m": [0.004, 0.005, 0.004], "1h": [0.004, 0.004, 0.004], "24h": [0.004, 0.004, 0.004, 0.004] }
-    container_oom_kills: { "5m": [4, 5, 5], "1h": [0, 6, 14], "24h": [0, 0, 0, 14] }
+    thumbnailer_memory_ratio: { "5m": [ 0.88, 0.94, 0.99 ], "1h": [ 0.41, 0.77, 0.99 ], "24h": [ 0.164, 0.164, 0.41, 0.99 ] }
+    api_error_rate: { "5m": [ 0.004, 0.005, 0.004 ], "1h": [ 0.004, 0.004, 0.004 ], "24h": [ 0.004, 0.004, 0.004, 0.004 ] }
+    container_oom_kills: { "5m": [ 4, 5, 5 ], "1h": [ 0, 6, 14 ], "24h": [ 0, 0, 0, 14 ] }
   effects:
     - when: { tool: restart_service, args: { name: thumbnailer } }
       metrics:
-        thumbnailer_memory_ratio: { "5m": [0.99, 0.12, 0.14] }
-        container_oom_kills: { "5m": [5, 0, 0] }
+        thumbnailer_memory_ratio: { "5m": [ 0.99, 0.12, 0.14 ] }
+        container_oom_kills: { "5m": [ 5, 0, 0 ] }
       logs:
         - "2026-09-10T09:20:18Z thumbnailer INFO restarted with cache bound 200k entries (config reload); rss 480M"
 expected_answer: "thumbnailer's LRU cache became unbounded after a config change and it keeps getting OOM-killed. Restarting thumbnailer reloads the bounded cache config; memory is back to normal."
 endpoint:
-  answer_mentions: [thumbnailer]
+  answer_mentions: [ thumbnailer ]
   required_effects:
     - { tool: restart_service, args: { name: thumbnailer } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: OOMKilled media } }
+  - { tool: get_metric, args: { name: thumbnailer_memory_ratio, window: 1h } }
   - { tool: get_metric, args: { name: container_oom_kills, window: 1h } }
+  - { tool: get_metric, args: { name: api_error_rate, window: 1h } }
+  - { tool: search_logs, args: { query: thumbnailer OOM } }
+  - { tool: scale_service, args: { name: thumbnailer, replicas: 2 } }
+  - { tool: get_metric, args: { name: container_oom_kills, window: 5m } }
+  - { tool: get_metric, args: { name: thumbnailer_memory_ratio, window: 5m } }
+  - { tool: search_logs, args: { query: thumbnailer cache } }
   - { tool: restart_service, args: { name: thumbnailer } }
   - { tool: get_metric, args: { name: thumbnailer_memory_ratio, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: get_metric, args: { name: container_oom_kills, window: 5m } }
+  - { tool: post_status, args: { message: "Incident resolved: thumbnailer service in media namespace experienced OOM kills due to unbounded cache growth. Service has been restarted and memory usage is back to normal." } }
+golden_source: baseline
+golden_final_answer: |-
+  Root cause: The thumbnailer service in the media namespace was experiencing OOM kills due to unbounded cache growth after a recent configuration change (v5.3), causing memory exhaustion.
+
+  Action taken: Restarted the thumbnailer service to clear the cache and reduce memory usage. OOM kills have stopped and memory usage is back to normal.
+
+  Affected service: thumbnailer.
+golden_scenario_hash: 6ad2d6657186de30

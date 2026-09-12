@@ -2,34 +2,46 @@ id: incident_healthcheck_dependency
 kind: eval
 task: "ALERT api_healthy_instances = 3 of 12: the load balancer is ejecting instances and capacity is dropping. Diagnose and remediate. Services in this namespace: api, config-service, load-balancer, postgres. Metrics available: api_healthy_instances, config_service_up, api_latency_p99_ms."
 world:
-  services: [api, config-service, load-balancer, postgres]
+  services: [ api, config-service, load-balancer, postgres ]
   logs:
     - "2026-09-10T18:02:11Z config-service ERROR listener thread crashed: too many open files; process still running"
     - "2026-09-10T18:03:00Z api WARN /healthz failing: config-service unreachable (health check includes config dependency)"
     - "2026-09-10T18:03:05Z load-balancer WARN api-3,4,5,6,7,8,9,11,12 removed from pool (healthz 503)"
     - "2026-09-10T18:03:30Z postgres INFO healthy"
   metrics:
-    api_healthy_instances: { "5m": [11, 6, 3], "1h": [17, 11, 3], "24h": [17, 17, 17, 3] }
-    config_service_up: { "5m": [0, 0, 0], "1h": [0, 0, 0], "24h": [0, 0, 0, 0] }
-    api_latency_p99_ms: { "5m": [180, 420, 910], "1h": [0, 180, 910], "24h": [0, 0, 0, 910] }
+    api_healthy_instances: { "5m": [ 11, 6, 3 ], "1h": [ 17, 11, 3 ], "24h": [ 17, 17, 17, 3 ] }
+    config_service_up: { "5m": [ 0, 0, 0 ], "1h": [ 0, 0, 0 ], "24h": [ 0, 0, 0, 0 ] }
+    api_latency_p99_ms: { "5m": [ 180, 420, 910 ], "1h": [ 0, 180, 910 ], "24h": [ 0, 0, 0, 910 ] }
   effects:
     - when: { tool: restart_service, args: { name: config-service } }
       metrics:
-        api_healthy_instances: { "5m": [3, 10, 12] }
-        config_service_up: { "5m": [0, 1, 1] }
-        api_latency_p99_ms: { "5m": [910, 260, 170] }
+        api_healthy_instances: { "5m": [ 3, 10, 12 ] }
+        config_service_up: { "5m": [ 0, 1, 1 ] }
+        api_latency_p99_ms: { "5m": [ 910, 260, 170 ] }
     - when: { tool: restart_service, args: { name: api } }
       logs:
         - "2026-09-10T18:08:00Z api WARN /healthz failing: config-service unreachable"
 expected_answer: "config-service's listener crashed (too many open files) and api's health check depends on it, so the load balancer is ejecting healthy api instances. Restarting config-service brought health checks back and all instances rejoined."
 endpoint:
-  answer_mentions: [config-service]
+  answer_mentions: [ config-service ]
   required_effects:
     - { tool: restart_service, args: { name: config-service } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: healthz api unhealthy } }
-  - { tool: get_metric, args: { name: config_service_up, window: 5m } }
+  - { tool: get_metric, args: { name: api_healthy_instances, window: 1h } }
+  - { tool: get_metric, args: { name: api_latency_p99_ms, window: 1h } }
+  - { tool: search_logs, args: { query: api error } }
+  - { tool: get_metric, args: { name: config_service_up, window: 1h } }
+  - { tool: search_logs, args: { query: config-service } }
   - { tool: restart_service, args: { name: config-service } }
+  - { tool: get_metric, args: { name: config_service_up, window: 5m } }
   - { tool: get_metric, args: { name: api_healthy_instances, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: get_metric, args: { name: api_latency_p99_ms, window: 5m } }
+  - { tool: post_status, args: { message: "Incident resolved: API capacity and latency restored after addressing config-service outage. All systems operational." } }
+golden_source: baseline
+golden_final_answer: |-
+  Root cause: The config-service crashed due to "too many open files," causing the API health checks to fail and the load balancer to eject most API instances. 
+
+  Action taken: Restarted the config-service, which restored its availability. This allowed API instances to recover, returning capacity and latency to normal.
+
+  Affected service: api (dependency: config-service).
+golden_scenario_hash: 3bad2590d6320aa8

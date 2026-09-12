@@ -2,32 +2,40 @@ id: incident_inode_exhaustion
 kind: eval
 task: "ALERT inode_usage_var = 100% on app-3: writes fail with 'No space left on device' while disk_usage_var is only 41%. Diagnose and remediate. Services in this namespace: app, tmp-cleaner, php-sessions, nginx. Metrics available: disk_usage_var, inode_usage_var, app_error_rate."
 world:
-  services: [app, tmp-cleaner, php-sessions, nginx]
+  services: [ app, tmp-cleaner, php-sessions, nginx ]
   logs:
     - "2026-09-10T04:00:00Z tmp-cleaner ERROR cron wrapper crashed: config parse error at line 12; will not run again until restarted"
     - "2026-09-10T09:22:14Z app ERROR open /var/lib/php/sessions/sess_9f2c: No space left on device"
     - "2026-09-10T09:22:15Z php-sessions WARN inode usage /var 100% (6.5M files in /var/lib/php/sessions)"
     - "2026-09-10T09:23:02Z nginx INFO upstream app-3 returning 500"
   metrics:
-    disk_usage_var: { "5m": [0.41, 0.41, 0.41], "1h": [0.41, 0.41, 0.41], "24h": [0.41, 0.41, 0.41, 0.41] }
-    inode_usage_var: { "5m": [0.99, 1, 1], "24h": [0.62, 0.81, 0.95, 1.0], "1h": [0.982, 0.99, 1] }
-    app_error_rate: { "5m": [0.21, 0.3, 0.33], "1h": [0.114, 0.21, 0.33], "24h": [0.046, 0.046, 0.114, 0.33] }
+    disk_usage_var: { "5m": [ 0.41, 0.41, 0.41 ], "1h": [ 0.41, 0.41, 0.41 ], "24h": [ 0.41, 0.41, 0.41, 0.41 ] }
+    inode_usage_var: { "5m": [ 0.99, 1, 1 ], "24h": [ 0.62, 0.81, 0.95, 1.0 ], "1h": [ 0.982, 0.99, 1 ] }
+    app_error_rate: { "5m": [ 0.21, 0.3, 0.33 ], "1h": [ 0.114, 0.21, 0.33 ], "24h": [ 0.046, 0.046, 0.114, 0.33 ] }
   effects:
     - when: { tool: restart_service, args: { name: tmp-cleaner } }
       metrics:
-        inode_usage_var: { "5m": [1, 0.71, 0.18] }
-        app_error_rate: { "5m": [0.33, 0.05, 0.002] }
+        inode_usage_var: { "5m": [ 1, 0.71, 0.18 ] }
+        app_error_rate: { "5m": [ 0.33, 0.05, 0.002 ] }
       logs:
         - "2026-09-10T09:30:02Z tmp-cleaner INFO config reloaded; removed 6.1M expired session files"
 expected_answer: "/var is out of inodes, not bytes: tmp-cleaner crashed on a config error at 04:00 and stopped expiring PHP session files. Restarting tmp-cleaner cleared 6.1M files and app writes recovered."
 endpoint:
-  answer_mentions: [tmp-cleaner]
+  answer_mentions: [ tmp-cleaner ]
   required_effects:
     - { tool: restart_service, args: { name: tmp-cleaner } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: No space left on device } }
-  - { tool: get_metric, args: { name: inode_usage_var, window: 5m } }
+  - { tool: search_logs, args: { query: app-3 No space left on device } }
+  - { tool: search_logs, args: { query: tmp-cleaner } }
   - { tool: restart_service, args: { name: tmp-cleaner } }
   - { tool: get_metric, args: { name: inode_usage_var, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: get_metric, args: { name: app_error_rate, window: 5m } }
+  - { tool: post_status, args: { message: "Incident resolved: inode exhaustion on app-3 cleared after restarting tmp-cleaner. Services are operating normally." } }
+golden_source: baseline
+golden_final_answer: |-
+  Root cause: The tmp-cleaner service had crashed due to a config parse error, causing inodes to be exhausted by session files in /var/lib/php/sessions. 
+
+  Action taken: Restarted tmp-cleaner, which cleared old session files and freed inodes.
+
+  Affected service: app (and indirectly php-sessions).
+golden_scenario_hash: 90f9bc02d5592e90

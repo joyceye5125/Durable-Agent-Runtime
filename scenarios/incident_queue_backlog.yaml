@@ -2,7 +2,7 @@ id: incident_queue_backlog
 kind: eval
 task: "ALERT email_queue_depth = 91000 and growing; password-reset emails delayed. Diagnose and remediate. Services in this namespace: email-worker, smtp-relay, api, redis-queue. Metrics available: email_queue_depth, email_worker_throughput, smtp_relay_errors."
 world:
-  services: [email-worker, smtp-relay, api, redis-queue]
+  services: [ email-worker, smtp-relay, api, redis-queue ]
   logs:
     - "2026-09-10T06:11:02Z redis-queue WARN brief network partition (4s) between az-1 and az-2"
     - "2026-09-10T06:11:09Z email-worker ERROR consumer thread blocked on stale connection; no messages processed since 06:11"
@@ -10,25 +10,32 @@ world:
     - "2026-09-10T07:05:13Z smtp-relay INFO accepted 0 messages in last 5m"
     - "2026-09-10T07:06:40Z api INFO enqueued password_reset email for user 55231"
   metrics:
-    email_queue_depth: { "5m": [88000, 90000, 91000], "1h": [1200, 45000, 91000], "24h": [480, 480, 1200, 91000] }
-    email_worker_throughput: { "5m": [0, 0, 0], "1h": [0, 0, 0], "24h": [0, 0, 0, 0] }
-    smtp_relay_errors: { "5m": [0, 0, 0], "1h": [0, 0, 0], "24h": [0, 0, 0, 0] }
+    email_queue_depth: { "5m": [ 88000, 90000, 91000 ], "1h": [ 1200, 45000, 91000 ], "24h": [ 480, 480, 1200, 91000 ] }
+    email_worker_throughput: { "5m": [ 0, 0, 0 ], "1h": [ 0, 0, 0 ], "24h": [ 0, 0, 0, 0 ] }
+    smtp_relay_errors: { "5m": [ 0, 0, 0 ], "1h": [ 0, 0, 0 ], "24h": [ 0, 0, 0, 0 ] }
   effects:
     - when: { tool: restart_service, args: { name: email-worker } }
       metrics:
-        email_queue_depth: { "5m": [91000, 62000, 30000] }
-        email_worker_throughput: { "5m": [0, 1900, 2100] }
+        email_queue_depth: { "5m": [ 91000, 62000, 30000 ] }
+        email_worker_throughput: { "5m": [ 0, 1900, 2100 ] }
       logs:
         - "2026-09-10T07:12:44Z email-worker INFO reconnected to redis-queue, draining backlog"
 expected_answer: "After a short network partition the email-worker consumer blocked on a stale connection and stopped consuming while still heartbeating. Restarting email-worker reconnected it and the queue is draining."
 endpoint:
-  answer_mentions: [email-worker]
+  answer_mentions: [ email-worker ]
   required_effects:
     - { tool: restart_service, args: { name: email-worker } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: email queue } }
-  - { tool: get_metric, args: { name: email_queue_depth, window: 5m } }
+  - { tool: get_metric, args: { name: email_worker_throughput, window: 5m } }
+  - { tool: search_logs, args: { query: email-worker error } }
   - { tool: restart_service, args: { name: email-worker } }
+  - { tool: get_metric, args: { name: email_worker_throughput, window: 5m } }
   - { tool: get_metric, args: { name: email_queue_depth, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: get_metric, args: { name: smtp_relay_errors, window: 5m } }
+  - { tool: post_status, args: { message: Password reset email delays resolved. Email processing has resumed and queue is clearing. No further issues detected. } }
+golden_source: baseline
+golden_final_answer: |-
+  Root cause: The email-worker service was blocked due to a stale connection, causing it to stop processing emails and resulting in a growing email queue.
+  Action taken: Restarted the email-worker service, which restored throughput and cleared the queue.
+  Affected service: email-worker.
+golden_scenario_hash: 803641056a7eed68

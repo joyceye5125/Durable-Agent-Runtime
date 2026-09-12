@@ -26,19 +26,19 @@ endpoint:
   required_effects:
     - { tool: restart_service, args: { name: recommendations } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: gateway error } }
-  - { tool: get_metric, args: { name: recommendations_latency_p99_ms, window: 5m } }
-  - { tool: search_logs, args: { query: recommendations error } }
-  - { tool: restart_service, args: { name: recommendations } }
   - { tool: get_metric, args: { name: gateway_5xx_rate, window: 5m } }
-  - { tool: get_metric, args: { name: recommendations_latency_p99_ms, window: 5m } }
   - { tool: search_logs, args: { query: gateway error } }
-  - { tool: post_status, args: { message: "Incident resolved: gateway 5xx errors and latency caused by recommendations service deadlock. Recommendations service has been restarted and is operating normally." } }
+  - { tool: search_logs, args: { query: recommendations error } }
+  - { tool: get_metric, args: { name: recommendations_latency_p99_ms, window: 5m } }
+  - { tool: restart_service, args: { name: recommendations } }
+  - { tool: get_metric, args: { name: recommendations_latency_p99_ms, window: 5m } }
+  - { tool: get_metric, args: { name: gateway_5xx_rate, window: 5m } }
+  - { tool: post_status, args: { message: "Incident resolved: gateway 5xx errors and latency caused by recommendations service deadlock. Recommendations service was restarted and is now healthy." } }
 golden_source: baseline
 golden_final_answer: |-
-  Root cause: The recommendations service experienced a deadlock during a model refresh, blocking request handlers and causing high latency. This exhausted the gateway thread pool, resulting in elevated 5xx errors.
+  Root cause: The recommendations service experienced a deadlock, blocking request handlers and causing high latency. This exhausted the gateway thread pool, resulting in elevated 5xx errors.
 
   Action taken: Restarted the recommendations service to clear the deadlock.
 
-  Affected service: recommendations (impacting gateway).
+  Affected service: gateway (impacted by recommendations).
 golden_scenario_hash: 2771ee5698cfd090

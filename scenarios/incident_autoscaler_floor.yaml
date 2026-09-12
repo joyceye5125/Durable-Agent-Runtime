@@ -2,36 +2,45 @@ id: incident_autoscaler_floor
 kind: eval
 task: "ALERT search_latency_p99_ms = 1900 (SLO 400). Diagnose and remediate. Services in this namespace: search-api, search-index, autoscaler, api. Metrics available: search_latency_p99_ms, search_api_replicas, search_index_latency_p99_ms."
 world:
-  services: [search-api, search-index, autoscaler, api]
+  services: [ search-api, search-index, autoscaler, api ]
   logs:
     - "2026-09-10T14:00:10Z autoscaler ERROR failed to read metrics for search-api (permission denied); holding at minReplicas=2"
     - "2026-09-10T14:20:31Z search-api WARN cpu 94% on 2/2 replicas; normal weekday midday is 6 replicas"
     - "2026-09-10T14:21:00Z search-index INFO query latency p99 35ms"
     - "2026-09-10T14:21:40Z api INFO healthy"
   metrics:
-    search_latency_p99_ms: { "5m": [1500, 1800, 1900], "1h": [330, 900, 1900], "24h": [132, 132, 330, 1900] }
-    search_api_replicas: { "5m": [2, 2, 2], "1h": [2, 2, 2], "24h": [2, 2, 2, 2] }
-    search_index_latency_p99_ms: { "5m": [34, 36, 35], "1h": [33, 34, 35], "24h": [13, 13, 33, 35] }
+    search_latency_p99_ms: { "5m": [ 1500, 1800, 1900 ], "1h": [ 330, 900, 1900 ], "24h": [ 132, 132, 330, 1900 ] }
+    search_api_replicas: { "5m": [ 2, 2, 2 ], "1h": [ 2, 2, 2 ], "24h": [ 2, 2, 2, 2 ] }
+    search_index_latency_p99_ms: { "5m": [ 34, 36, 35 ], "1h": [ 33, 34, 35 ], "24h": [ 13, 13, 33, 35 ] }
   effects:
     - when: { tool: scale_service, args: { name: search-api, replicas: { gte: 3 } } }
       metrics:
-        search_latency_p99_ms: { "5m": [1900, 1250, 1150] }
-        search_api_replicas: { "5m": [2, 3, 3] }
+        search_latency_p99_ms: { "5m": [ 1900, 1250, 1150 ] }
+        search_api_replicas: { "5m": [ 2, 3, 3 ] }
       logs:
         - "2026-09-10T14:26:02Z search-api INFO scaled out; cpu still above 85%, short of the usual weekday midday footprint"
     - when: { tool: scale_service, args: { name: search-api, replicas: { gte: 5 } } }
       metrics:
-        search_latency_p99_ms: { "5m": [1900, 520, 290] }
-        search_api_replicas: { "5m": [2, 6, 6] }
+        search_latency_p99_ms: { "5m": [ 1900, 520, 290 ] }
+        search_api_replicas: { "5m": [ 2, 6, 6 ] }
 expected_answer: "The autoscaler lost permission to read search-api metrics and pinned it at 2 replicas, which are CPU-saturated at midday load. Scaled search-api to its normal 6 replicas; latency recovered. The autoscaler permission still needs fixing."
 endpoint:
-  answer_mentions: [search-api]
+  answer_mentions: [ search-api ]
   required_effects:
     - { tool: scale_service, args: { name: search-api, replicas: { gte: 5 } } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: search-api latency } }
-  - { tool: get_metric, args: { name: search_latency_p99_ms, window: 5m } }
+  - { tool: get_metric, args: { name: search_index_latency_p99_ms, window: 5m } }
+  - { tool: get_metric, args: { name: search_api_replicas, window: 5m } }
+  - { tool: get_metric, args: { name: search_latency_p99_ms, window: 1h } }
+  - { tool: search_logs, args: { query: search-api error } }
   - { tool: scale_service, args: { name: search-api, replicas: 6 } }
   - { tool: get_metric, args: { name: search_latency_p99_ms, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: post_status, args: { message: "Incident: Elevated search latency. Cause: search-api was under-provisioned due to autoscaler error. Mitigation: Manually scaled search-api to normal weekday capacity. Latency is recovering." } }
+golden_source: baseline
+golden_final_answer: |-
+  Root cause: The search-api service was running at minimum replicas (2) due to an autoscaler error ("permission denied"), causing high latency. 
+
+  Action taken: Manually scaled search-api to 6 replicas, restoring normal capacity.
+
+  Affected service: search-api.
+golden_scenario_hash: 4e60c2cd931e1fa7

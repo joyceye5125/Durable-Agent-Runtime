@@ -1,0 +1,123 @@
+{
+  "config_label": "baseline",
+  "task_id": "incident_gc_pauses",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "854531d02168c4f4c621266a1375a5f0393b9e1f23133d9ccac4955ff6cf63f1",
+  "recorded_at": "2026-09-12T22:04:30.623Z",
+  "entries": [
+    {
+      "key": "0133da1d7f383894bd391460093f8e4d181955a7d182bb5926129dc3f7851fc7",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_gc_pause_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 801,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "3b0c945def9ad51d2f2a8c308176bd9fcfdebd449d5ce7cfc7431eda0bcb9309",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_query_latency_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 857,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "eb003127abc994560e06068f88f85807815a6bc57b9b3eadc62a9f7f6a852359",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 908,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "327928081d8285d7270b717dcb449df33563626d194cbd25f669cee3f467c19c",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"ledger-service error\"}"
+        },
+        "tokensIn": 961,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "9fd76f5e54a8962dda91a554cf07c57832af95fbdc08210db695f4baf963d58a",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"ledger-service\",\"replicas\":8}"
+        },
+        "tokensIn": 1069,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "220ad1883f1e16cd69145710e136f584ae0d475d270e63b183fd08dbdf2fd4f2",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1112,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "2ec6f6fdbea3a2ab86d381668d7033f6e89075b1590b40be57ca9d5ef456b959",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_gc_pause_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1168,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "8b8ed748a7acf7c4f83f25f57130775cbb6425f9b61faf7aa4f4af34223bad40",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Ledger service latency has returned to normal after scaling up to handle increased load. Monitoring for stability.\"}"
+        },
+        "tokensIn": 1222,
+        "tokensOut": 32
+      }
+    },
+    {
+      "key": "6e67f6f1c88d4188526bce15d6df765fd8c6dd4bb9d85c26292ae25d0d922555",
+      "turn": 17,
+      "response": {
+        "text": "Root cause: The ledger-service was under-provisioned during a period of high load, leading to excessive GC pauses and high latency. \n\nAction taken: Scaled the ledger-service from 3 to 8 replicas as per capacity planning guidance.\n\nAffected service: ledger-service.",
+        "tokensIn": 1267,
+        "tokensOut": 56
+      }
+    }
+  ]
+}

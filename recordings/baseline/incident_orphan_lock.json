@@ -1,0 +1,110 @@
+{
+  "config_label": "baseline",
+  "task_id": "incident_orphan_lock",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "854531d02168c4f4c621266a1375a5f0393b9e1f23133d9ccac4955ff6cf63f1",
+  "recorded_at": "2026-09-12T22:08:24.713Z",
+  "entries": [
+    {
+      "key": "1af59774ad00f2b1140b7431471e1ce3c6eeba1a38ec1a3c0b9e2751e251598f",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 790,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "2bffb7d24156b3586a6db13b36c9530b5b29961648469ada24a7acf7e0e0abd0",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"inventory-sync error\"}"
+        },
+        "tokensIn": 848,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "3989ec98f60c7a6754b5cedf4f6b1bffbedd37506a6bf3b1c95e8d4640956b84",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"postgres error\"}"
+        },
+        "tokensIn": 966,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "4b21fb818fd13752b26aaff926423755bee56556747aea7b995e5eeb3a7934a1",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"inventory-sync\"}"
+        },
+        "tokensIn": 1048,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "9c0ae260f51de5237e9a92fc32fba2ea3cdae5c134623315eb0519ffa5f84aac",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1082,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "5cc4043a09cde5ef221172d592158c8150fddeabc9533502d77abbbf707fbbfc",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"storefront_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1138,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "3c6e3bc249c69432773e6a6298444c80123fcdd2909c78cf41cbf9f388317bc9",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Inventory sync issue resolved. Stock counts are up to date and services are operating normally.\"}"
+        },
+        "tokensIn": 1195,
+        "tokensOut": 30
+      }
+    },
+    {
+      "key": "136a7d2b8a55ab98ad938c83c190900a2ffea8359b31464ca7ec110937e969a5",
+      "turn": 15,
+      "response": {
+        "text": "Root cause: The inventory-sync service encountered a panic that left a database advisory lock held, preventing further sync cycles and causing stale stock counts in the storefront.\n\nAction taken: Restarted the inventory-sync service to clear the stuck lock and resume normal operation.\n\nAffected service: inventory-sync.",
+        "tokensIn": 1238,
+        "tokensOut": 57
+      }
+    }
+  ]
+}

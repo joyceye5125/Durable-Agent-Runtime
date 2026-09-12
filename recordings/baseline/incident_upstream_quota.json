@@ -1,0 +1,136 @@
+{
+  "config_label": "baseline",
+  "task_id": "incident_upstream_quota",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "854531d02168c4f4c621266a1375a5f0393b9e1f23133d9ccac4955ff6cf63f1",
+  "recorded_at": "2026-09-12T22:10:14.690Z",
+  "entries": [
+    {
+      "key": "551c7607137d879d7c10dfeebe43a0b4393b43eaaecae2911d0313d193792dd5",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_service_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 791,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "53ce876668fadc405e5a8440797fdc0de61c4bf90a69e29b6507932c6f420a46",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"maps_api_calls_per_min\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 848,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "491f47ad424f231a0cb80137f00c2e85511b993743ca9b4431718d554ad809f3",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_cache_hit_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 904,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "b6166dc4655327ec34fd97a43fc2a5323662155fe2909c710fdaf17307f976ed",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"geo-cache error\"}"
+        },
+        "tokensIn": 957,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "eafb7f2e7201bf0e8cd5e8d6631785c2bc805bcd295b440e1383f481a364b1fc",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"geo-cache\"}"
+        },
+        "tokensIn": 1074,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "027401580df41e1754bf36d5dbb3b511d80eab27bb884882ee182213105c1813",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_cache_hit_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1108,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "61400d1ce7dfee6ad8a99844d92d01b0bc175950e70a1b6f6b7db17d91f5b341",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_service_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1163,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "2d15f4c4c54d24d3fae45bbe22b54b13d3610ec06b3eacbbf1228fbf80459678",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"maps_api_calls_per_min\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1220,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "2904f52d4565d3d57cb84662a276bb9daae6e89a87cfaff87e47116b08def75b",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: geo-service errors and upstream 429s were caused by a geo-cache failure. Cache has been restored and service is operating normally.\"}"
+        },
+        "tokensIn": 1276,
+        "tokensOut": 42
+      }
+    },
+    {
+      "key": "7331f008bd3f8da74c4618651c6b27455a76445f6c495d81f153f0c30bce3b93",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The geo-cache service experienced an OOM event and became unavailable, causing all geo-service requests to bypass the cache and overload the upstream maps API, resulting in 429 errors and a high geo_service_error_rate.\n\nAction taken: Restarted the geo-cache service, restoring cache functionality and normalizing error rates and API usage.\n\nAffected service: geo-service.",
+        "tokensIn": 1331,
+        "tokensOut": 74
+      }
+    }
+  ]
+}

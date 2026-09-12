@@ -1,0 +1,218 @@
+{
+  "config_label": "baseline",
+  "task_id": "incident_log_flood",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "854531d02168c4f4c621266a1375a5f0393b9e1f23133d9ccac4955ff6cf63f1",
+  "recorded_at": "2026-09-12T22:05:39.745Z",
+  "entries": [
+    {
+      "key": "a0caf894a699d3ca276bd6e7eb3fcef101bf0f1a9045e530044dd0bb4eaa400e",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_pipeline_ingest_lag_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 799,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "5f9a85c4ecc894d4995d8384ad75a0c795be74375469a70f12f8a9255ca38005",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_lines_per_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 859,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "0a575940b3199ec5703b016d7673589c500000bbaa3ad11dc850c865bcaf3609",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-shipper error\"}"
+        },
+        "tokensIn": 913,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "b3a5e28d17af40d06272c5bf702ef61d776781d9fd976e2f5c01bcd21a1ded38",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-store error\"}"
+        },
+        "tokensIn": 1035,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "30841c15e2dee908677b74d29abe08af0a0a48399d86a262c6e9ad75dcb6f78a",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"checkout-api TRACE\"}"
+        },
+        "tokensIn": 1155,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "bb2879b33e47e89858448baf064bdb414ab2d6b5a53026ca3330c970ed55aea3",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-store slow\"}"
+        },
+        "tokensIn": 1269,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "b121a2422107220b4f5bdf292333d08637ba6d9653cdd64a9bb4bea721678d94",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-store\"}"
+        },
+        "tokensIn": 1389,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "973eceb7aa166a4334be79e108b5be5cf7c36eefb161d038dca64c0a32996744",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-shipper\"}"
+        },
+        "tokensIn": 1508,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "05a69f45d5c9c9e8105649af10162d113f139461b16f35740eac3faee52b02d8",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-store capacity\"}"
+        },
+        "tokensIn": 1629,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "fd98a7eb827505eb57ea5e3271d17211bac212e092dbdee5088b70b634683706",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-store overload\"}"
+        },
+        "tokensIn": 1749,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "0baaed5dc761966f2b7e95889ecfde720d052e48c0e9feaea9d5445e70bccfb1",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-store WARN\"}"
+        },
+        "tokensIn": 1869,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "3774272c93ab20db80c5aaf9db4be6ec100a9db7c2760feaee38d7d7a0497b37",
+      "turn": 23,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"log-store\",\"replicas\":2}"
+        },
+        "tokensIn": 1989,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "839c00a8645dc8a7a7c97bbfe38cb8f366ceb4be3c729b52db1b23193d65741e",
+      "turn": 25,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_pipeline_ingest_lag_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 2032,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "5b19aa209e2d4e1ca6abeac4707ce125efbf8903dc68bfcb221dd0c2486d4954",
+      "turn": 27,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_lines_per_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 2092,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "4b85117f90742d8e0ebccd8ff69087748e1cb14d7211cc1a25fabe401dfae0e5",
+      "turn": 29,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"log-store\",\"replicas\":4}"
+        },
+        "tokensIn": 2146,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "3904dde587d3e3464f7e3788883ed6c1b12f81f32f12f268434239c3e1e177ab",
+      "turn": 31,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_pipeline_ingest_lag_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 2189,
+        "tokensOut": 25
+      }
+    }
+  ]
+}

@@ -2,38 +2,46 @@ id: incident_websocket_limit
 kind: eval
 task: "ALERT realtime_connection_rejections = 3,800/min; live updates failing for users. Diagnose and remediate. Services in this namespace: realtime, api, redis-pubsub. Metrics available: realtime_connection_rejections, realtime_connections, realtime_replicas."
 world:
-  services: [realtime, api, redis-pubsub]
+  services: [ realtime, api, redis-pubsub ]
   logs:
     - "2026-09-10T19:00:04Z realtime WARN max connections per instance reached (20000/20000) on 3/3 replicas"
     - "2026-09-10T19:00:05Z realtime INFO sports final started; connected clients 60k and rising; at least 6 replicas needed, 8 recommended"
     - "2026-09-10T19:01:12Z redis-pubsub INFO cpu 22%"
     - "2026-09-10T19:01:30Z api INFO healthy"
   metrics:
-    realtime_connection_rejections: { "5m": [900, 2600, 3800], "1h": [0, 900, 3800], "24h": [0, 0, 0, 3800] }
-    realtime_connections: { "5m": [58000, 60000, 60000], "1h": [56400, 58000, 60000], "24h": [22560, 22560, 56400, 60000] }
-    realtime_replicas: { "5m": [3, 3, 3], "1h": [3, 3, 3], "24h": [3, 3, 3, 3] }
+    realtime_connection_rejections: { "5m": [ 900, 2600, 3800 ], "1h": [ 0, 900, 3800 ], "24h": [ 0, 0, 0, 3800 ] }
+    realtime_connections: { "5m": [ 58000, 60000, 60000 ], "1h": [ 56400, 58000, 60000 ], "24h": [ 22560, 22560, 56400, 60000 ] }
+    realtime_replicas: { "5m": [ 3, 3, 3 ], "1h": [ 3, 3, 3 ], "24h": [ 3, 3, 3, 3 ] }
   effects:
     - when: { tool: scale_service, args: { name: realtime, replicas: { gte: 4 } } }
       metrics:
-        realtime_connection_rejections: { "5m": [3800, 2000, 1800] }
-        realtime_connections: { "5m": [60000, 79000, 80000] }
-        realtime_replicas: { "5m": [3, 4, 4] }
+        realtime_connection_rejections: { "5m": [ 3800, 2000, 1800 ] }
+        realtime_connections: { "5m": [ 60000, 79000, 80000 ] }
+        realtime_replicas: { "5m": [ 3, 4, 4 ] }
       logs:
         - "2026-09-10T19:08:40Z realtime INFO scaled out; still rejecting connections at this replica count"
     - when: { tool: scale_service, args: { name: realtime, replicas: { gte: 6 } } }
       metrics:
-        realtime_connection_rejections: { "5m": [3800, 400, 0] }
-        realtime_connections: { "5m": [60000, 97000, 104000] }
-        realtime_replicas: { "5m": [3, 8, 8] }
+        realtime_connection_rejections: { "5m": [ 3800, 400, 0 ] }
+        realtime_connections: { "5m": [ 60000, 97000, 104000 ] }
+        realtime_replicas: { "5m": [ 3, 8, 8 ] }
 expected_answer: "A live sports final pushed realtime to its per-instance connection cap on all 3 replicas. Scaled realtime out; rejections stopped."
 endpoint:
-  answer_mentions: [realtime]
+  answer_mentions: [ realtime ]
   required_effects:
     - { tool: scale_service, args: { name: realtime, replicas: { gte: 6 } } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: realtime connections } }
+  - { tool: get_metric, args: { name: realtime_connection_rejections, window: 5m } }
   - { tool: get_metric, args: { name: realtime_connections, window: 5m } }
+  - { tool: get_metric, args: { name: realtime_replicas, window: 5m } }
+  - { tool: search_logs, args: { query: realtime error } }
   - { tool: scale_service, args: { name: realtime, replicas: 8 } }
   - { tool: get_metric, args: { name: realtime_connection_rejections, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: get_metric, args: { name: realtime_connections, window: 5m } }
+  - { tool: post_status, args: { message: Live updates are restored. The realtime service was scaled up to handle increased user demand during a major event. } }
+golden_source: baseline
+golden_final_answer: |-
+  Root cause: The realtime service reached its maximum connection limit per instance due to a surge in user demand, causing connection rejections and live update failures.
+  Action taken: Scaled the realtime service from 3 to 8 replicas to accommodate the increased load.
+  Affected service: realtime.
+golden_scenario_hash: fd1200e96d64d40d

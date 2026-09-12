@@ -2,27 +2,38 @@ id: incident_partition_consumer
 kind: eval
 task: "ALERT kafka_consumer_lag_p7 = 1.4M; the other partitions are normal. Diagnose and remediate. Services in this namespace: events-consumer, kafka, analytics-sink. Metrics available: kafka_consumer_lag_p7, kafka_consumer_lag_other."
 world:
-  services: [events-consumer, kafka, analytics-sink]
+  services: [ events-consumer, kafka, analytics-sink ]
   logs:
     - "2026-09-10T05:12:40Z events-consumer ERROR partition 7: poison message at offset 88123410 (schema v9 unknown); handler retrying forever"
     - "2026-09-10T05:12:41Z events-consumer INFO partitions 0-6,8-11 healthy"
     - "2026-09-10T06:00:00Z kafka INFO brokers healthy, ISR full"
     - "2026-09-10T06:01:30Z analytics-sink INFO writes normal"
   metrics:
-    kafka_consumer_lag_p7: { "5m": [1350000, 1380000, 1400000], "1h": [1310000, 1350000, 1400000], "24h": [524000, 524000, 1310000, 1400000] }
-    kafka_consumer_lag_other: { "5m": [120, 90, 110], "1h": [128, 120, 110], "24h": [128, 128, 128, 110] }
+    kafka_consumer_lag_p7: { "5m": [ 1350000, 1380000, 1400000 ], "1h": [ 1310000, 1350000, 1400000 ], "24h": [ 524000, 524000, 1310000, 1400000 ] }
+    kafka_consumer_lag_other: { "5m": [ 120, 90, 110 ], "1h": [ 128, 120, 110 ], "24h": [ 128, 128, 128, 110 ] }
   effects:
     - when: { tool: restart_service, args: { name: events-consumer } }
       logs:
         - "2026-09-10T06:10:02Z events-consumer INFO restarted; partition 7: poison message at offset 88123410 (schema v9 unknown); handler retrying forever"
 expected_answer: "One poison message (unknown schema v9) on partition 7 makes events-consumer retry forever; a restart hits the same offset again. Skipping or dead-lettering it needs a human decision: paged on-call."
 endpoint:
-  answer_mentions: [partition 7]
+  answer_mentions: [ partition 7 ]
   required_effects:
     - { tool: page_oncall }
 golden_trajectory:
-  - { tool: search_logs, args: { query: events-consumer partition 7 } }
+  - { tool: get_metric, args: { name: kafka_consumer_lag_p7, window: 1h } }
+  - { tool: search_logs, args: { query: events-consumer error } }
+  - { tool: search_logs, args: { query: kafka partition 7 } }
+  - { tool: restart_service, args: { name: events-consumer } }
   - { tool: get_metric, args: { name: kafka_consumer_lag_p7, window: 5m } }
-  - { tool: page_oncall, args: { message: (predicted) } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: search_logs, args: { query: events-consumer partition 7 } }
+  - { tool: page_oncall, args: { message: "events-consumer is stuck retrying a poison message with unknown schema (v9) on Kafka partition 7, causing consumer lag. Restart did not resolve. Manual intervention required to handle or skip the poison message at offset 88123410." } }
+  - { tool: post_status, args: { message: "Incident: Kafka consumer lag on partition 7 due to poison message. Engineering is investigating. Other partitions unaffected." } }
+golden_source: baseline
+golden_final_answer: |-
+  Root cause: The events-consumer service is stuck retrying a poison message with an unknown schema (v9) on Kafka partition 7, causing persistent consumer lag. Restarting the service did not resolve the issue.
+
+  Action taken: Paged the on-call engineer, as manual intervention is required to handle or skip the poison message at offset 88123410.
+
+  Affected service: events-consumer.
+golden_scenario_hash: fbc6ea326dad6fbb

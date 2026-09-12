@@ -2,27 +2,35 @@ id: incident_crashloop_image
 kind: eval
 task: "ALERT pdf_renderer_restarts = 38 in 20 minutes; invoice PDFs not generated. Diagnose and remediate. Services in this namespace: pdf-renderer, billing-api, deployer. Metrics available: pdf_renderer_restarts, billing_api_error_rate."
 world:
-  services: [pdf-renderer, billing-api, deployer]
+  services: [ pdf-renderer, billing-api, deployer ]
   logs:
     - "2026-09-10T16:10:20Z deployer INFO pdf-renderer image v3.2.0 rolled out (previous v3.1.4)"
     - "2026-09-10T16:10:31Z pdf-renderer ERROR fatal: font 'NotoSans-Regular' not found in image; exiting"
     - "2026-09-10T16:11:02Z pdf-renderer ERROR fatal: font 'NotoSans-Regular' not found in image; exiting"
     - "2026-09-10T16:12:00Z billing-api WARN pdf-renderer unavailable, retrying"
   metrics:
-    pdf_renderer_restarts: { "5m": [9, 10, 10], "1h": [0, 18, 38], "24h": [0, 0, 0, 38] }
-    billing_api_error_rate: { "5m": [0.01, 0.01, 0.01], "1h": [0.01, 0.01, 0.01], "24h": [0.01, 0.01, 0.01, 0.01] }
+    pdf_renderer_restarts: { "5m": [ 9, 10, 10 ], "1h": [ 0, 18, 38 ], "24h": [ 0, 0, 0, 38 ] }
+    billing_api_error_rate: { "5m": [ 0.01, 0.01, 0.01 ], "1h": [ 0.01, 0.01, 0.01 ], "24h": [ 0.01, 0.01, 0.01, 0.01 ] }
   effects:
     - when: { tool: restart_service, args: { name: pdf-renderer } }
       logs:
         - "2026-09-10T16:31:09Z pdf-renderer ERROR fatal: font 'NotoSans-Regular' not found in image; exiting"
 expected_answer: "pdf-renderer v3.2.0 ships without the NotoSans font and exits on start, so it crashloops. Restarting can't fix a broken image and there is no rollback tool: paged on-call to roll back to v3.1.4."
 endpoint:
-  answer_mentions: [v3.2.0]
+  answer_mentions: [ v3.2.0 ]
   required_effects:
     - { tool: page_oncall }
 golden_trajectory:
-  - { tool: search_logs, args: { query: pdf-renderer } }
+  - { tool: search_logs, args: { query: pdf-renderer error } }
+  - { tool: search_logs, args: { query: NotoSans-Regular } }
+  - { tool: search_logs, args: { query: deployer } }
+  - { tool: restart_service, args: { name: pdf-renderer } }
+  - { tool: get_metric, args: { name: pdf_renderer_restarts, window: 5m } }
   - { tool: get_metric, args: { name: pdf_renderer_restarts, window: 1h } }
-  - { tool: page_oncall, args: { message: (predicted) } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: get_metric, args: { name: billing_api_error_rate, window: 5m } }
+  - { tool: page_oncall, args: { message: "pdf-renderer is repeatedly crashing after a recent deploy (v3.2.0). Logs show fatal error: missing required font 'NotoSans-Regular' in the image. Manual intervention needed to fix the image or roll back to a working version." } }
+  - { tool: post_status, args: { message: We are investigating an issue with invoice PDF generation. Our team has identified a problem with the PDF rendering service and is working to resolve it. } }
+golden_source: baseline
+golden_final_answer: |-
+  The root cause is a missing required font ('NotoSans-Regular') in the new pdf-renderer image (v3.2.0) deployed recently, causing the service to crash repeatedly. I paged the on-call engineer, as this requires a fix to the image or a rollback, which is beyond my tools. The affected service is pdf-renderer.
+golden_scenario_hash: 204e036a9b4214aa

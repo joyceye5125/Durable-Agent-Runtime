@@ -29,13 +29,16 @@ golden_trajectory:
   - { tool: get_metric, args: { name: api_latency_p99_ms, window: 1h } }
   - { tool: get_metric, args: { name: postgres_cpu, window: 1h } }
   - { tool: search_logs, args: { query: api error } }
+  - { tool: search_logs, args: { query: NullPointerException } }
+  - { tool: search_logs, args: { query: applyCoupon } }
+  - { tool: search_logs, args: { query: v2.41.0 } }
   - { tool: restart_service, args: { name: api } }
   - { tool: get_metric, args: { name: api_error_rate, window: 5m } }
-  - { tool: search_logs, args: { query: api error } }
-  - { tool: page_oncall, args: { message: API error rate spiked to 18% after deployer rolled out api v2.41.0. Logs show repeated NullPointerException at CheckoutHandler.applyCoupon. Restart did not resolve. Rollback or code fix required. } }
-  - { tool: post_status, args: { message: We are investigating elevated API errors following a recent deployment. Engineering is working to resolve the issue. } }
+  - { tool: search_logs, args: { query: api v2.41.0 } }
+  - { tool: page_oncall, args: { message: "API error rate spiked to 18% after deploy of v2.41.0. Logs show NullPointerException at CheckoutHandler.applyCoupon in v2.41.0, and restart did not resolve. Rollback or code fix required." } }
+  - { tool: post_status, args: { message: We are investigating elevated API errors following a recent deployment. Our engineering team is working to resolve the issue. } }
 golden_final_answer: |-
-  Root cause: The api service began throwing NullPointerExceptions in CheckoutHandler.applyCoupon immediately after deployment of version v2.41.0, causing a sustained high error rate. Restarting the service did not resolve the issue, indicating a code or deployment problem.
+  Root cause: The spike in API error rate was caused by a NullPointerException in CheckoutHandler.applyCoupon introduced in the recent deployment of api v2.41.0. Restarting the service did not resolve the issue, confirming a code-level bug in the new release.
 
   Action taken: Paged the on-call engineer for rollback or code fix, and posted a public status update.
 

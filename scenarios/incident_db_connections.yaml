@@ -31,19 +31,19 @@ endpoint:
     - { tool: restart_service, args: { name: reporting-job } }
 golden_trajectory:
   - { tool: get_metric, args: { name: postgres_connections, window: 1h } }
-  - { tool: search_logs, args: { query: checkout error } }
-  - { tool: search_logs, args: { query: reporting-job } }
-  - { tool: search_logs, args: { query: api } }
+  - { tool: get_metric, args: { name: checkout_error_rate, window: 1h } }
+  - { tool: search_logs, args: { query: too many clients } }
   - { tool: search_logs, args: { query: reporting-job error } }
+  - { tool: get_metric, args: { name: postgres_cpu, window: 1h } }
   - { tool: restart_service, args: { name: reporting-job } }
   - { tool: get_metric, args: { name: postgres_connections, window: 5m } }
   - { tool: get_metric, args: { name: checkout_error_rate, window: 5m } }
-  - { tool: post_status, args: { message: "Incident resolved: Checkout errors due to database connection exhaustion. Root cause was runaway reporting-job connections. Service has been remediated and systems are operating normally." } }
+  - { tool: post_status, args: { message: Checkout errors due to database connection exhaustion have been resolved. Root cause was reporting-job leaking connections; service has been restarted and normal operation is restored. } }
 golden_source: baseline
 golden_final_answer: |-
-  Root cause: The reporting-job service exhausted the Postgres connection pool (340/400 connections), causing checkout requests to fail with "too many clients". 
+  Root cause: The reporting-job service leaked database connections, consuming 340 out of 400 available Postgres connections and causing checkout requests to fail with "too many clients" errors.
 
-  Action taken: Restarted the reporting-job service to release connections.
+  Action taken: Restarted the reporting-job service to release the leaked connections.
 
   Affected service: checkout (and indirectly, postgres).
 golden_scenario_hash: 938daac9e659e564

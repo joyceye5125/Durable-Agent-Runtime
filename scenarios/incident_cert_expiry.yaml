@@ -28,10 +28,10 @@ golden_trajectory:
   - { tool: restart_service, args: { name: cert-manager } }
   - { tool: search_logs, args: { query: cert-manager } }
   - { tool: page_oncall, args: { message: "API downtime: TLS certificate for api.example.com expired and cert-manager cannot renew it due to DNS-01 challenge failure (API token revoked). Manual intervention required to restore certificate issuance." } }
-  - { tool: post_status, args: { message: We are investigating an outage affecting api.example.com. The issue is related to an expired TLS certificate. Our team is working to restore service. } }
+  - { tool: post_status, args: { message: We are investigating an outage for api.example.com due to an expired TLS certificate. Our team is working to restore service. } }
 golden_source: baseline
 golden_final_answer: |-
-  Root cause: The TLS certificate for api.example.com expired, and cert-manager cannot renew it because the DNS-01 challenge is failing due to a revoked API token.
-  Action taken: Paged the on-call engineer, as remediation requires manual intervention to restore certificate issuance.
-  Affected service: api (and edge-proxy, due to TLS termination).
+  Root cause: The TLS certificate for api.example.com expired, and cert-manager cannot renew it because the DNS-01 challenge is failing due to a revoked API token. Restarting cert-manager did not resolve the issue.
+
+  Action taken: Paged the on-call engineer for manual intervention to restore certificate issuance. Affected service: api (and edge-proxy).
 golden_scenario_hash: 03bc7ac48634d808

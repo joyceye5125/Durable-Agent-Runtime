@@ -2,30 +2,36 @@ id: incident_replica_lag
 kind: eval
 task: "ALERT postgres_replica_lag_s = 910 on replica-1; dashboards show stale data. Diagnose and remediate. Services in this namespace: postgres, postgres-replica, analytics-etl, dashboards. Metrics available: postgres_replica_lag_s, postgres_primary_cpu."
 world:
-  services: [postgres, postgres-replica, analytics-etl, dashboards]
+  services: [ postgres, postgres-replica, analytics-etl, dashboards ]
   logs:
     - "2026-09-10T02:00:00Z analytics-etl INFO job full_refresh started against postgres-replica"
     - "2026-09-10T02:04:12Z postgres-replica WARN replay paused: conflict with long-running query (pid 8812, analytics-etl, 58 min)"
     - "2026-09-10T02:58:40Z dashboards WARN data freshness 15m"
     - "2026-09-10T02:59:00Z postgres INFO wal generation normal"
   metrics:
-    postgres_replica_lag_s: { "5m": [840, 880, 910], "1h": [2, 400, 910], "24h": [1, 1, 2, 910] }
-    postgres_primary_cpu: { "5m": [0.4, 0.41, 0.39], "1h": [0.408, 0.4, 0.39], "24h": [0.408, 0.408, 0.408, 0.39] }
+    postgres_replica_lag_s: { "5m": [ 840, 880, 910 ], "1h": [ 2, 400, 910 ], "24h": [ 1, 1, 2, 910 ] }
+    postgres_primary_cpu: { "5m": [ 0.4, 0.41, 0.39 ], "1h": [ 0.408, 0.4, 0.39 ], "24h": [ 0.408, 0.408, 0.408, 0.39 ] }
   effects:
     - when: { tool: restart_service, args: { name: analytics-etl } }
       metrics:
-        postgres_replica_lag_s: { "5m": [910, 300, 4] }
+        postgres_replica_lag_s: { "5m": [ 910, 300, 4 ] }
       logs:
         - "2026-09-10T03:05:31Z postgres-replica INFO replay resumed; caught up"
 expected_answer: "A 58-minute analytics-etl query on the replica is blocking WAL replay, so replica lag keeps growing. Restarting analytics-etl cancelled the query and the replica caught up."
 endpoint:
-  answer_mentions: [analytics-etl]
+  answer_mentions: [ analytics-etl ]
   required_effects:
     - { tool: restart_service, args: { name: analytics-etl } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: replica lag } }
   - { tool: get_metric, args: { name: postgres_replica_lag_s, window: 5m } }
+  - { tool: search_logs, args: { query: replica-1 } }
+  - { tool: search_logs, args: { query: analytics-etl } }
   - { tool: restart_service, args: { name: analytics-etl } }
   - { tool: get_metric, args: { name: postgres_replica_lag_s, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: post_status, args: { message: Resolved an issue where dashboards showed stale data due to high replica lag on postgres-replica. The root cause was a long-running analytics-etl query blocking replication. Service has been remediated and data freshness is restored. } }
+golden_source: baseline
+golden_final_answer: |-
+  Root cause: A long-running query from analytics-etl was blocking replication on postgres-replica, causing replica lag and stale data in dashboards.
+  Action: Restarted the analytics-etl service to terminate the blocking query.
+  Affected service: postgres-replica.
+golden_scenario_hash: 2ced2e6647207cc9

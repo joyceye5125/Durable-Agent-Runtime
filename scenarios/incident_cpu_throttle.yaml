@@ -2,7 +2,7 @@ id: incident_cpu_throttle
 kind: eval
 task: "ALERT image_api_latency_p99_ms = 5200; uploads timing out. Diagnose and remediate. Services in this namespace: image-api, object-store, api, thumbnailer. Metrics available: image_api_latency_p99_ms, image_api_cpu_throttled_ratio, image_api_replicas, object_store_put_latency_ms."
 world:
-  services: [image-api, object-store, api, thumbnailer]
+  services: [ image-api, object-store, api, thumbnailer ]
   logs:
     - "2026-09-10T08:30:00Z api INFO bulk import started by customer acme (180k images)"
     - "2026-09-10T08:34:12Z image-api WARN cpu throttled 71% of periods on 2/2 replicas (limit 2 cores)"
@@ -10,32 +10,41 @@ world:
     - "2026-09-10T08:35:00Z object-store INFO put latency p99 60ms"
     - "2026-09-10T08:35:30Z thumbnailer INFO healthy"
   metrics:
-    image_api_latency_p99_ms: { "5m": [3900, 4800, 5200], "1h": [2860, 3900, 5200], "24h": [1144, 1144, 2860, 5200] }
-    image_api_cpu_throttled_ratio: { "5m": [0.62, 0.7, 0.71], "1h": [0.548, 0.62, 0.71], "24h": [0.219, 0.219, 0.548, 0.71] }
-    image_api_replicas: { "5m": [2, 2, 2], "1h": [2, 2, 2], "24h": [2, 2, 2, 2] }
-    object_store_put_latency_ms: { "5m": [58, 61, 60], "1h": [56, 58, 60], "24h": [22, 22, 56, 60] }
+    image_api_latency_p99_ms: { "5m": [ 3900, 4800, 5200 ], "1h": [ 2860, 3900, 5200 ], "24h": [ 1144, 1144, 2860, 5200 ] }
+    image_api_cpu_throttled_ratio: { "5m": [ 0.62, 0.7, 0.71 ], "1h": [ 0.548, 0.62, 0.71 ], "24h": [ 0.219, 0.219, 0.548, 0.71 ] }
+    image_api_replicas: { "5m": [ 2, 2, 2 ], "1h": [ 2, 2, 2 ], "24h": [ 2, 2, 2, 2 ] }
+    object_store_put_latency_ms: { "5m": [ 58, 61, 60 ], "1h": [ 56, 58, 60 ], "24h": [ 22, 22, 56, 60 ] }
   effects:
     - when: { tool: scale_service, args: { name: image-api, replicas: { gte: 3 } } }
       metrics:
-        image_api_latency_p99_ms: { "5m": [5200, 3200, 3000] }
-        image_api_cpu_throttled_ratio: { "5m": [0.71, 0.45, 0.43] }
-        image_api_replicas: { "5m": [2, 3, 3] }
+        image_api_latency_p99_ms: { "5m": [ 5200, 3200, 3000 ] }
+        image_api_cpu_throttled_ratio: { "5m": [ 0.71, 0.45, 0.43 ] }
+        image_api_replicas: { "5m": [ 2, 3, 3 ] }
       logs:
         - "2026-09-10T08:41:11Z image-api INFO scaled out; still throttled, runbook RB-44 calls for 5 replicas during bulk imports"
     - when: { tool: scale_service, args: { name: image-api, replicas: { gte: 5 } } }
       metrics:
-        image_api_latency_p99_ms: { "5m": [5200, 1100, 380] }
-        image_api_cpu_throttled_ratio: { "5m": [0.71, 0.12, 0.03] }
-        image_api_replicas: { "5m": [2, 5, 5] }
+        image_api_latency_p99_ms: { "5m": [ 5200, 1100, 380 ] }
+        image_api_cpu_throttled_ratio: { "5m": [ 0.71, 0.12, 0.03 ] }
+        image_api_replicas: { "5m": [ 2, 5, 5 ] }
 expected_answer: "A 180k-image bulk import is CPU-throttling the 2 image-api replicas. Scaled image-api to 5 replicas per runbook RB-44; latency recovered."
 endpoint:
-  answer_mentions: [image-api]
+  answer_mentions: [ image-api ]
   required_effects:
     - { tool: scale_service, args: { name: image-api, replicas: { gte: 5 } } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: image-api } }
-  - { tool: get_metric, args: { name: image_api_latency_p99_ms, window: 5m } }
+  - { tool: get_metric, args: { name: image_api_latency_p99_ms, window: 1h } }
+  - { tool: get_metric, args: { name: object_store_put_latency_ms, window: 1h } }
+  - { tool: get_metric, args: { name: image_api_cpu_throttled_ratio, window: 1h } }
+  - { tool: get_metric, args: { name: image_api_replicas, window: 1h } }
+  - { tool: search_logs, args: { query: image-api error } }
   - { tool: scale_service, args: { name: image-api, replicas: 5 } }
   - { tool: get_metric, args: { name: image_api_latency_p99_ms, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: get_metric, args: { name: image_api_cpu_throttled_ratio, window: 5m } }
+  - { tool: post_status, args: { message: Image uploads are operating normally after scaling up image-api to handle a bulk import. Latency and CPU throttling have returned to normal levels. } }
+golden_source: baseline
+golden_final_answer: |-
+  Root cause: The image-api service was CPU throttled due to insufficient replicas during a bulk import, causing high latency and upload timeouts.
+  Action taken: Scaled image-api from 2 to 5 replicas, as recommended in the runbook and logs.
+  Affected service: image-api.
+golden_scenario_hash: 0be24730daae8157

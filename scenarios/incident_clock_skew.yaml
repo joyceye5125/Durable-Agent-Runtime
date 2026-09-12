@@ -2,31 +2,39 @@ id: incident_clock_skew
 kind: eval
 task: "ALERT auth_401_rate = 23%: users are being logged out with 'token not yet valid'. Diagnose and remediate. Services in this namespace: auth, api, ntp-agent, session-cache. Metrics available: auth_401_rate, auth_clock_offset_s."
 world:
-  services: [auth, api, ntp-agent, session-cache]
+  services: [ auth, api, ntp-agent, session-cache ]
   logs:
     - "2026-09-10T07:30:00Z ntp-agent ERROR exited after config reload failure on hosts auth-1..auth-3"
     - "2026-09-10T09:41:12Z auth WARN clock offset vs NTP pool: -94s"
     - "2026-09-10T09:41:13Z api ERROR JWT rejected: nbf is in the future (issued by auth)"
     - "2026-09-10T09:42:00Z session-cache INFO hit ratio 0.96"
   metrics:
-    auth_401_rate: { "5m": [0.19, 0.22, 0.23], "24h": [0.001, 0.001, 0.08, 0.23], "1h": [0.158, 0.19, 0.23] }
-    auth_clock_offset_s: { "5m": [-92, -93, -94], "1h": [0, 0, 0], "24h": [0, 0, 0, 0] }
+    auth_401_rate: { "5m": [ 0.19, 0.22, 0.23 ], "24h": [ 0.001, 0.001, 0.08, 0.23 ], "1h": [ 0.158, 0.19, 0.23 ] }
+    auth_clock_offset_s: { "5m": [ -92, -93, -94 ], "1h": [ 0, 0, 0 ], "24h": [ 0, 0, 0, 0 ] }
   effects:
     - when: { tool: restart_service, args: { name: ntp-agent } }
       metrics:
-        auth_clock_offset_s: { "5m": [-94, -2, 0] }
-        auth_401_rate: { "5m": [0.23, 0.04, 0.002] }
+        auth_clock_offset_s: { "5m": [ -94, -2, 0 ] }
+        auth_401_rate: { "5m": [ 0.23, 0.04, 0.002 ] }
       logs:
         - "2026-09-10T09:48:20Z ntp-agent INFO synced; clock stepped +94s on auth-1..auth-3"
 expected_answer: "ntp-agent died at 07:30 on the auth hosts, their clocks drifted 94s behind, and auth issues tokens other services consider not yet valid. Restarting ntp-agent resynced the clocks and 401s dropped."
 endpoint:
-  answer_mentions: [ntp-agent]
+  answer_mentions: [ ntp-agent ]
   required_effects:
     - { tool: restart_service, args: { name: ntp-agent } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: auth token not yet valid } }
   - { tool: get_metric, args: { name: auth_clock_offset_s, window: 5m } }
+  - { tool: search_logs, args: { query: ntp-agent error } }
   - { tool: restart_service, args: { name: ntp-agent } }
+  - { tool: get_metric, args: { name: auth_clock_offset_s, window: 5m } }
   - { tool: get_metric, args: { name: auth_401_rate, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: post_status, args: { message: "Resolved: Authentication errors due to clock drift have been fixed. Service is operating normally." } }
+golden_source: baseline
+golden_final_answer: |-
+  Root cause: The ntp-agent service failed, causing the auth service clock to drift by over 90 seconds. This led to tokens being rejected as "not yet valid," resulting in high 401 rates and user logouts.
+
+  Action taken: Restarted the ntp-agent service, which corrected the clock offset and resolved the authentication errors.
+
+  Affected service: auth (with root cause in ntp-agent).
+golden_scenario_hash: 3a46c05139bd4592

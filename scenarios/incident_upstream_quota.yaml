@@ -2,31 +2,42 @@ id: incident_upstream_quota
 kind: eval
 task: "ALERT geo_service_error_rate = 34%, upstream maps API answering 429. Diagnose and remediate. Services in this namespace: geo-service, geo-cache, api. Metrics available: geo_service_error_rate, geo_cache_hit_ratio, maps_api_calls_per_min."
 world:
-  services: [geo-service, geo-cache, api]
+  services: [ geo-service, geo-cache, api ]
   logs:
     - "2026-09-10T12:01:03Z geo-cache ERROR evicted all keys after OOM; process stuck in replication handshake"
     - "2026-09-10T12:01:40Z geo-service WARN cache unavailable, calling maps API directly for every request"
     - "2026-09-10T12:15:22Z geo-service ERROR maps API 429 Too Many Requests (daily quota 82% used)"
     - "2026-09-10T12:16:00Z api INFO healthy"
   metrics:
-    geo_service_error_rate: { "5m": [0.21, 0.3, 0.34], "1h": [0.106, 0.21, 0.34], "24h": [0.042, 0.042, 0.106, 0.34] }
-    geo_cache_hit_ratio: { "5m": [0, 0, 0], "1h": [0.93, 0, 0], "24h": [0.93, 0.93, 0.93, 0] }
-    maps_api_calls_per_min: { "5m": [9800, 11000, 11400], "1h": [8520, 9800, 11400], "24h": [3408, 3408, 8520, 11400] }
+    geo_service_error_rate: { "5m": [ 0.21, 0.3, 0.34 ], "1h": [ 0.106, 0.21, 0.34 ], "24h": [ 0.042, 0.042, 0.106, 0.34 ] }
+    geo_cache_hit_ratio: { "5m": [ 0, 0, 0 ], "1h": [ 0.93, 0, 0 ], "24h": [ 0.93, 0.93, 0.93, 0 ] }
+    maps_api_calls_per_min: { "5m": [ 9800, 11000, 11400 ], "1h": [ 8520, 9800, 11400 ], "24h": [ 3408, 3408, 8520, 11400 ] }
   effects:
     - when: { tool: restart_service, args: { name: geo-cache } }
       metrics:
-        geo_service_error_rate: { "5m": [0.34, 0.07, 0.004] }
-        geo_cache_hit_ratio: { "5m": [0, 0.64, 0.88] }
-        maps_api_calls_per_min: { "5m": [11400, 3100, 1200] }
+        geo_service_error_rate: { "5m": [ 0.34, 0.07, 0.004 ] }
+        geo_cache_hit_ratio: { "5m": [ 0, 0.64, 0.88 ] }
+        maps_api_calls_per_min: { "5m": [ 11400, 3100, 1200 ] }
 expected_answer: "geo-cache is stuck after an OOM, so geo-service calls the maps API for every request and hits its 429 quota. Restarting geo-cache restored the cache; upstream calls and errors dropped."
 endpoint:
-  answer_mentions: [geo-cache]
+  answer_mentions: [ geo-cache ]
   required_effects:
     - { tool: restart_service, args: { name: geo-cache } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: geo-service 429 } }
-  - { tool: get_metric, args: { name: geo_cache_hit_ratio, window: 5m } }
+  - { tool: get_metric, args: { name: geo_service_error_rate, window: 1h } }
+  - { tool: get_metric, args: { name: maps_api_calls_per_min, window: 1h } }
+  - { tool: get_metric, args: { name: geo_cache_hit_ratio, window: 1h } }
+  - { tool: search_logs, args: { query: geo-cache error } }
   - { tool: restart_service, args: { name: geo-cache } }
+  - { tool: get_metric, args: { name: geo_cache_hit_ratio, window: 5m } }
   - { tool: get_metric, args: { name: geo_service_error_rate, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: get_metric, args: { name: maps_api_calls_per_min, window: 5m } }
+  - { tool: post_status, args: { message: "Incident resolved: geo-service errors and upstream 429s were caused by a geo-cache failure. Cache has been restored and service is operating normally." } }
+golden_source: baseline
+golden_final_answer: |-
+  Root cause: The geo-cache service experienced an OOM event and became unavailable, causing all geo-service requests to bypass the cache and overload the upstream maps API, resulting in 429 errors and a high geo_service_error_rate.
+
+  Action taken: Restarted the geo-cache service, restoring cache functionality and normalizing error rates and API usage.
+
+  Affected service: geo-service.
+golden_scenario_hash: a0d73325e966be83
