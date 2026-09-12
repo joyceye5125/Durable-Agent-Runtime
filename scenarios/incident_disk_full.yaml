@@ -26,3 +26,19 @@ endpoint:
   answer_mentions: [ log-rotator ]
   required_effects:
     - { tool: restart_service, args: { name: log-rotator } }
+golden_trajectory:
+  - { tool: search_logs, args: { query: storage-1 disk full OR no space OR disk usage OR /data } }
+  - { tool: get_metric, args: { name: log_rotator_last_success_age_s, window: 1h } }
+  - { tool: restart_service, args: { name: log-rotator } }
+  - { tool: get_metric, args: { name: disk_usage_data, window: 5m } }
+  - { tool: get_metric, args: { name: log_rotator_last_success_age_s, window: 5m } }
+  - { tool: search_logs, args: { query: log-rotator success OR cleanup OR freed OR deleted } }
+  - { tool: post_status, args: { message: "Incident resolved: Disk usage on storage-1 /data dropped from 96% to 62% after log-rotator was restarted and old logs were cleaned up. No further action required." } }
+golden_final_answer: |-
+  Root cause: The log-rotator service was stuck due to a stale lock file, preventing log cleanup and causing disk usage on storage-1 /data to reach 96%. 
+
+  Action taken: Restarted the log-rotator service, which cleared the stale lock and freed up disk space by rotating and compressing old logs.
+
+  Affected service: log-rotator (impacting /data disk usage).
+golden_source: baseline
+golden_scenario_hash: 5e8b8164a62f3f19

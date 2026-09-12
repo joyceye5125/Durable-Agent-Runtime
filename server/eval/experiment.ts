@@ -2,7 +2,8 @@ import { fold, trajectoryOf } from "../core/events";
 import { CONFIGS } from "../llm/configs";
 import { hasRecording } from "../llm/recording";
 import { buildRuntime, createRun, defaultAgentFactory, type AgentFactory } from "../runtime/runs";
-import { goldenIsCurrent, listScenarioIds, loadScenario, type Scenario } from "../scenarios";
+import { listScenarioIds, loadScenario, type Scenario } from "../scenarios";
+import { goldenIsUsable } from "./golden";
 import type { EvalResultRow, Store } from "../store/store";
 import { scoreTrajectory, type TrajectoryScore } from "./trajectory";
 
@@ -109,7 +110,7 @@ export async function runEvalExperiment(
     changes,
     missedByEndpoint: candidates.filter((c) => c.endpointVerdict === "PASS" && c.trajectoryVerdict === "BLOCKED").length,
     pathOnlyRows: candidates.reduce((s, c) => s + (c.pathOnlyRegressions ?? 0), 0),
-    provisionalGolden: tasks.filter((t) => !goldenIsCurrent(t)).map((t) => t.id),
+    provisionalGolden: tasks.filter((t) => !goldenIsUsable(t)).map((t) => t.id),
   };
 }
 
@@ -175,7 +176,7 @@ export async function latestEvalTable(store: Store): Promise<EvalSummary & { eva
     changes,
     missedByEndpoint: candidates.filter((c) => c.endpointVerdict === "PASS" && c.trajectoryVerdict === "BLOCKED").length,
     pathOnlyRows: candidates.reduce((s, c) => s + (c.pathOnlyRegressions ?? 0), 0),
-    provisionalGolden: tasks.filter((t) => !goldenIsCurrent(t)).map((t) => t.id),
+    provisionalGolden: tasks.filter((t) => !goldenIsUsable(t)).map((t) => t.id),
     evaluatedAt,
   };
 }

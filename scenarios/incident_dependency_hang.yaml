@@ -2,33 +2,43 @@ id: incident_dependency_hang
 kind: eval
 task: "ALERT gateway_5xx_rate = 12%, gateway thread pool at 100%. Diagnose and remediate. Services in this namespace: gateway, recommendations, catalog, cart. Metrics available: gateway_5xx_rate, recommendations_latency_p99_ms, catalog_latency_p99_ms."
 world:
-  services: [gateway, recommendations, catalog, cart]
+  services: [ gateway, recommendations, catalog, cart ]
   logs:
     - "2026-09-10T12:20:31Z gateway WARN thread pool exhausted (200/200); 180 threads waiting on recommendations"
     - "2026-09-10T12:18:02Z recommendations ERROR deadlock detected in model refresh; request handlers blocked"
     - "2026-09-10T12:20:40Z catalog INFO p99 42ms"
     - "2026-09-10T12:20:41Z cart INFO p99 35ms"
   metrics:
-    gateway_5xx_rate: { "5m": [0.06, 0.1, 0.12], "1h": [0.012, 0.06, 0.12], "24h": [0.005, 0.005, 0.012, 0.12] }
-    recommendations_latency_p99_ms: { "5m": [30000, 30000, 30000], "1h": [30000, 30000, 30000], "24h": [30000, 30000, 30000, 30000] }
-    catalog_latency_p99_ms: { "5m": [41, 43, 42], "1h": [40, 41, 42], "24h": [16, 16, 40, 42] }
+    gateway_5xx_rate: { "5m": [ 0.06, 0.1, 0.12 ], "1h": [ 0.012, 0.06, 0.12 ], "24h": [ 0.005, 0.005, 0.012, 0.12 ] }
+    recommendations_latency_p99_ms: { "5m": [ 30000, 30000, 30000 ], "1h": [ 30000, 30000, 30000 ], "24h": [ 30000, 30000, 30000, 30000 ] }
+    catalog_latency_p99_ms: { "5m": [ 41, 43, 42 ], "1h": [ 40, 41, 42 ], "24h": [ 16, 16, 40, 42 ] }
   effects:
     - when: { tool: restart_service, args: { name: recommendations } }
       metrics:
-        gateway_5xx_rate: { "5m": [0.12, 0.03, 0.002] }
-        recommendations_latency_p99_ms: { "5m": [30000, 180, 95] }
+        gateway_5xx_rate: { "5m": [ 0.12, 0.03, 0.002 ] }
+        recommendations_latency_p99_ms: { "5m": [ 30000, 180, 95 ] }
     - when: { tool: restart_service, args: { name: gateway } }
       logs:
         - "2026-09-10T12:26:03Z gateway WARN thread pool exhausted again (200/200) 90s after restart; threads waiting on recommendations"
 expected_answer: "recommendations deadlocked during a model refresh, so gateway threads pile up waiting on it until the pool is exhausted. Restarting recommendations cleared the deadlock and gateway errors dropped."
 endpoint:
-  answer_mentions: [recommendations]
+  answer_mentions: [ recommendations ]
   required_effects:
     - { tool: restart_service, args: { name: recommendations } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: gateway thread pool } }
+  - { tool: search_logs, args: { query: gateway error } }
   - { tool: get_metric, args: { name: recommendations_latency_p99_ms, window: 5m } }
+  - { tool: search_logs, args: { query: recommendations error } }
   - { tool: restart_service, args: { name: recommendations } }
   - { tool: get_metric, args: { name: gateway_5xx_rate, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: get_metric, args: { name: recommendations_latency_p99_ms, window: 5m } }
+  - { tool: search_logs, args: { query: gateway error } }
+  - { tool: post_status, args: { message: "Incident resolved: gateway 5xx errors and latency caused by recommendations service deadlock. Recommendations service has been restarted and is operating normally." } }
+golden_source: baseline
+golden_final_answer: |-
+  Root cause: The recommendations service experienced a deadlock during a model refresh, blocking request handlers and causing high latency. This exhausted the gateway thread pool, resulting in elevated 5xx errors.
+
+  Action taken: Restarted the recommendations service to clear the deadlock.
+
+  Affected service: recommendations (impacting gateway).
+golden_scenario_hash: 2771ee5698cfd090

@@ -2,7 +2,7 @@ id: incident_traffic_spike
 kind: eval
 task: "ALERT web_cpu_utilization = 97% across all web replicas, p99 latency 2.3s. Diagnose and remediate. Services in this namespace: web, api, postgres, marketing-mailer. Metrics available: web_cpu_utilization, web_replicas, web_latency_p99_ms, postgres_cpu."
 world:
-  services: [web, api, postgres, marketing-mailer]
+  services: [ web, api, postgres, marketing-mailer ]
   logs:
     - "2026-09-10T17:00:03Z marketing-mailer INFO campaign FALL-SALE sent to 1.2M recipients"
     - "2026-09-10T17:04:41Z web WARN request rate 3.1x baseline, 4/4 replicas saturated"
@@ -10,32 +10,41 @@ world:
     - "2026-09-10T17:05:10Z api INFO request rate 1.2x baseline, healthy"
     - "2026-09-10T17:05:30Z postgres INFO cpu 38%"
   metrics:
-    web_cpu_utilization: { "5m": [0.91, 0.96, 0.97], "1h": [0.33, 0.52, 0.97], "24h": [0.132, 0.132, 0.33, 0.97] }
-    web_replicas: { "5m": [4, 4, 4], "1h": [4, 4, 4], "24h": [4, 4, 4, 4] }
-    web_latency_p99_ms: { "5m": [1400, 2100, 2300], "1h": [680, 1400, 2300], "24h": [272, 272, 680, 2300] }
-    postgres_cpu: { "5m": [0.36, 0.38, 0.37], "1h": [0.352, 0.36, 0.37], "24h": [0.141, 0.141, 0.352, 0.37] }
+    web_cpu_utilization: { "5m": [ 0.91, 0.96, 0.97 ], "1h": [ 0.33, 0.52, 0.97 ], "24h": [ 0.132, 0.132, 0.33, 0.97 ] }
+    web_replicas: { "5m": [ 4, 4, 4 ], "1h": [ 4, 4, 4 ], "24h": [ 4, 4, 4, 4 ] }
+    web_latency_p99_ms: { "5m": [ 1400, 2100, 2300 ], "1h": [ 680, 1400, 2300 ], "24h": [ 272, 272, 680, 2300 ] }
+    postgres_cpu: { "5m": [ 0.36, 0.38, 0.37 ], "1h": [ 0.352, 0.36, 0.37 ], "24h": [ 0.141, 0.141, 0.352, 0.37 ] }
   effects:
     - when: { tool: scale_service, args: { name: web, replicas: { gte: 5 } } }
       metrics:
-        web_cpu_utilization: { "5m": [0.97, 0.89, 0.87] }
-        web_replicas: { "5m": [4, 6, 6] }
-        web_latency_p99_ms: { "5m": [2300, 1600, 1500] }
+        web_cpu_utilization: { "5m": [ 0.97, 0.89, 0.87 ] }
+        web_replicas: { "5m": [ 4, 6, 6 ] }
+        web_latency_p99_ms: { "5m": [ 2300, 1600, 1500 ] }
       logs:
         - "2026-09-10T17:12:20Z web INFO scaled out; p99 still above SLO, below the 12-replica campaign capacity plan"
     - when: { tool: scale_service, args: { name: web, replicas: { gte: 10 } } }
       metrics:
-        web_cpu_utilization: { "5m": [0.97, 0.55, 0.41] }
-        web_replicas: { "5m": [4, 12, 12] }
-        web_latency_p99_ms: { "5m": [2300, 610, 320] }
+        web_cpu_utilization: { "5m": [ 0.97, 0.55, 0.41 ] }
+        web_replicas: { "5m": [ 4, 12, 12 ] }
+        web_latency_p99_ms: { "5m": [ 2300, 610, 320 ] }
 expected_answer: "A marketing campaign tripled traffic and the 4 web replicas are CPU-saturated. Scaled web out to the campaign capacity plan; CPU and latency recovered."
 endpoint:
-  answer_mentions: [web]
+  answer_mentions: [ web ]
   required_effects:
     - { tool: scale_service, args: { name: web, replicas: { gte: 10 } } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: web cpu } }
   - { tool: get_metric, args: { name: web_cpu_utilization, window: 5m } }
-  - { tool: scale_service, args: { name: web, replicas: 12 } }
+  - { tool: get_metric, args: { name: web_replicas, window: 5m } }
   - { tool: get_metric, args: { name: web_latency_p99_ms, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: search_logs, args: { query: web error } }
+  - { tool: scale_service, args: { name: web, replicas: 12 } }
+  - { tool: get_metric, args: { name: web_cpu_utilization, window: 5m } }
+  - { tool: get_metric, args: { name: web_latency_p99_ms, window: 5m } }
+  - { tool: get_metric, args: { name: web_replicas, window: 5m } }
+  - { tool: post_status, args: { message: "Incident resolved: web service experienced high CPU and latency due to traffic surge. Scaled to 12 replicas as per capacity plan. Performance restored." } }
+golden_source: baseline
+golden_final_answer: |-
+  Root cause: The web service was overloaded due to a traffic surge, saturating all replicas and causing high CPU utilization and latency.
+  Action taken: Scaled the web service from 4 to 12 replicas, matching the documented capacity plan for peak loads.
+  Affected service: web.
+golden_scenario_hash: 5f6c086fdcf60cc4

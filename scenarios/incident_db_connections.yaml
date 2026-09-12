@@ -2,7 +2,7 @@ id: incident_db_connections
 kind: eval
 task: "ALERT postgres_connections = 396/400; checkout requests failing with 'too many clients'. Diagnose and remediate. Services in this namespace: checkout, postgres, reporting-job, api. Metrics available: postgres_connections, checkout_error_rate, postgres_cpu."
 world:
-  services: [checkout, postgres, reporting-job, api]
+  services: [ checkout, postgres, reporting-job, api ]
   logs:
     - "2026-09-10T11:00:00Z reporting-job INFO nightly-rollup started (re-run requested manually)"
     - "2026-09-10T11:02:31Z reporting-job WARN connection pool grew to 340; connections not returned after query timeout"
@@ -10,14 +10,14 @@ world:
     - "2026-09-10T11:14:06Z postgres WARN 396 of 400 connections in use (340 by role reporting)"
     - "2026-09-10T11:14:20Z api INFO healthy"
   metrics:
-    postgres_connections: { "5m": [381, 392, 396], "1h": [120, 290, 396], "24h": [48, 48, 120, 396] }
-    checkout_error_rate: { "5m": [0.08, 0.17, 0.22], "1h": [0, 0.08, 0.22], "24h": [0, 0, 0, 0.22] }
-    postgres_cpu: { "5m": [0.44, 0.46, 0.45], "1h": [0.432, 0.44, 0.45], "24h": [0.173, 0.173, 0.432, 0.45] }
+    postgres_connections: { "5m": [ 381, 392, 396 ], "1h": [ 120, 290, 396 ], "24h": [ 48, 48, 120, 396 ] }
+    checkout_error_rate: { "5m": [ 0.08, 0.17, 0.22 ], "1h": [ 0, 0.08, 0.22 ], "24h": [ 0, 0, 0, 0.22 ] }
+    postgres_cpu: { "5m": [ 0.44, 0.46, 0.45 ], "1h": [ 0.432, 0.44, 0.45 ], "24h": [ 0.173, 0.173, 0.432, 0.45 ] }
   effects:
     - when: { tool: restart_service, args: { name: reporting-job } }
       metrics:
-        postgres_connections: { "5m": [396, 140, 61] }
-        checkout_error_rate: { "5m": [0.22, 0.02, 0.001] }
+        postgres_connections: { "5m": [ 396, 140, 61 ] }
+        checkout_error_rate: { "5m": [ 0.22, 0.02, 0.001 ] }
       logs:
         - "2026-09-10T11:20:10Z postgres INFO 61 of 400 connections in use"
     - when: { tool: restart_service, args: { name: postgres } }
@@ -26,13 +26,24 @@ world:
         - "2026-09-10T11:22:15Z postgres WARN 380 of 400 connections in use (330 by role reporting)"
 expected_answer: "reporting-job leaked its pooled connections after query timeouts and holds most of Postgres's 400 connections, starving checkout. Restarting reporting-job released them and checkout errors cleared."
 endpoint:
-  answer_mentions: [reporting-job]
+  answer_mentions: [ reporting-job ]
   required_effects:
     - { tool: restart_service, args: { name: reporting-job } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: too many clients postgres } }
   - { tool: get_metric, args: { name: postgres_connections, window: 1h } }
+  - { tool: search_logs, args: { query: checkout error } }
+  - { tool: search_logs, args: { query: reporting-job } }
+  - { tool: search_logs, args: { query: api } }
+  - { tool: search_logs, args: { query: reporting-job error } }
   - { tool: restart_service, args: { name: reporting-job } }
+  - { tool: get_metric, args: { name: postgres_connections, window: 5m } }
   - { tool: get_metric, args: { name: checkout_error_rate, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: post_status, args: { message: "Incident resolved: Checkout errors due to database connection exhaustion. Root cause was runaway reporting-job connections. Service has been remediated and systems are operating normally." } }
+golden_source: baseline
+golden_final_answer: |-
+  Root cause: The reporting-job service exhausted the Postgres connection pool (340/400 connections), causing checkout requests to fail with "too many clients". 
+
+  Action taken: Restarted the reporting-job service to release connections.
+
+  Affected service: checkout (and indirectly, postgres).
+golden_scenario_hash: 938daac9e659e564

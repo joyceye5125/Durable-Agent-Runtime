@@ -27,7 +27,8 @@ import { CANDIDATES, getConfig } from "../server/llm/configs";
 import { hasRecording, openAgentLLM, recordingPath, type LlmMode } from "../server/llm/recording";
 import { CRASH_WINDOWS } from "../server/runtime/crash";
 import { buildRuntime, createRun, prepareResume, type AgentFactory } from "../server/runtime/runs";
-import { goldenIsCurrent, listScenarioIds, loadScenario, writeGolden } from "../server/scenarios";
+import { goldenIsUsable } from "../server/eval/golden";
+import { listScenarioIds, loadScenario, writeGolden } from "../server/scenarios";
 import { Store } from "../server/store/store";
 
 /** Run these first to validate the pipeline before recording all 30. */
@@ -96,7 +97,7 @@ const short = (v: unknown, n = 110) => {
 
 async function recordGolden(store: Store) {
   const ids = flag("all")
-    ? listScenarioIds("eval").filter((id) => !goldenIsCurrent(loadScenario(id)))
+    ? listScenarioIds("eval").filter((id) => !goldenIsUsable(loadScenario(id)))
     : flag("pilot")
       ? PILOT
       : [opt("scenario") ?? ""];

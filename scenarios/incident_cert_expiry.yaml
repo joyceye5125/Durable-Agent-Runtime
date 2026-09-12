@@ -2,27 +2,36 @@ id: incident_cert_expiry
 kind: eval
 task: "ALERT synthetic_https_success{target=api.example.com} = 0 from every region. Diagnose and remediate. Services in this namespace: api, edge-proxy, cert-manager. Metrics available: synthetic_https_success, api_requests_per_s."
 world:
-  services: [api, edge-proxy, cert-manager]
+  services: [ api, edge-proxy, cert-manager ]
   logs:
     - "2026-09-10T00:00:01Z edge-proxy ERROR TLS handshake failed: certificate for api.example.com expired at 2026-09-10T00:00:00Z"
     - "2026-09-09T02:00:00Z cert-manager ERROR renewal for api.example.com failed: DNS-01 challenge rejected (API token revoked)"
     - "2026-09-10T00:03:12Z api INFO healthy, 0 requests in last 5m"
     - "2026-09-10T00:04:00Z edge-proxy ERROR TLS handshake failed: certificate for api.example.com expired"
   metrics:
-    synthetic_https_success: { "5m": [0, 0, 0], "1h": [1, 0, 0], "24h": [1, 1, 1, 0] }
-    api_requests_per_s: { "5m": [0, 0, 0], "1h": [0, 0, 0], "24h": [0, 0, 0, 0] }
+    synthetic_https_success: { "5m": [ 0, 0, 0 ], "1h": [ 1, 0, 0 ], "24h": [ 1, 1, 1, 0 ] }
+    api_requests_per_s: { "5m": [ 0, 0, 0 ], "1h": [ 0, 0, 0 ], "24h": [ 0, 0, 0, 0 ] }
   effects:
     - when: { tool: restart_service, args: { name: cert-manager } }
       logs:
         - "2026-09-10T00:15:40Z cert-manager ERROR renewal for api.example.com failed: DNS-01 challenge rejected (API token revoked)"
 expected_answer: "The TLS certificate for api.example.com expired because cert-manager's DNS API token was revoked, so renewal fails. That needs a new token, which no tool can provide: paged on-call."
 endpoint:
-  answer_mentions: [cert]
+  answer_mentions: [ cert ]
   required_effects:
     - { tool: page_oncall }
 golden_trajectory:
-  - { tool: search_logs, args: { query: TLS certificate api.example.com } }
   - { tool: get_metric, args: { name: synthetic_https_success, window: 5m } }
-  - { tool: page_oncall, args: { message: (predicted) } }
-  - { tool: post_status, args: { message: (predicted) } }
-golden_source: predicted
+  - { tool: get_metric, args: { name: api_requests_per_s, window: 5m } }
+  - { tool: search_logs, args: { query: edge-proxy error } }
+  - { tool: search_logs, args: { query: cert-manager error } }
+  - { tool: restart_service, args: { name: cert-manager } }
+  - { tool: search_logs, args: { query: cert-manager } }
+  - { tool: page_oncall, args: { message: "API downtime: TLS certificate for api.example.com expired and cert-manager cannot renew it due to DNS-01 challenge failure (API token revoked). Manual intervention required to restore certificate issuance." } }
+  - { tool: post_status, args: { message: We are investigating an outage affecting api.example.com. The issue is related to an expired TLS certificate. Our team is working to restore service. } }
+golden_source: baseline
+golden_final_answer: |-
+  Root cause: The TLS certificate for api.example.com expired, and cert-manager cannot renew it because the DNS-01 challenge is failing due to a revoked API token.
+  Action taken: Paged the on-call engineer, as remediation requires manual intervention to restore certificate issuance.
+  Affected service: api (and edge-proxy, due to TLS termination).
+golden_scenario_hash: 03bc7ac48634d808
