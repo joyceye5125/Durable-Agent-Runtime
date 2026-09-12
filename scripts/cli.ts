@@ -214,7 +214,9 @@ async function experiment(store: Store) {
     );
     for (const w of CRASH_WINDOWS) {
       const s = summary.byWindow[w];
-      console.log(`  ${w}: durable ${s.durableCorrect}/${s.trials}  naive dup ${s.naiveTrialsWithDuplicates}/${s.naiveMeasured}`);
+      console.log(
+        `  ${w}: durable ${s.durableCorrect}/${s.trials} correct  ·  naive repeated a side effect in ${s.naiveTrialsWithDuplicates}/${s.naiveExposed} of the trials that crashed after one`,
+      );
     }
     console.log(`malformed outputs blocked before any side effect: ${summary.malformed.allBlocked ? "yes" : "NO"}`);
     const cell = `${summary.n} crashes over W1–W4 → **${d.correctPct.toFixed(1)}%** correct resume, **${d.duplicateSideEffects}** duplicate side effects. Naive baseline: **${nv.duplicateRateWhenExposedPct?.toFixed(1) ?? "n/a"}%** of the ${nv.exposed} trials that crashed after a side effect repeated one (${nv.duplicateRows} extra actions; ${nv.duplicateRatePct?.toFixed(1) ?? "n/a"}% of all ${nv.measured} trials${nv.unrecorded ? `, ${nv.unrecorded} unrecorded excluded` : ""}). Seed ${summary.seed}.`;
