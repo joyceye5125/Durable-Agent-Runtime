@@ -12,7 +12,13 @@ export interface EffectMatch {
 }
 
 export interface WorldEffect {
-  when: EffectMatch;
+  when?: EffectMatch;
+  /**
+   * Applies only once every one of these has happened. An incident that needs
+   * two remediations has to read as unfixed after either one alone, or the
+   * agent is right to stop halfway and the task is unsolvable by observation.
+   */
+  when_all?: EffectMatch[];
   /** Metric series that replace the base ones once `when` has happened. */
   metrics?: Record<string, Record<string, number[]>>;
   /** Log lines that appear once `when` has happened. */

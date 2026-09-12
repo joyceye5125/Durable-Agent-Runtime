@@ -35,10 +35,10 @@ describe.each(scenarios.map((s) => [s.id, s] as const))("%s", (_id, s) => {
 
   it("makes an under-sized scale-out visible instead of silent", () => {
     const thresholds = new Map<string, number[]>();
-    for (const e of s.world.effects ?? []) {
-      const replicas = e.when.args?.replicas as { gte?: number } | undefined;
-      if (e.when.tool !== "scale_service" || !replicas?.gte) continue;
-      const key = String(e.when.args?.name);
+    for (const e of triggersOf(s)) {
+      const replicas = e.args?.replicas as { gte?: number } | undefined;
+      if (e.tool !== "scale_service" || !replicas?.gte) continue;
+      const key = String(e.args?.name);
       thresholds.set(key, [...(thresholds.get(key) ?? []), replicas.gte]);
     }
     for (const [service, gtes] of thresholds) {
@@ -49,7 +49,7 @@ describe.each(scenarios.map((s) => [s.id, s] as const))("%s", (_id, s) => {
   });
 
   it("only requires tools that exist, and every effect targets a real service", () => {
-    for (const e of [...s.endpoint.required_effects, ...(s.world.effects ?? []).map((x) => x.when)]) {
+    for (const e of [...s.endpoint.required_effects, ...triggersOf(s)]) {
       expect(getTool(e.tool), `unknown tool ${e.tool}`).toBeDefined();
       if (e.args?.name !== undefined) expect(s.world.services).toContain(String(e.args.name));
     }
@@ -64,7 +64,7 @@ describe.each(scenarios.map((s) => [s.id, s] as const))("%s", (_id, s) => {
   it("recovers in the 5m window, not only in the long ones", () => {
     for (const e of s.world.effects ?? []) {
       for (const [metric, series] of Object.entries(e.metrics ?? {})) {
-        expect(Object.keys(series), `${e.when.tool} -> ${metric}`).toContain("5m");
+        expect(Object.keys(series), `effect -> ${metric}`).toContain("5m");
       }
     }
   });
@@ -74,14 +74,32 @@ describe.each(scenarios.map((s) => [s.id, s] as const))("%s", (_id, s) => {
     // in a page, and it is scored on crash recovery, not on solving it.
     const escalateOnly = s.kind === "crash" || s.endpoint.required_effects.every((e) => e.tool === "page_oncall");
     if (escalateOnly) return;
-    const alerted = [...s.task.matchAll(/ALERT ([a-z_][a-z0-9_]*)|and ([a-z_][a-z0-9_]*) = /g)]
-      .flatMap((m) => [m[1], m[2]])
-      .filter((x): x is string => !!x && x in s.world.metrics);
+    const alerted = alertedMetrics(s);
     expect(alerted.length, "task names no metric that exists").toBeGreaterThan(0);
     const before = currentWorld(s, []);
     const after = currentWorld(s, s.endpoint.required_effects.map((e) => ({ tool: e.tool, args: liftArgs(e.args) })));
     for (const m of alerted) {
       expect(after.metrics[m]?.["5m"], `${m} reads the same at 5m after the fix`).not.toEqual(before.metrics[m]?.["5m"]);
+    }
+  });
+
+  /**
+   * An incident that requires two remediations has to look unfixed after
+   * either one on its own. Otherwise the agent does half, sees the alert
+   * clear, and stops — correctly, by its own evidence — and the scenario is
+   * asking for something the readings never justify.
+   */
+  it("does not look solved after only part of a multi-step remediation", () => {
+    const req = s.endpoint.required_effects;
+    // Again not the crash scenario: it is not scored on being solved, and its
+    // reference run is what C1 measures.
+    if (s.kind === "crash" || req.length < 2) return;
+    const alerted = alertedMetrics(s);
+    const base = currentWorld(s, []);
+    for (const left of req) {
+      const partial = currentWorld(s, [{ tool: left.tool, args: liftArgs(left.args) }]);
+      const stillAlerting = alerted.filter((m) => JSON.stringify(partial.metrics[m]?.["5m"]) === JSON.stringify(base.metrics[m]?.["5m"]));
+      expect(stillAlerting.length, `after ${left.tool} alone, every alerting metric has moved: nothing tells the agent it is not done`).toBeGreaterThan(0);
     }
   });
 
@@ -95,6 +113,18 @@ describe.each(scenarios.map((s) => [s.id, s] as const))("%s", (_id, s) => {
     expect(readsChange || escalateOnly, "required remediation has no observable effect").toBe(true);
   });
 });
+
+/** The metrics the alert itself names: the ones the agent will check to decide it is done. */
+function alertedMetrics(s: Scenario): string[] {
+  return [...s.task.matchAll(/ALERT ([a-z_][a-z0-9_]*)|and ([a-z_][a-z0-9_]*) = /g)]
+    .flatMap((m) => [m[1], m[2]])
+    .filter((x): x is string => !!x && x in s.world.metrics);
+}
+
+/** Every matcher an effect waits on, whether it waits on one or on all of several. */
+function triggersOf(s: Scenario) {
+  return (s.world.effects ?? []).flatMap((e) => e.when_all ?? (e.when ? [e.when] : []));
+}
 
 /** `{ replicas: { gte: 6 } }` describes a class of calls; a ledger row holds one concrete call. */
 function liftArgs(args: Record<string, unknown> = {}): Record<string, unknown> {

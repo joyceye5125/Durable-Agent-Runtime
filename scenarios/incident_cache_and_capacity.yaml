@@ -15,11 +15,17 @@ world:
     price_cache_hit_ratio: { "5m": [0, 0, 0], "1h": [0, 0, 0], "24h": [0, 0, 0, 0] }
     pricing_api_replicas: { "5m": [3, 3, 3], "1h": [3, 3, 3], "24h": [3, 3, 3, 3] }
   effects:
+    # Cache back, but 3 replicas are still saturated by flash-sale traffic:
+    # latency improves and CPU does not move at all.
     - when: { tool: restart_service, args: { name: price-cache } }
       metrics:
         price_cache_hit_ratio: { "5m": [0, 0.71, 0.9] }
-        pricing_api_latency_p99_ms: { "5m": [2600, 1300, 900] }
-        pricing_api_cpu: { "5m": [0.96, 0.84, 0.81] }
+        pricing_api_latency_p99_ms: { "5m": [2600, 1900, 1700] }
+      logs:
+        - "2026-09-10T11:36:10Z price-cache INFO snapshot rebuilt from source; serving keys"
+        - "2026-09-10T11:36:40Z pricing-api WARN cpu 96% on 3 replicas; flash-sale traffic 2x (runbook: 6 replicas)"
+    # Capacity added while every lookup still misses the cache: CPU eases,
+    # latency is unchanged because the work per request has not changed.
     - when: { tool: scale_service, args: { name: pricing-api, replicas: { gte: 4 } } }
       metrics:
         pricing_api_cpu: { "5m": [0.96, 0.89, 0.87] }
@@ -28,8 +34,15 @@ world:
         - "2026-09-10T11:38:02Z pricing-api INFO scaled out; cpu still high for flash-sale traffic (runbook: 6 replicas)"
     - when: { tool: scale_service, args: { name: pricing-api, replicas: { gte: 6 } } }
       metrics:
-        pricing_api_cpu: { "5m": [0.81, 0.52, 0.44] }
+        pricing_api_cpu: { "5m": [0.96, 0.70, 0.62] }
         pricing_api_replicas: { "5m": [3, 6, 6] }
+    # Only both together clear the alert.
+    - when_all:
+        - { tool: restart_service, args: { name: price-cache } }
+        - { tool: scale_service, args: { name: pricing-api, replicas: { gte: 6 } } }
+      metrics:
+        pricing_api_latency_p99_ms: { "5m": [1700, 600, 300] }
+        pricing_api_cpu: { "5m": [0.94, 0.55, 0.44] }
 expected_answer: "Two problems: price-cache was stuck after a failed snapshot restore (0% hits), and flash-sale traffic needs 6 pricing-api replicas, not 3. Restarted price-cache and scaled pricing-api to 6; latency and CPU recovered."
 endpoint:
   answer_mentions: [price-cache, pricing-api]

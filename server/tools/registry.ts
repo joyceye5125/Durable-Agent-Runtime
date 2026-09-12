@@ -241,7 +241,9 @@ export function currentWorld(scenario: Scenario, ledger: Array<{ tool: string; a
     metrics: { ...scenario.world.metrics },
   };
   for (const eff of scenario.world.effects ?? []) {
-    if (!ledger.some((row) => effectMatches(eff.when, row.tool, row.args))) continue;
+    const triggers = eff.when_all ?? (eff.when ? [eff.when] : []);
+    if (!triggers.length) throw new Error(`effect in scenario "${scenario.id}" has no trigger`);
+    if (!triggers.every((t) => ledger.some((row) => effectMatches(t, row.tool, row.args)))) continue;
     for (const [name, series] of Object.entries(eff.metrics ?? {})) {
       world.metrics[name] = { ...world.metrics[name], ...series };
     }
