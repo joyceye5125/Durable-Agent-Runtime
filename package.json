@@ -13,7 +13,8 @@
     "record-golden": "tsx scripts/cli.ts",
     "record": "tsx scripts/cli.ts",
     "record-crash-paths": "tsx scripts/cli.ts",
-    "experiment": "tsx scripts/cli.ts"
+    "experiment": "tsx scripts/cli.ts",
+    "redo-baseline": "npm run record-golden -- --all --fresh && npm run record-crash-paths && npm run experiment -- crash --write-readme && npm test"
   },
   "engines": {
     "node": ">=20.19"
