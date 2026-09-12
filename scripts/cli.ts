@@ -16,6 +16,7 @@
  */
 import fs from "node:fs";
 import readline from "node:readline/promises";
+import { fileURLToPath } from "node:url";
 import { canonicalJSON } from "../server/core/canonical";
 import { fold, trajectoryOf } from "../server/core/events";
 import { runCrashExperiment } from "../server/experiments/crash";
@@ -73,7 +74,8 @@ async function pool<T>(items: T[], n: number, fn: (x: T) => Promise<void>) {
  * numbers that were measured.
  */
 function writeReadmeCell(claim: "C1" | "C4", result: string): void {
-  const file = new URL("../README.md", import.meta.url).pathname;
+  // fileURLToPath, not URL.pathname: a path containing a space comes back percent-encoded.
+  const file = fileURLToPath(new URL("../README.md", import.meta.url));
   const lines = fs.readFileSync(file, "utf8").split("\n");
   const i = lines.findIndex((l) => l.startsWith(`| **${claim}** |`));
   if (i < 0) {
