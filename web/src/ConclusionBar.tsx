@@ -17,8 +17,6 @@ export function ConclusionBar({
   const table = results?.eval;
   const candidates = table?.changes.filter((c) => c.label !== "baseline") ?? [];
   const evaluated = candidates.filter((c) => c.status === "evaluated");
-  const endpointCaught = evaluated.filter((c) => c.endpointVerdict === "BLOCKED").length;
-  const trajCaught = evaluated.filter((c) => c.trajectoryVerdict === "BLOCKED").length;
 
   return (
     <section className="cards">
@@ -31,25 +29,31 @@ export function ConclusionBar({
         </div>
         {crash ? (
           <>
-            <div className="big mono">
-              {crash.n} crashes → <b className="good">{pct(crash.durable.correctPct)}</b> correct resume ·{" "}
-              <b className={crash.durable.duplicateSideEffects === 0 ? "good" : "bad"}>{crash.durable.duplicateSideEffects}</b> duplicate side
-              effects
+            <div className="stat">
+              <b className="good">{pct(crash.durable.correctPct)}</b>
+              <span>
+                correct resume, <b className={crash.durable.duplicateSideEffects === 0 ? "good" : "bad"}>{crash.durable.duplicateSideEffects}</b>{" "}
+                duplicate side effects
+              </span>
             </div>
-            <div className="sub mono">
-              naive baseline: <b className="bad">{pct(crash.naive.duplicateRateWhenExposedPct)}</b> of the {crash.naive.exposed} trials that
-              crashed after a side effect repeated one ({crash.naive.duplicateRows} extra actions · {pct(crash.naive.duplicateRatePct)} of all{" "}
-              {crash.naive.measured} trials)
-              {crash.naive.unrecorded > 0 && <> · {crash.naive.unrecorded} unrecorded, excluded</>}
+            <div className="sub">
+              Naive baseline repeated one in <b className="bad">{pct(crash.naive.duplicateRateWhenExposedPct)}</b> of the {crash.naive.exposed}{" "}
+              crashes that landed after a side effect had already happened.
             </div>
-            <div className="sub mono muted">
-              malformed model output: {crash.malformed.cases.length} injections, {crash.malformed.allBlocked ? "none reached a tool" : "SOME REACHED A TOOL"} ·
-              scenario {crash.scenario} · seed {crash.seed} · {results?.crash[0]?.started_at.slice(0, 19).replace("T", " ")}
+            <div
+              className="meta mono muted"
+              title={`${crash.naive.duplicateRows} extra actions · ${pct(crash.naive.duplicateRatePct)} of all ${crash.naive.measured} trials${crash.seed === null ? "" : ` · seed ${crash.seed}`}`}
+            >
+              {crash.n} crashes ({crash.coverage === "exhaustive" ? "every W1–W4 × tool-call point, no sampling" : `sampled, seed ${crash.seed}`}) ·{" "}
+              {crash.scenario} ·{" "}
+              {crash.malformed.allBlocked ? `${crash.malformed.cases.length} malformed outputs, none reached a tool` : "SOME MALFORMED OUTPUT REACHED A TOOL"}
             </div>
           </>
         ) : (
           <div className="sub muted">
-            {results?.seeding ? "measuring from the committed recordings…" : "Not measured yet: needs the baseline recording of the crash scenario (npm run record-crash-paths)."}
+            {results?.seeding
+              ? "measuring from the committed recordings…"
+              : "Not measured yet — needs the crash-scenario recording (npm run record-crash-paths)."}
           </div>
         )}
       </div>
@@ -63,15 +67,16 @@ export function ConclusionBar({
         </div>
         {table && evaluated.length > 0 ? (
           <>
-            <div className="big mono">
-              {evaluated.length} candidate changes → endpoint eval missed <b className="bad">{table.missedByEndpoint}</b> · trajectory eval caught{" "}
-              <b className="good">{table.missedByEndpoint}</b>
+            <div className="stat">
+              <b className={table.missedByEndpoint > 0 ? "bad" : "good"}>{table.missedByEndpoint}</b>
+              <span>
+                of {evaluated.length} config changes passed the endpoint eval and were blocked by the trajectory eval
+              </span>
             </div>
-            <div className="sub mono">
-              {table.pathOnlyRows} task runs kept a correct answer on a worse path · endpoint eval blocked {endpointCaught}/{evaluated.length} changes,
-              trajectory eval {trajCaught}/{evaluated.length}
+            <div className="sub">
+              <b>{table.pathOnlyRows}</b> task runs kept a correct final answer on a worse path.
             </div>
-            <div className="sub mono muted">
+            <div className="meta mono muted">
               {table.tasks.length} tasks with reviewed golden trajectories
               {candidates.length > evaluated.length && <> · {candidates.length - evaluated.length} candidates not recorded</>}
             </div>
@@ -80,7 +85,7 @@ export function ConclusionBar({
           <div className="sub muted">
             {results?.seeding
               ? "measuring from the committed recordings…"
-              : "Not measured yet: needs reviewed golden trajectories and candidate recordings (npm run record-golden, npm run record)."}
+              : "Not measured yet — needs golden trajectories and candidate recordings (npm run record-golden, npm run record)."}
           </div>
         )}
       </div>

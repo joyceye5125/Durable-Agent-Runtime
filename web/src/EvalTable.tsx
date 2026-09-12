@@ -4,24 +4,32 @@ import type { EvalTable as Table } from "./api";
 export function EvalTable({ table, busy, onRerun }: { table: Table | null; busy: boolean; onRerun: () => void }) {
   const [open, setOpen] = useState<string | null>(null);
   const n = table?.tasks.length ?? 0;
+  // Before the candidates are recorded every row would repeat the same "not
+  // recorded" cell; say it once instead.
+  const anyEvaluated = !!table?.changes.some((c) => c.status === "evaluated");
   return (
     <section className="section">
       <div className="section-head row">
         <div>
           <h2>Endpoint eval vs trajectory eval</h2>
           <p className="muted">
-            Each row is one candidate change, replayed on {n || "the"} tasks against the same deterministic tools and compared with the
-            human-reviewed golden trajectory from the baseline. Highlighted rows keep every final answer correct — the endpoint eval
-            passes them — while the path got worse.
+            One row per config change, replayed on {n || "the"} tasks against the golden trajectory. Highlighted rows keep every answer
+            correct while the path got worse.
           </p>
         </div>
         <button disabled={busy || !n} onClick={onRerun}>
           {busy ? "running…" : "Re-run eval"}
         </button>
       </div>
+      {table && n > 0 && !anyEvaluated && (
+        <div className="notice">
+          No candidate recording yet — nothing has been measured. These are the {table.changes.length - 1} config changes that will be, once{" "}
+          <code>npm run record -- --candidates</code> has run.
+        </div>
+      )}
       {table && table.provisionalGolden.length > 0 && (
         <div className="notice">
-          {table.provisionalGolden.length}/{n} golden trajectories are provisional predictions, not yet replaced by reviewed baseline runs
+          {table.provisionalGolden.length}/{n} golden trajectories are still provisional predictions, not reviewed baseline runs
           (<code>npm run record-golden -- --all</code> replaces them).
         </div>
       )}
@@ -52,7 +60,8 @@ export function EvalTable({ table, busy, onRerun }: { table: Table | null; busy:
                     <tr key={c.label} className="unrecorded">
                       <td title={c.description}>{c.label}</td>
                       <td colSpan={7}>
-                        not recorded{c.missing?.length ? ` (${c.missing.length}/${n} tasks missing)` : ""} — {c.description}
+                        {anyEvaluated && <>not recorded{c.missing?.length ? ` (${c.missing.length}/${n} tasks missing)` : ""} — </>}
+                        {c.description}
                       </td>
                     </tr>
                   );

@@ -32,7 +32,7 @@ export function App() {
     setBusy("crash");
     setError("");
     try {
-      await api.runCrashExperiment(100);
+      await api.runCrashExperiment();
       setResults(await api.results());
     } catch (e) {
       setError((e as Error).message);
@@ -61,17 +61,15 @@ export function App() {
         <div>
           <h1>Durable Agent Runtime</h1>
           <p className="muted">
-            An LLM agent crashes after a tool already changed the world but before the result was logged. Resume naively and the
-            side effect happens twice. This runtime makes it happen once — and evaluates agents by the path they took, not just the
-            answer.
+            An event-sourced LLM agent runtime: crash it mid-tool-call and the side effect still happens exactly once.
           </p>
         </div>
         {meta && (
           <div className="badges mono">
-            <span className={`badge ${meta.llmMode}`}>
-              {meta.llmMode === "replay" ? "REPLAY · recorded model output · no API calls" : "LIVE · calling the model"}
+            <span className={`badge ${meta.llmMode}`} title={meta.llmMode === "replay" ? "recorded model output, no API calls" : "calling the model"}>
+              {meta.llmMode.toUpperCase()}
             </span>
-            <span className="badge">db: {meta.db}</span>
+            <span className="badge">{meta.db}</span>
           </div>
         )}
       </header>
