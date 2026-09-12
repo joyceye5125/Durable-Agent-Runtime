@@ -205,11 +205,19 @@ async function recordCrashPaths(store: Store) {
 async function experiment(store: Store) {
   const which = args[0];
   if (which === "crash") {
-    const summary = await runCrashExperiment(store, { n: Number(opt("n") ?? 200), seed: opt("seed") ? Number(opt("seed")) : undefined, scenario: opt("scenario") });
+    const summary = await runCrashExperiment(store, {
+      n: opt("n") ? Number(opt("n")) : undefined,
+      seed: opt("seed") ? Number(opt("seed")) : undefined,
+      scenario: opt("scenario"),
+    });
     await store.insertCrashExperiment(summary.scenario, summary.n, summary);
     const d = summary.durable;
     const nv = summary.naive;
-    console.log(`crash experiment on ${summary.scenario}, n=${summary.n}, seed=${summary.seed}`);
+    const how =
+      summary.coverage === "exhaustive"
+        ? `every crash point once (${CRASH_WINDOWS.length} windows × ${summary.reference.toolCalls} tool calls = ${summary.n})`
+        : `${summary.n} sampled crash points, seed ${summary.seed}`;
+    console.log(`crash experiment on ${summary.scenario}: ${how}`);
     console.log(`durable: ${d.correct}/${d.trials} correct resumes (${d.correctPct.toFixed(1)}%), ${d.duplicateSideEffects} duplicate side effects`);
     console.log(
       `naive:   ${nv.trialsWithDuplicates}/${nv.exposed} trials that crashed after a side effect repeated one (${nv.duplicateRateWhenExposedPct?.toFixed(1) ?? "n/a"}%), ${nv.duplicateRows} duplicate rows, ${nv.unrecorded} unrecorded`,
@@ -221,7 +229,11 @@ async function experiment(store: Store) {
       );
     }
     console.log(`malformed outputs blocked before any side effect: ${summary.malformed.allBlocked ? "yes" : "NO"}`);
-    const cell = `${summary.n} crashes over W1–W4 → **${d.correctPct.toFixed(1)}%** correct resume, **${d.duplicateSideEffects}** duplicate side effects. Naive baseline: **${nv.duplicateRateWhenExposedPct?.toFixed(1) ?? "n/a"}%** of the ${nv.exposed} trials that crashed after a side effect repeated one (${nv.duplicateRows} extra actions; ${nv.duplicateRatePct?.toFixed(1) ?? "n/a"}% of all ${nv.measured} trials${nv.unrecorded ? `, ${nv.unrecorded} unrecorded excluded` : ""}). Seed ${summary.seed}.`;
+    const coverage =
+      summary.coverage === "exhaustive"
+        ? `${summary.n} crashes — every W1–W4 × tool-call point once, no sampling`
+        : `${summary.n} sampled crashes, seed ${summary.seed}`;
+    const cell = `${coverage} → **${d.correctPct.toFixed(1)}%** correct resume, **${d.duplicateSideEffects}** duplicate side effects. Naive baseline: **${nv.duplicateRateWhenExposedPct?.toFixed(1) ?? "n/a"}%** of the ${nv.exposed} crashes that landed after a side effect repeated one (${nv.duplicateRows} extra actions; ${nv.duplicateRatePct?.toFixed(1) ?? "n/a"}% of all ${nv.measured}${nv.unrecorded ? `, ${nv.unrecorded} unrecorded excluded` : ""}).`;
     console.log(`\nREADME C1 result cell:\n${cell}`);
     if (flag("write-readme")) writeReadmeCell("C1", cell);
     for (const c of summary.malformed.cases) console.log(`  ${c.kind}/${c.variant}: ${c.status}, rejected ${c.rejected}, side effects from rejected steps ${c.sideEffectRowsFromRejectedSteps}`);

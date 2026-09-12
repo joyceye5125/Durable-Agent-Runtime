@@ -79,7 +79,8 @@ export interface EvalTable {
 export interface CrashSummary {
   scenario: string;
   n: number;
-  seed: number;
+  coverage: "exhaustive" | "sampled";
+  seed: number | null;
   reference: { steps: number; toolCalls: number; sideEffects: number };
   durable: { trials: number; correct: number; correctPct: number; duplicateSideEffects: number };
   naive: {
@@ -121,7 +122,8 @@ export const api = {
   resume: (id: string, paceMs?: number) => call("POST", `/api/runs/${id}/resume`, { paceMs }),
   run: (id: string) => call<RunView>("GET", `/api/runs/${id}`),
   results: () => call<Results>("GET", "/api/experiments/results"),
-  runCrashExperiment: (n: number) => call<{ summary: CrashSummary }>("POST", "/api/experiments/crash", { n }),
+  /** No n: every crash point once. */
+  runCrashExperiment: () => call<{ summary: CrashSummary }>("POST", "/api/experiments/crash", {}),
   runEval: () => call<{ errors: Array<{ label: string; error: string }>; table: EvalTable }>("POST", "/api/experiments/eval", {}),
 };
 

@@ -1,4 +1,5 @@
 import { canonicalJSON } from "../core/canonical";
+import { countDuplicateActions } from "../core/identity";
 import { fold, trajectoryOf } from "../core/events";
 import { CRASH_WINDOWS, type CrashPlan, type CrashWindow } from "../runtime/crash";
 import { buildRuntime, createRun, defaultAgentFactory, prepareResume, type AgentFactory } from "../runtime/runs";
@@ -9,8 +10,11 @@ import { MALFORMED_KINDS, MalformedInjectingLLM, type MalformedKind } from "./ma
 
 export interface CrashExperimentOptions {
   scenario?: string;
-  n: number;
+  /** Number of randomly sampled crash points. Ignored when `exhaustive`. */
+  n?: number;
   seed?: number;
+  /** Every (window × tool call) point exactly once: no sampling, so no seed and no run-to-run drift. */
+  exhaustive?: boolean;
   agent?: AgentFactory;
 }
 
@@ -40,7 +44,9 @@ export interface MalformedCase {
 export interface CrashSummary {
   scenario: string;
   n: number;
-  seed: number;
+  /** "exhaustive": every crash point once, reproducible without a seed. */
+  coverage: "exhaustive" | "sampled";
+  seed: number | null;
   reference: { runId: string; steps: number; toolCalls: number; sideEffects: number };
   durable: { trials: number; correct: number; correctPct: number; duplicateSideEffects: number };
   naive: {
@@ -81,14 +87,7 @@ const signature = (rows: Array<{ step: number; tool: string; args: unknown }>) =
  * a restarted agent that pages on-call again writes a differently worded
  * message, and the human is still paged twice.
  */
-function duplicateRows(rows: Array<{ tool: string; args: Record<string, unknown> }>): number {
-  const seen = new Map<string, number>();
-  for (const r of rows) {
-    const key = actionIdentity(r.tool, r.args);
-    seen.set(key, (seen.get(key) ?? 0) + 1);
-  }
-  return [...seen.values()].reduce((sum, c) => sum + (c - 1), 0);
-}
+const duplicateRows = countDuplicateActions;
 
 const isRecordingGap = (err: string | undefined) => !!err && /no recorded response|has not been recorded/.test(err);
 
@@ -97,8 +96,9 @@ export async function runCrashExperiment(store: Store, opts: CrashExperimentOpti
   const scenarioId = opts.scenario ?? "incident_checkout_cascade";
   loadScenario(scenarioId);
   const agent = opts.agent ?? defaultAgentFactory();
-  const seed = opts.seed ?? Math.floor(Math.random() * 2 ** 31);
-  const rng = mulberry32(seed);
+  const exhaustive = opts.exhaustive ?? opts.n === undefined;
+  const seed = exhaustive ? null : (opts.seed ?? Math.floor(Math.random() * 2 ** 31));
+  const rng = mulberry32(seed ?? 0);
 
   // Reference: the same scenario, same recording, no crash.
   const refId = await createRun(store, { scenario: scenarioId, mode: "durable" }, { agent });
@@ -119,9 +119,19 @@ export async function runCrashExperiment(store: Store, opts: CrashExperimentOpti
     ]),
   ) as Record<CrashWindow, WindowStats>;
 
-  for (let i = 0; i < opts.n; i++) {
-    const window = CRASH_WINDOWS[i % CRASH_WINDOWS.length];
-    const plan: CrashPlan = { window, target: { kind: "tool_call", index: Math.floor(rng() * toolCalls) } };
+  // Every crash point is deterministic, so enumerating them all answers the
+  // question exactly; sampling only re-answers it with noise. Sampling stays
+  // available for "n crashes" phrasing, but it is no longer the default.
+  const points: Array<{ window: CrashWindow; index: number }> = exhaustive
+    ? CRASH_WINDOWS.flatMap((w) => Array.from({ length: toolCalls }, (_, index) => ({ window: w, index })))
+    : Array.from({ length: opts.n ?? 0 }, (_, i) => ({
+        window: CRASH_WINDOWS[i % CRASH_WINDOWS.length],
+        index: Math.floor(rng() * toolCalls),
+      }));
+
+  for (const [i, point] of points.entries()) {
+    const window = point.window;
+    const plan: CrashPlan = { window, target: { kind: "tool_call", index: point.index } };
     const stats = byWindow[window];
     stats.trials++;
 
@@ -172,19 +182,21 @@ export async function runCrashExperiment(store: Store, opts: CrashExperimentOpti
   const naiveMeasured = sum("naiveMeasured");
   const malformed = await runMalformedBatch(store, scenarioId, agent, refState);
 
+  const trials = points.length;
   return {
     scenario: scenarioId,
-    n: opts.n,
+    n: trials,
+    coverage: exhaustive ? "exhaustive" : "sampled",
     seed,
     reference: { runId: refId, steps: refState.steps.length, toolCalls, sideEffects: refLedger.length },
     durable: {
-      trials: opts.n,
+      trials,
       correct: sum("durableCorrect"),
-      correctPct: opts.n ? (100 * sum("durableCorrect")) / opts.n : 0,
+      correctPct: trials ? (100 * sum("durableCorrect")) / trials : 0,
       duplicateSideEffects: sum("durableDuplicateRows"),
     },
     naive: {
-      trials: opts.n,
+      trials,
       measured: naiveMeasured,
       unrecorded: sum("naiveUnrecorded"),
       exposed: sum("naiveExposed"),

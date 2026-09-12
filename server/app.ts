@@ -147,7 +147,8 @@ export function createApp({ store, agent, seedOnBoot }: AppOptions) {
   });
 
   app.post("/api/experiments/crash", async (req, res) => {
-    const n = Math.min(Math.max(Number(req.body?.n ?? 100), 4), 500);
+    // No n: every crash point once, which is the reproducible default.
+    const n = req.body?.n === undefined ? undefined : Math.min(Math.max(Number(req.body.n), 4), 500);
     const scenario = typeof req.body?.scenario === "string" ? req.body.scenario : undefined;
     const summary = await exclusive(() => runCrashExperiment(store, { scenario, n, agent }));
     const id = await store.insertCrashExperiment(summary.scenario, summary.n, summary);
@@ -181,7 +182,7 @@ export function createApp({ store, agent, seedOnBoot }: AppOptions) {
     try {
       const crashScenario = listScenarioIds("crash")[0];
       if ((await store.listCrashExperiments(1)).length === 0 && crashScenario && hasRecording("baseline", crashScenario)) {
-        const summary = await exclusive(() => runCrashExperiment(store, { n: 200, agent }));
+        const summary = await exclusive(() => runCrashExperiment(store, { agent }));
         await store.insertCrashExperiment(summary.scenario, summary.n, summary);
         console.log(`[seed] crash experiment: ${summary.durable.correct}/${summary.n} durable resumes correct`);
       }

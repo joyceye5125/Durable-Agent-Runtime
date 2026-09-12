@@ -8,10 +8,10 @@ Both claims are experiments you can run, not assertions in a README. The numbers
 
 | | Claim | How it is measured | Result |
 |---|---|---|---|
-| **C1** | Crash the agent in any of the four commit windows and a durable resume reproduces the crash-free run with no repeated side effect. A from-scratch baseline repeats them. | 200 seeded crashes spread over W1–W4 on a 10-call incident. Each trial resumes a durable run and a naive run from the same crash point, then compares the final answer and the side-effect ledger against a crash-free reference. | 200 crashes over W1–W4 → **100.0%** correct resume, **0** duplicate side effects. Naive baseline: **34.4%** of the 90 trials that crashed after a side effect repeated one (42 extra actions; 15.5% of all 200 trials). Seed 323368293. |
+| **C1** | Crash the agent in any of the four commit windows and a durable resume reproduces the crash-free run with no repeated side effect. A from-scratch baseline repeats them. | Every crash point once: each of the four windows × each tool call of the reference run. Each trial resumes a durable run and a naive run from the same crash point, then compares the final answer and the side-effect ledger against a crash-free reference. Exhaustive rather than sampled, so the result is the same on every machine. | _pending recording_ |
 | **C4** | Trajectory-level eval catches config changes that keep every final answer correct while the path degrades. Endpoint-level eval passes them. | 15 candidate changes (model swaps, prompt edits, a smaller step budget) × 30 incidents, each replayed against the same deterministic tools and scored against a reviewed golden trajectory. | _pending recording_ |
 
-Two things are worth separating. That one `idem_key` can produce at most one ledger row is structural, not statistical: it is the table's primary key, and `test/resume-after-crash-uses-only-the-event-log.test.ts` pins it for all four windows without needing a model. What the experiment measures is whether the whole loop preserves that under crashes, and how often the from-scratch baseline duplicates — the second number is purely empirical and depends on where the crashes land.
+Two things are worth separating. That one `idem_key` can produce at most one ledger row is structural, not statistical: it is the table's primary key, and `test/resume-after-crash-uses-only-the-event-log.test.ts` pins it for all four windows without needing a model. What the experiment measures is whether the whole loop preserves that under crashes, and how often the from-scratch baseline duplicates — the second number is purely empirical — it depends on where the crash lands and on what the model does after a restart. Because every crash point is enumerated rather than sampled, that number is exact for this incident rather than an estimate with a seed attached.
 
 **Status:** the golden trajectories in `scenarios/` are currently provisional predictions (`golden_source: predicted`), pending replacement by reviewed baseline runs via `npm run record-golden -- --all`. The tests, the runtime and the eval pipeline are complete and run today; what is missing is the recorded model output that turns the pipeline into numbers.
 
@@ -19,9 +19,9 @@ Two things are worth separating. That one `idem_key` can produce at most one led
 
 Open the Repl. There is no API key to set and nothing to configure. The page runs in **replay mode**, where every model response comes from `recordings/`. The badge in the top-right corner says so.
 
-1. **Top cards.** On a fresh database the server runs both experiments once on boot. Click **Run again** on either card to re-run it (the crash experiment uses a new random seed each time).
+1. **Top cards.** On a fresh database the server runs both experiments once on boot. Click **Run again** on either card to re-run it; the crash experiment covers every crash point, so it lands on the same numbers each time.
 2. **Middle, the W3 demo.** It starts on its own once the cards are ready. The same long incident runs twice, first `durable` and then `naive`. Each run crashes at **W3** on `page_oncall`: the page has already been sent, but the log never recorded it. Then both runs resume. Watch the right-hand ledger in each panel. The durable ledger keeps one row per page, and its W3 row is marked as reused through `ON CONFLICT`. The naive ledger gains red `DUPLICATE` rows: the on-call engineer got paged twice.
-3. **Manual controls.** Pick a mode, a window (W1–W4) and a target, press **Start**, press **Crash** while the run is going, then press **Resume**.
+3. **Manual controls.** Pick a mode, a window (W1–W4) and a target, press **Start** — the crash is armed before the run begins — then press **Resume**. `don't crash` runs it clean.
 4. **Bottom table.** Each row is one candidate change. The highlighted rows pass the endpoint eval and are blocked by the trajectory eval. Click a row to see its per-task scores.
 
 ## Design
@@ -116,7 +116,7 @@ npm run record-crash-paths
 # 4. Measure (replay mode, no key used) and persist; this prints the numbers for the Results table
 # Each command prints the sentence for its Results row; --write-readme puts it
 # in the table, so the table can only contain numbers that were measured.
-npm run experiment -- crash --n 200 --write-readme
+npm run experiment -- crash --write-readme
 npm run experiment -- eval --write-readme
 
 git add recordings scenarios && git commit -m "Record baseline, candidates and crash paths"
