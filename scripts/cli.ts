@@ -172,7 +172,10 @@ async function recordCrashPaths(store: Store) {
   const refState = fold(await store.listEvents(refId));
   const toolCalls = trajectoryOf(refState).length;
   console.log(`reference run: ${ref.status}, ${toolCalls} tool calls`);
-  if (ref.status !== "completed") throw new Error("baseline does not complete the crash scenario; fix it before recording crash paths");
+  if (ref.status !== "completed") {
+    const why = "error" in ref ? ref.error : ref.status;
+    throw new Error(`baseline does not complete the crash scenario: ${why}`);
+  }
 
   // A naive restart after a crash can see a world its first attempt already
   // changed, so it asks the model new questions. Record every crash point.

@@ -1,0 +1,270 @@
+{
+  "config_label": "baseline",
+  "task_id": "incident_checkout_cascade",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "916ae0334f038bd28049d5f8511f42e6da89eefcb39d9f2fa0dea43e638449f2",
+  "recorded_at": "2026-09-12T01:09:35.724Z",
+  "entries": [
+    {
+      "key": "67efd5acb345cb6d596e5bbcf1713961204cd867d85fac09fa9cdec0c6d72554",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"checkout\"}"
+        },
+        "tokensIn": 588,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "257926c2b748a0bf7ea5de453b3bd03eb6547182da8f34bfdaedd8d29f523aaf",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"orders_queue_depth\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 645,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "c9f66b6bac2576e069e535e71d9fa15d15511cfd8d783b72efab0ef46f2bb495",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"orders\"}"
+        },
+        "tokensIn": 697,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "fd87a2876a4cbc9a0548aa656a36bd73d193f63cbd5ef3bf02b9ad53a7bc17c8",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"payments_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 730,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "1836d407a8298a47eaf7fa778e04a27a942902bfc11c24bdfa048cb5d355690b",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"payments_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 781,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "b3868d46c5e62edc12d02fdbd4b26bd0fdd42d8d75ef15ba59d6fd3d063dd8e2",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"payments error\"}"
+        },
+        "tokensIn": 836,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "6e3e7510694f8c5ba9e344dbfa0af769ad3c50a02a3170b3f803557d04201d4d",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"session-cache\"}"
+        },
+        "tokensIn": 990,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "970e835979d9a6d2aa6228913ea373ee83b563be295fe2a1a48b419e13878b62",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1082,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "b8cb5cec9f96b63c16601a051cabc027ac0d13ea37454604420ab2cf89980925",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"orders_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1137,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "83164d214555d2c79febfe590c1731c6b08971dd9b14b12fafbd5335ddb45bcc",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1189,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "8ea64f6e1c46d920954cf0f48796e171f765cabe8f1af94a84b6c657f4efcb72",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"session-cache.memory_usage\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1245,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "07c0dca87fceb23963530905df4c6740b6137f857384d0ef6709d33c69fed8bb",
+      "turn": 23,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"session_cache_memory_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1315,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "8cc7e8950cfbe5f3a9224df489a3f63b5bcaed3e5dc5ec0c7089daadbb331956",
+      "turn": 25,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"session_cache_memory_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1368,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "2a9719f7f6836b3fd775f2039e3b15e91372b2dc383f3bd1de046dc2263d3874",
+      "turn": 27,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"order_worker\"}"
+        },
+        "tokensIn": 1425,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "e13adbbdeb27323d953f19d03e1c438268d25edb95ed590e30fa0155031df79e",
+      "turn": 29,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"order_worker_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1459,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "581b52e1714abdf7282deb04748224627ff8d9e09952a28a4085fb6f8685c7c2",
+      "turn": 31,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"order_worker\",\"replicas\":4}"
+        },
+        "tokensIn": 1512,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "ac8158972aad44fd2658bddc812e939b61c3f012ba68040cdec07cba055ab554",
+      "turn": 33,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"order-worker\",\"replicas\":4}"
+        },
+        "tokensIn": 1565,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "0474007e14a612473984e44fd4c169cd9cb82a7a6921d769ebbdd0f0d91fb0c7",
+      "turn": 35,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"orders_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1608,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "eb3f6f3a3feecacd39912d8662d796b2318e4cc335fed652aeabbe62667b027d",
+      "turn": 37,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"orders_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1660,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "9d5881ea40fb02b4f62e251c298274c3553c092cde6ce59d1bdf6ee7719a9f25",
+      "turn": 39,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"orders_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1712,
+        "tokensOut": 21
+      }
+    }
+  ]
+}

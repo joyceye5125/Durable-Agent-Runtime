@@ -2,8 +2,9 @@
 # side-effecting tool calls, so crashes land on many different steps.
 id: incident_checkout_cascade
 kind: crash
-# Allows the extra steps this multi-alert incident needs.
-max_steps: 20
+# Allows the extra steps this multi-alert incident needs: three alerts, each
+# investigated, remediated or escalated, then verified.
+max_steps: 26
 task: "Three alerts are firing on the checkout path: checkout_latency_p99_ms = 4800 (SLO 800), orders_queue_depth = 52000 and rising, payments_error_rate = 6%. Investigate each alert, remediate what you can, and escalate what you cannot."
 world:
   services: [checkout, session-cache, order-worker, payments-gateway, postgres]
@@ -30,6 +31,14 @@ world:
         session_cache_memory_ratio: { "5m": [0.99, 0.18, 0.21] }
       logs:
         - "2026-09-10T09:21:05Z session-cache INFO restarted; used_memory 1.4G/8G"
+    # An under-sized scale-out has to be visible: the queue drains slowly
+    # instead of not moving at all, so the agent gets feedback either way.
+    - when: { tool: scale_service, args: { name: order-worker, replicas: { gte: 3 } } }
+      metrics:
+        orders_queue_depth: { "5m": [52000, 51000, 50000] }
+        order_worker_replicas: { "5m": [2, 4, 4] }
+      logs:
+        - "2026-09-10T09:23:10Z order-worker INFO scaled out; consumer lag still rising, throughput below the 8-replica capacity plan"
     - when: { tool: scale_service, args: { name: order-worker, replicas: { gte: 6 } } }
       metrics:
         orders_queue_depth: { "5m": [52000, 41000, 23000] }

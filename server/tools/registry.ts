@@ -58,12 +58,20 @@ const TOOLS: ToolDef[] = [
       additionalProperties: false,
     },
     run(args, world) {
-      const tokens = String(args.query)
-        .toLowerCase()
-        .split(/[^a-z0-9_./:-]+/)
-        .filter((t) => t.length >= 2);
+      // Service names are hyphenated (order-worker) while metric names use
+      // underscores (order_worker_replicas), and a search for one spelling
+      // must not miss the other: both sides are split on every separator.
+      const words = (s: string) =>
+        s
+          .toLowerCase()
+          .split(/[^a-z0-9]+/)
+          .filter((t) => t.length >= 2);
+      const tokens = words(String(args.query));
       const scored = world.logs
-        .map((line, i) => ({ line, i, score: tokens.filter((t) => line.toLowerCase().includes(t)).length }))
+        .map((line, i) => {
+          const lineWords = words(line);
+          return { line, i, score: tokens.filter((t) => lineWords.some((w) => w === t || w.includes(t) || t.includes(w))).length };
+        })
         .filter((x) => x.score > 0)
         .sort((a, b) => b.score - a.score || a.i - b.i)
         .slice(0, 6)
