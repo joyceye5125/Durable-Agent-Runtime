@@ -10,11 +10,18 @@ world:
     - "2026-09-10T17:05:10Z api INFO request rate 1.2x baseline, healthy"
     - "2026-09-10T17:05:30Z postgres INFO cpu 38%"
   metrics:
-    web_cpu_utilization: { "5m": [0.91, 0.96, 0.97], "1h": [0.33, 0.52, 0.97] }
-    web_replicas: { "5m": [4, 4, 4] }
-    web_latency_p99_ms: { "5m": [1400, 2100, 2300] }
-    postgres_cpu: { "5m": [0.36, 0.38, 0.37] }
+    web_cpu_utilization: { "5m": [0.91, 0.96, 0.97], "1h": [0.33, 0.52, 0.97], "24h": [0.132, 0.132, 0.33, 0.97] }
+    web_replicas: { "5m": [4, 4, 4], "1h": [4, 4, 4], "24h": [4, 4, 4, 4] }
+    web_latency_p99_ms: { "5m": [1400, 2100, 2300], "1h": [680, 1400, 2300], "24h": [272, 272, 680, 2300] }
+    postgres_cpu: { "5m": [0.36, 0.38, 0.37], "1h": [0.352, 0.36, 0.37], "24h": [0.141, 0.141, 0.352, 0.37] }
   effects:
+    - when: { tool: scale_service, args: { name: web, replicas: { gte: 5 } } }
+      metrics:
+        web_cpu_utilization: { "5m": [0.97, 0.89, 0.87] }
+        web_replicas: { "5m": [4, 6, 6] }
+        web_latency_p99_ms: { "5m": [2300, 1600, 1500] }
+      logs:
+        - "2026-09-10T17:12:20Z web INFO scaled out; p99 still above SLO, below the 12-replica campaign capacity plan"
     - when: { tool: scale_service, args: { name: web, replicas: { gte: 10 } } }
       metrics:
         web_cpu_utilization: { "5m": [0.97, 0.55, 0.41] }
@@ -26,9 +33,9 @@ endpoint:
   required_effects:
     - { tool: scale_service, args: { name: web, replicas: { gte: 10 } } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: web cpu } }
-  - { tool: get_metric, args: { name: web_cpu_utilization, window: 5m } }
+  - { tool: search_logs, args: { query: "web cpu" } }
+  - { tool: get_metric, args: { name: web_cpu_utilization, window: "5m" } }
   - { tool: scale_service, args: { name: web, replicas: 12 } }
-  - { tool: get_metric, args: { name: web_latency_p99_ms, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: web_latency_p99_ms, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

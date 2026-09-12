@@ -9,9 +9,9 @@ world:
     - "2026-09-10T12:20:40Z catalog INFO p99 42ms"
     - "2026-09-10T12:20:41Z cart INFO p99 35ms"
   metrics:
-    gateway_5xx_rate: { "5m": [0.06, 0.10, 0.12] }
-    recommendations_latency_p99_ms: { "5m": [30000, 30000, 30000] }
-    catalog_latency_p99_ms: { "5m": [41, 43, 42] }
+    gateway_5xx_rate: { "5m": [0.06, 0.1, 0.12], "1h": [0.012, 0.06, 0.12], "24h": [0.005, 0.005, 0.012, 0.12] }
+    recommendations_latency_p99_ms: { "5m": [30000, 30000, 30000], "1h": [30000, 30000, 30000], "24h": [30000, 30000, 30000, 30000] }
+    catalog_latency_p99_ms: { "5m": [41, 43, 42], "1h": [40, 41, 42], "24h": [16, 16, 40, 42] }
   effects:
     - when: { tool: restart_service, args: { name: recommendations } }
       metrics:
@@ -26,9 +26,9 @@ endpoint:
   required_effects:
     - { tool: restart_service, args: { name: recommendations } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: gateway thread pool } }
-  - { tool: get_metric, args: { name: recommendations_latency_p99_ms, window: 5m } }
+  - { tool: search_logs, args: { query: "gateway thread pool" } }
+  - { tool: get_metric, args: { name: recommendations_latency_p99_ms, window: "5m" } }
   - { tool: restart_service, args: { name: recommendations } }
-  - { tool: get_metric, args: { name: gateway_5xx_rate, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: gateway_5xx_rate, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

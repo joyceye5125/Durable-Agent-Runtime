@@ -12,8 +12,8 @@ world:
     - "2026-09-10T05:03:00Z api INFO request volume normal"
   metrics:
     disk_usage_data: { "5m": [0.95, 0.96, 0.96], "1h": [0.91, 0.93, 0.96], "24h": [0.71, 0.80, 0.88, 0.96] }
-    log_rotator_last_success_age_s: { "1h": [86400, 88200, 90000] }
-    api_error_rate: { "5m": [0.001, 0.001, 0.001] }
+    log_rotator_last_success_age_s: { "1h": [86400, 88200, 90000], "5m": [89460, 89460, 90000], "24h": [34560, 34560, 86400, 90000] }
+    api_error_rate: { "5m": [0.001, 0.001, 0.001], "1h": [0.001, 0.001, 0.001], "24h": [0.001, 0.001, 0.001, 0.001] }
   effects:
     - when: { tool: restart_service, args: { name: log-rotator } }
       metrics:
@@ -27,9 +27,9 @@ endpoint:
   required_effects:
     - { tool: restart_service, args: { name: log-rotator } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: /data disk usage } }
-  - { tool: get_metric, args: { name: disk_usage_data, window: 1h } }
+  - { tool: search_logs, args: { query: "/data disk usage" } }
+  - { tool: get_metric, args: { name: disk_usage_data, window: "1h" } }
   - { tool: restart_service, args: { name: log-rotator } }
-  - { tool: get_metric, args: { name: disk_usage_data, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: disk_usage_data, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

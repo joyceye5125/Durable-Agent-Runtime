@@ -1,6 +1,6 @@
 id: incident_crashloop_image
 kind: eval
-task: "ALERT pod_restarts{service=pdf-renderer} = 38 in 20 minutes; invoice PDFs not generated. Diagnose and remediate."
+task: "ALERT pdf_renderer_restarts = 38 in 20 minutes; invoice PDFs not generated. Diagnose and remediate."
 world:
   services: [pdf-renderer, billing-api, deployer]
   logs:
@@ -9,8 +9,8 @@ world:
     - "2026-09-10T16:11:02Z pdf-renderer ERROR fatal: font 'NotoSans-Regular' not found in image; exiting"
     - "2026-09-10T16:12:00Z billing-api WARN pdf-renderer unavailable, retrying"
   metrics:
-    pdf_renderer_restarts: { "5m": [9, 10, 10], "1h": [0, 18, 38] }
-    billing_api_error_rate: { "5m": [0.01, 0.01, 0.01] }
+    pdf_renderer_restarts: { "5m": [9, 10, 10], "1h": [0, 18, 38], "24h": [0, 0, 0, 38] }
+    billing_api_error_rate: { "5m": [0.01, 0.01, 0.01], "1h": [0.01, 0.01, 0.01], "24h": [0.01, 0.01, 0.01, 0.01] }
   effects:
     - when: { tool: restart_service, args: { name: pdf-renderer } }
       logs:
@@ -22,7 +22,7 @@ endpoint:
     - { tool: page_oncall }
 golden_trajectory:
   - { tool: search_logs, args: { query: pdf-renderer } }
-  - { tool: get_metric, args: { name: pod_restarts, window: 1h } }
-  - { tool: page_oncall, args: { message: (predicted) } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: pod_restarts, window: "1h" } }
+  - { tool: page_oncall, args: { message: "(predicted)" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

@@ -70,13 +70,16 @@ export function wrongThenRecover(calls: GoldenCall[], golden: GoldenCall[]): boo
   return false;
 }
 
+/** Lowercased, punctuation collapsed: "partition-7" and "Partition 7" are the same mention. */
+const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+
 export function endpointOk(
   scenario: Scenario,
   run: { status: string; finalAnswer?: string; ledger: Array<{ tool: string; args: Record<string, unknown> }> },
 ): boolean {
   if (run.status !== "completed") return false;
-  const answer = (run.finalAnswer ?? "").toLowerCase();
-  if (!scenario.endpoint.answer_mentions.every((m) => answer.includes(m.toLowerCase()))) return false;
+  const answer = normalize(run.finalAnswer ?? "");
+  if (!scenario.endpoint.answer_mentions.every((m) => answer.includes(normalize(m)))) return false;
   return scenario.endpoint.required_effects.every((req) => run.ledger.some((row) => effectMatches(req, row.tool, row.args)));
 }
 

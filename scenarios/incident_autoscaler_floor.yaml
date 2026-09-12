@@ -9,10 +9,16 @@ world:
     - "2026-09-10T14:21:00Z search-index INFO query latency p99 35ms"
     - "2026-09-10T14:21:40Z api INFO healthy"
   metrics:
-    search_latency_p99_ms: { "5m": [1500, 1800, 1900], "1h": [330, 900, 1900] }
-    search_api_replicas: { "5m": [2, 2, 2] }
-    search_index_latency_p99_ms: { "5m": [34, 36, 35] }
+    search_latency_p99_ms: { "5m": [1500, 1800, 1900], "1h": [330, 900, 1900], "24h": [132, 132, 330, 1900] }
+    search_api_replicas: { "5m": [2, 2, 2], "1h": [2, 2, 2], "24h": [2, 2, 2, 2] }
+    search_index_latency_p99_ms: { "5m": [34, 36, 35], "1h": [33, 34, 35], "24h": [13, 13, 33, 35] }
   effects:
+    - when: { tool: scale_service, args: { name: search-api, replicas: { gte: 3 } } }
+      metrics:
+        search_latency_p99_ms: { "5m": [1900, 1250, 1150] }
+        search_api_replicas: { "5m": [2, 3, 3] }
+      logs:
+        - "2026-09-10T14:26:02Z search-api INFO scaled out; cpu still above 85%, short of the usual weekday midday footprint"
     - when: { tool: scale_service, args: { name: search-api, replicas: { gte: 5 } } }
       metrics:
         search_latency_p99_ms: { "5m": [1900, 520, 290] }
@@ -23,9 +29,9 @@ endpoint:
   required_effects:
     - { tool: scale_service, args: { name: search-api, replicas: { gte: 5 } } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: search-api latency } }
-  - { tool: get_metric, args: { name: search_latency_p99_ms, window: 5m } }
+  - { tool: search_logs, args: { query: "search-api latency" } }
+  - { tool: get_metric, args: { name: search_latency_p99_ms, window: "5m" } }
   - { tool: scale_service, args: { name: search-api, replicas: 6 } }
-  - { tool: get_metric, args: { name: search_latency_p99_ms, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: search_latency_p99_ms, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

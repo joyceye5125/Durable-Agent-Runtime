@@ -10,9 +10,9 @@ world:
     - "2026-09-10T11:14:06Z postgres WARN 396 of 400 connections in use (340 by role reporting)"
     - "2026-09-10T11:14:20Z api INFO healthy"
   metrics:
-    postgres_connections: { "5m": [381, 392, 396], "1h": [120, 290, 396] }
-    checkout_error_rate: { "5m": [0.08, 0.17, 0.22] }
-    postgres_cpu: { "5m": [0.44, 0.46, 0.45] }
+    postgres_connections: { "5m": [381, 392, 396], "1h": [120, 290, 396], "24h": [48, 48, 120, 396] }
+    checkout_error_rate: { "5m": [0.08, 0.17, 0.22], "1h": [0, 0.08, 0.22], "24h": [0, 0, 0, 0.22] }
+    postgres_cpu: { "5m": [0.44, 0.46, 0.45], "1h": [0.432, 0.44, 0.45], "24h": [0.173, 0.173, 0.432, 0.45] }
   effects:
     - when: { tool: restart_service, args: { name: reporting-job } }
       metrics:
@@ -30,9 +30,9 @@ endpoint:
   required_effects:
     - { tool: restart_service, args: { name: reporting-job } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: too many clients postgres } }
-  - { tool: get_metric, args: { name: postgres_connections, window: 1h } }
+  - { tool: search_logs, args: { query: "too many clients postgres" } }
+  - { tool: get_metric, args: { name: postgres_connections, window: "1h" } }
   - { tool: restart_service, args: { name: reporting-job } }
-  - { tool: get_metric, args: { name: checkout_error_rate, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: checkout_error_rate, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

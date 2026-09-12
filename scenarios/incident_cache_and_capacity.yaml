@@ -1,5 +1,6 @@
 id: incident_cache_and_capacity
 kind: eval
+max_steps: 16
 task: "ALERT pricing_api_latency_p99_ms = 2600 and pricing_api_cpu = 96%. Diagnose and remediate."
 world:
   services: [pricing-api, price-cache, catalog, postgres]
@@ -9,16 +10,22 @@ world:
     - "2026-09-10T11:31:00Z pricing-api INFO flash sale traffic 2x; runbook: 6 replicas during sales (currently 3)"
     - "2026-09-10T11:31:30Z catalog INFO p99 90ms"
   metrics:
-    pricing_api_latency_p99_ms: { "5m": [2100, 2500, 2600] }
-    pricing_api_cpu: { "5m": [0.93, 0.95, 0.96] }
-    price_cache_hit_ratio: { "5m": [0.0, 0.0, 0.0] }
-    pricing_api_replicas: { "5m": [3, 3, 3] }
+    pricing_api_latency_p99_ms: { "5m": [2100, 2500, 2600], "1h": [1700, 2100, 2600], "24h": [680, 680, 1700, 2600] }
+    pricing_api_cpu: { "5m": [0.93, 0.95, 0.96], "1h": [0.906, 0.93, 0.96], "24h": [0.362, 0.362, 0.906, 0.96] }
+    price_cache_hit_ratio: { "5m": [0, 0, 0], "1h": [0, 0, 0], "24h": [0, 0, 0, 0] }
+    pricing_api_replicas: { "5m": [3, 3, 3], "1h": [3, 3, 3], "24h": [3, 3, 3, 3] }
   effects:
     - when: { tool: restart_service, args: { name: price-cache } }
       metrics:
-        price_cache_hit_ratio: { "5m": [0.0, 0.71, 0.9] }
+        price_cache_hit_ratio: { "5m": [0, 0.71, 0.9] }
         pricing_api_latency_p99_ms: { "5m": [2600, 1300, 900] }
         pricing_api_cpu: { "5m": [0.96, 0.84, 0.81] }
+    - when: { tool: scale_service, args: { name: pricing-api, replicas: { gte: 4 } } }
+      metrics:
+        pricing_api_cpu: { "5m": [0.96, 0.89, 0.87] }
+        pricing_api_replicas: { "5m": [3, 4, 4] }
+      logs:
+        - "2026-09-10T11:38:02Z pricing-api INFO scaled out; cpu still high for flash-sale traffic (runbook: 6 replicas)"
     - when: { tool: scale_service, args: { name: pricing-api, replicas: { gte: 6 } } }
       metrics:
         pricing_api_cpu: { "5m": [0.81, 0.52, 0.44] }
@@ -30,11 +37,11 @@ endpoint:
     - { tool: restart_service, args: { name: price-cache } }
     - { tool: scale_service, args: { name: pricing-api, replicas: { gte: 6 } } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: pricing-api cache } }
-  - { tool: get_metric, args: { name: price_cache_hit_ratio, window: 5m } }
+  - { tool: search_logs, args: { query: "pricing-api cache" } }
+  - { tool: get_metric, args: { name: price_cache_hit_ratio, window: "5m" } }
   - { tool: restart_service, args: { name: price-cache } }
-  - { tool: get_metric, args: { name: pricing_api_cpu, window: 5m } }
+  - { tool: get_metric, args: { name: pricing_api_cpu, window: "5m" } }
   - { tool: scale_service, args: { name: pricing-api, replicas: 6 } }
-  - { tool: get_metric, args: { name: pricing_api_latency_p99_ms, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: pricing_api_latency_p99_ms, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

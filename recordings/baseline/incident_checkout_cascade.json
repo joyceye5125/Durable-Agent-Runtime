@@ -4,7 +4,7 @@
   "provider": "openai",
   "model": "gpt-4.1",
   "config_hash": "916ae0334f038bd28049d5f8511f42e6da89eefcb39d9f2fa0dea43e638449f2",
-  "recorded_at": "2026-09-12T01:15:02.909Z",
+  "recorded_at": "2026-09-12T03:57:38.911Z",
   "entries": [
     {
       "key": "67efd5acb345cb6d596e5bbcf1713961204cd867d85fac09fa9cdec0c6d72554",
@@ -368,6 +368,201 @@
         },
         "tokensIn": 1318,
         "tokensOut": 23
+      }
+    },
+    {
+      "key": "cc7a8b27066f3f06c5196a409b89686de49fe1ef139ad433272d3756518711c7",
+      "turn": 23,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1374,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "7d2fe82b7f3172f0c02331fd1e0b50702688b512cb964e0259929e1d88113176",
+      "turn": 25,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"orders_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1430,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "80b74e071e2ddc221c68f131ea75de00fc87ed72c8673194d1adc236a74eff5c",
+      "turn": 27,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"payments_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1482,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "0233d9fbdc39839b2b12f0869c8d2372a35daac537cb9cbcf4e945b4fc489a1f",
+      "turn": 29,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1537,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "763a55b597a3b4dce7042b6ab42040ca7ef0eae64d6812fd96b05aceff4979ce",
+      "turn": 31,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1593,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "7285b4fab178f93986b50edc1b4617758fe5745f8f5ec33d372f63e94d587d37",
+      "turn": 33,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1649,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "6e705723249797be22269948d10181ba9474eb09c9eb8bcf14170b30ca5ed4ac",
+      "turn": 35,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"orders_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1705,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "9fe9bbeb2ab0f00b608d1708833787a37c498fee5d864eadd0a8575feac47174",
+      "turn": 37,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"orders_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1757,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "23aca32b63c941dd52bc9aa87b8415e1265c3a3a762522e439da2f0b2f327f16",
+      "turn": 39,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"orders_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1809,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "7258dde5bb888cc65a99e5dcb5e0865d7a189d4b68b54536ce9437799e536745",
+      "turn": 41,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"orders_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1861,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "37b98844d06fd29548d15add63001ce5762fd5e127814153781afc20bf3e1904",
+      "turn": 43,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"orders_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1913,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "e58353497b46ee0502f86099d59b3103efc1035c51abe41c9dc22cbba01c2b1e",
+      "turn": 45,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"orders_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1965,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "a36dc880a854416844511e9258731e72dc2165d173618434c475f8dfbb12f087",
+      "turn": 47,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"orders_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 2017,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "c68db237d6b3705c2efaf02c0f8bc5796a2b41783b15d367dd76a60ecc85072d",
+      "turn": 49,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 2069,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "3275413b17aa1271e45eaa7d3b5b2653d59aa5b770a47907fcf5ebb366681858",
+      "turn": 51,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Checkout latency is elevated due to session-cache OOM (maxmemory reached, causing cache misses and fallback to postgres). Payments errors are due to upstream PSP 503s (provider incident PSP-2231). Orders queue depth is recovering after scaling order-worker to 8 replicas. Manual intervention needed for session-cache memory exhaustion and to monitor upstream PSP incident.\"}"
+        },
+        "tokensIn": 2125,
+        "tokensOut": 84
       }
     }
   ]

@@ -9,8 +9,8 @@ world:
     - "2026-09-10T02:58:40Z dashboards WARN data freshness 15m"
     - "2026-09-10T02:59:00Z postgres INFO wal generation normal"
   metrics:
-    postgres_replica_lag_s: { "5m": [840, 880, 910], "1h": [2, 400, 910] }
-    postgres_primary_cpu: { "5m": [0.40, 0.41, 0.39] }
+    postgres_replica_lag_s: { "5m": [840, 880, 910], "1h": [2, 400, 910], "24h": [1, 1, 2, 910] }
+    postgres_primary_cpu: { "5m": [0.4, 0.41, 0.39], "1h": [0.408, 0.4, 0.39], "24h": [0.408, 0.408, 0.408, 0.39] }
   effects:
     - when: { tool: restart_service, args: { name: analytics-etl } }
       metrics:
@@ -23,9 +23,9 @@ endpoint:
   required_effects:
     - { tool: restart_service, args: { name: analytics-etl } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: replica lag } }
-  - { tool: get_metric, args: { name: postgres_replica_lag_s, window: 5m } }
+  - { tool: search_logs, args: { query: "replica lag" } }
+  - { tool: get_metric, args: { name: postgres_replica_lag_s, window: "5m" } }
   - { tool: restart_service, args: { name: analytics-etl } }
-  - { tool: get_metric, args: { name: postgres_replica_lag_s, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: postgres_replica_lag_s, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

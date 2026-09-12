@@ -10,8 +10,8 @@ world:
     - "2026-09-10T08:10:00Z pdf-renderer INFO idle"
     - "2026-09-10T08:12:44Z billing-api INFO healthy"
   metrics:
-    invoices_generated_today: { "1h": [0, 0, 0] }
-    billing_cron_lock_wait_s: { "1h": [3600, 5400, 7200] }
+    invoices_generated_today: { "1h": [0, 0, 0], "5m": [0, 0, 0], "24h": [0, 0, 0, 0] }
+    billing_cron_lock_wait_s: { "1h": [3600, 5400, 7200], "5m": [6660, 6660, 7200], "24h": [1440, 1440, 3600, 7200] }
   effects:
     - when: { tool: restart_service, args: { name: billing-cron } }
       metrics:
@@ -25,9 +25,9 @@ endpoint:
   required_effects:
     - { tool: restart_service, args: { name: billing-cron } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: billing-cron invoices } }
-  - { tool: get_metric, args: { name: billing_cron_lock_wait_s, window: 1h } }
+  - { tool: search_logs, args: { query: "billing-cron invoices" } }
+  - { tool: get_metric, args: { name: billing_cron_lock_wait_s, window: "1h" } }
   - { tool: restart_service, args: { name: billing-cron } }
-  - { tool: get_metric, args: { name: invoices_generated_today, window: 1h } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: invoices_generated_today, window: "1h" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

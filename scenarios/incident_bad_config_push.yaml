@@ -9,8 +9,8 @@ world:
     - "2026-09-10T10:45:40Z edge-proxy WARN 429 Too Many Requests for 71% of requests"
     - "2026-09-10T10:46:10Z api INFO request rate 0.3x baseline"
   metrics:
-    edge_429_rate: { "5m": [0.02, 0.68, 0.71] }
-    api_requests_per_s: { "5m": [880, 290, 260] }
+    edge_429_rate: { "5m": [0.02, 0.68, 0.71], "1h": [0, 0.02, 0.71], "24h": [0, 0, 0, 0.71] }
+    api_requests_per_s: { "5m": [880, 290, 260], "1h": [1376, 880, 260], "24h": [1376, 1376, 1376, 260] }
   effects:
     - when: { tool: restart_service, args: { name: edge-proxy } }
       logs:
@@ -21,8 +21,8 @@ endpoint:
   required_effects:
     - { tool: page_oncall }
 golden_trajectory:
-  - { tool: search_logs, args: { query: edge-proxy 429 rate limit } }
-  - { tool: get_metric, args: { name: edge_429_rate, window: 5m } }
-  - { tool: page_oncall, args: { message: (predicted) } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: search_logs, args: { query: "edge-proxy 429 rate limit" } }
+  - { tool: get_metric, args: { name: edge_429_rate, window: "5m" } }
+  - { tool: page_oncall, args: { message: "(predicted)" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

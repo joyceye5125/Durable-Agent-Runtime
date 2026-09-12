@@ -1,6 +1,6 @@
 id: incident_model_server_hang
 kind: eval
-task: "ALERT checkout_fraud_check_timeouts = 41%; orders held for manual review. Diagnose and remediate."
+task: "ALERT fraud_check_timeout_rate = 41%; orders held for manual review. Diagnose and remediate."
 world:
   services: [fraud-check, fraud-model, checkout, feature-store]
   logs:
@@ -9,9 +9,9 @@ world:
     - "2026-09-10T20:06:02Z checkout INFO order held for manual review (fraud check unavailable)"
     - "2026-09-10T20:06:30Z feature-store INFO p99 8ms"
   metrics:
-    fraud_check_timeout_rate: { "5m": [0.30, 0.38, 0.41] }
-    fraud_model_latency_p99_ms: { "5m": [2000, 2000, 2000] }
-    feature_store_latency_p99_ms: { "5m": [8, 8, 9] }
+    fraud_check_timeout_rate: { "5m": [0.3, 0.38, 0.41], "1h": [0.212, 0.3, 0.41], "24h": [0.085, 0.085, 0.212, 0.41] }
+    fraud_model_latency_p99_ms: { "5m": [2000, 2000, 2000], "1h": [2000, 2000, 2000], "24h": [2000, 2000, 2000, 2000] }
+    feature_store_latency_p99_ms: { "5m": [8, 8, 9], "1h": [7, 8, 9], "24h": [3, 3, 7, 9] }
   effects:
     - when: { tool: restart_service, args: { name: fraud-model } }
       metrics:
@@ -26,9 +26,9 @@ endpoint:
   required_effects:
     - { tool: restart_service, args: { name: fraud-model } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: fraud check timeout } }
-  - { tool: get_metric, args: { name: checkout_fraud_check_timeouts, window: 5m } }
+  - { tool: search_logs, args: { query: "fraud check timeout" } }
+  - { tool: get_metric, args: { name: checkout_fraud_check_timeouts, window: "5m" } }
   - { tool: restart_service, args: { name: fraud-model } }
-  - { tool: get_metric, args: { name: fraud_check_timeout_rate, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: fraud_check_timeout_rate, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

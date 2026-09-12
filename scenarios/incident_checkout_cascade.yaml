@@ -1,9 +1,5 @@
-# Long scenario for the crash experiment: at least 10 steps and at least 3
-# side-effecting tool calls, so crashes land on many different steps.
 id: incident_checkout_cascade
 kind: crash
-# Allows the extra steps this multi-alert incident needs: three alerts, each
-# investigated, remediated or escalated, then verified.
 max_steps: 26
 task: "Three alerts are firing on the checkout path: checkout_latency_p99_ms = 4800 (SLO 800), orders_queue_depth = 52000 and rising, payments_error_rate = 6%. Investigate each alert, remediate what you can, and escalate what you cannot."
 world:
@@ -11,6 +7,7 @@ world:
   logs:
     - "2026-09-10T09:12:44Z session-cache WARN used_memory 7.9G/8G, evicting keys (maxmemory reached)"
     - "2026-09-10T09:12:51Z session-cache ERROR OOM command not allowed when used memory > maxmemory"
+    - "2026-09-10T09:12:55Z session-cache INFO persistence disabled; sessions are rebuilt from postgres on miss, so the keyspace is safe to drop"
     - "2026-09-10T09:13:02Z checkout WARN session lookup fell back to postgres (cache error), +3.9s"
     - "2026-09-10T09:14:30Z order-worker WARN consumer lag 48000 messages; running 2/2 replicas"
     - "2026-09-10T09:14:31Z order-worker INFO autoscaler disabled for this service; capacity plan for peak is 8 replicas"
@@ -18,12 +15,12 @@ world:
     - "2026-09-10T09:15:12Z payments-gateway ERROR upstream PSP returned 503 Service Unavailable (provider incident PSP-2231)"
     - "2026-09-10T09:15:40Z postgres INFO connections 180/400"
   metrics:
-    checkout_latency_p99_ms: { "5m": [4100, 4600, 4800], "1h": [620, 2900, 4800] }
-    session_cache_memory_ratio: { "5m": [0.99, 0.99, 0.99] }
-    orders_queue_depth: { "5m": [44000, 48000, 52000], "1h": [3000, 21000, 52000] }
-    order_worker_replicas: { "5m": [2, 2, 2] }
-    payments_error_rate: { "5m": [0.058, 0.061, 0.060] }
-    postgres_cpu: { "5m": [0.52, 0.55, 0.54] }
+    checkout_latency_p99_ms: { "5m": [4100, 4600, 4800], "1h": [620, 2900, 4800], "24h": [248, 248, 620, 4800] }
+    session_cache_memory_ratio: { "5m": [0.99, 0.99, 0.99], "1h": [0.99, 0.99, 0.99], "24h": [0.99, 0.99, 0.99, 0.99] }
+    orders_queue_depth: { "5m": [44000, 48000, 52000], "1h": [3000, 21000, 52000], "24h": [1200, 1200, 3000, 52000] }
+    order_worker_replicas: { "5m": [2, 2, 2], "1h": [2, 2, 2], "24h": [2, 2, 2, 2] }
+    payments_error_rate: { "5m": [0.058, 0.061, 0.06], "1h": [0.056, 0.058, 0.06], "24h": [0.022, 0.022, 0.056, 0.06] }
+    postgres_cpu: { "5m": [0.52, 0.55, 0.54], "1h": [0.504, 0.52, 0.54], "24h": [0.202, 0.202, 0.504, 0.54] }
   effects:
     - when: { tool: restart_service, args: { name: session-cache } }
       metrics:
@@ -31,8 +28,6 @@ world:
         session_cache_memory_ratio: { "5m": [0.99, 0.18, 0.21] }
       logs:
         - "2026-09-10T09:21:05Z session-cache INFO restarted; used_memory 1.4G/8G"
-    # An under-sized scale-out has to be visible: the queue drains slowly
-    # instead of not moving at all, so the agent gets feedback either way.
     - when: { tool: scale_service, args: { name: order-worker, replicas: { gte: 3 } } }
       metrics:
         orders_queue_depth: { "5m": [52000, 51000, 50000] }

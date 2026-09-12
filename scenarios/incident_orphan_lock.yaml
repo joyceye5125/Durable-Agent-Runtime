@@ -10,8 +10,8 @@ world:
     - "2026-09-10T11:00:10Z warehouse-api INFO healthy"
     - "2026-09-10T11:00:20Z postgres INFO connections 110/400"
   metrics:
-    inventory_sync_last_success_age_s: { "5m": [4100, 4150, 4200] }
-    storefront_error_rate: { "5m": [0.001, 0.001, 0.001] }
+    inventory_sync_last_success_age_s: { "5m": [4100, 4150, 4200], "1h": [4020, 4100, 4200], "24h": [1608, 1608, 4020, 4200] }
+    storefront_error_rate: { "5m": [0.001, 0.001, 0.001], "1h": [0.001, 0.001, 0.001], "24h": [0.001, 0.001, 0.001, 0.001] }
   effects:
     - when: { tool: restart_service, args: { name: inventory-sync } }
       metrics:
@@ -24,8 +24,8 @@ endpoint:
   required_effects:
     - { tool: restart_service, args: { name: inventory-sync } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: inventory-sync lock } }
+  - { tool: search_logs, args: { query: "inventory-sync lock" } }
   - { tool: restart_service, args: { name: inventory-sync } }
-  - { tool: get_metric, args: { name: inventory_sync_last_success_age_s, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: inventory_sync_last_success_age_s, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

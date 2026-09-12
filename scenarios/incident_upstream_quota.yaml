@@ -9,14 +9,14 @@ world:
     - "2026-09-10T12:15:22Z geo-service ERROR maps API 429 Too Many Requests (daily quota 82% used)"
     - "2026-09-10T12:16:00Z api INFO healthy"
   metrics:
-    geo_service_error_rate: { "5m": [0.21, 0.30, 0.34] }
-    geo_cache_hit_ratio: { "5m": [0.0, 0.0, 0.0], "1h": [0.93, 0.0, 0.0] }
-    maps_api_calls_per_min: { "5m": [9800, 11000, 11400] }
+    geo_service_error_rate: { "5m": [0.21, 0.3, 0.34], "1h": [0.106, 0.21, 0.34], "24h": [0.042, 0.042, 0.106, 0.34] }
+    geo_cache_hit_ratio: { "5m": [0, 0, 0], "1h": [0.93, 0, 0], "24h": [0.93, 0.93, 0.93, 0] }
+    maps_api_calls_per_min: { "5m": [9800, 11000, 11400], "1h": [8520, 9800, 11400], "24h": [3408, 3408, 8520, 11400] }
   effects:
     - when: { tool: restart_service, args: { name: geo-cache } }
       metrics:
         geo_service_error_rate: { "5m": [0.34, 0.07, 0.004] }
-        geo_cache_hit_ratio: { "5m": [0.0, 0.64, 0.88] }
+        geo_cache_hit_ratio: { "5m": [0, 0.64, 0.88] }
         maps_api_calls_per_min: { "5m": [11400, 3100, 1200] }
 expected_answer: "geo-cache is stuck after an OOM, so geo-service calls the maps API for every request and hits its 429 quota. Restarting geo-cache restored the cache; upstream calls and errors dropped."
 endpoint:
@@ -24,9 +24,9 @@ endpoint:
   required_effects:
     - { tool: restart_service, args: { name: geo-cache } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: geo-service 429 } }
-  - { tool: get_metric, args: { name: geo_cache_hit_ratio, window: 5m } }
+  - { tool: search_logs, args: { query: "geo-service 429" } }
+  - { tool: get_metric, args: { name: geo_cache_hit_ratio, window: "5m" } }
   - { tool: restart_service, args: { name: geo-cache } }
-  - { tool: get_metric, args: { name: geo_service_error_rate, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: geo_service_error_rate, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

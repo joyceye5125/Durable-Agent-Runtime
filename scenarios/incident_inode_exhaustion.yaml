@@ -1,6 +1,6 @@
 id: incident_inode_exhaustion
 kind: eval
-task: "ALERT app-3: writes failing with 'No space left on device' while disk_usage_var = 41%. Diagnose and remediate."
+task: "ALERT inode_usage_var = 100% on app-3: writes fail with 'No space left on device' while disk_usage_var is only 41%. Diagnose and remediate."
 world:
   services: [app, tmp-cleaner, php-sessions, nginx]
   logs:
@@ -9,13 +9,13 @@ world:
     - "2026-09-10T09:22:15Z php-sessions WARN inode usage /var 100% (6.5M files in /var/lib/php/sessions)"
     - "2026-09-10T09:23:02Z nginx INFO upstream app-3 returning 500"
   metrics:
-    disk_usage_var: { "5m": [0.41, 0.41, 0.41] }
-    inode_usage_var: { "5m": [0.99, 1.0, 1.0], "24h": [0.62, 0.81, 0.95, 1.0] }
-    app_error_rate: { "5m": [0.21, 0.30, 0.33] }
+    disk_usage_var: { "5m": [0.41, 0.41, 0.41], "1h": [0.41, 0.41, 0.41], "24h": [0.41, 0.41, 0.41, 0.41] }
+    inode_usage_var: { "5m": [0.99, 1, 1], "24h": [0.62, 0.81, 0.95, 1.0], "1h": [0.982, 0.99, 1] }
+    app_error_rate: { "5m": [0.21, 0.3, 0.33], "1h": [0.114, 0.21, 0.33], "24h": [0.046, 0.046, 0.114, 0.33] }
   effects:
     - when: { tool: restart_service, args: { name: tmp-cleaner } }
       metrics:
-        inode_usage_var: { "5m": [1.0, 0.71, 0.18] }
+        inode_usage_var: { "5m": [1, 0.71, 0.18] }
         app_error_rate: { "5m": [0.33, 0.05, 0.002] }
       logs:
         - "2026-09-10T09:30:02Z tmp-cleaner INFO config reloaded; removed 6.1M expired session files"
@@ -25,9 +25,9 @@ endpoint:
   required_effects:
     - { tool: restart_service, args: { name: tmp-cleaner } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: No space left on device } }
-  - { tool: get_metric, args: { name: inode_usage_var, window: 5m } }
+  - { tool: search_logs, args: { query: "No space left on device" } }
+  - { tool: get_metric, args: { name: inode_usage_var, window: "5m" } }
   - { tool: restart_service, args: { name: tmp-cleaner } }
-  - { tool: get_metric, args: { name: inode_usage_var, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: inode_usage_var, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

@@ -1,6 +1,6 @@
 id: incident_partition_consumer
 kind: eval
-task: "ALERT kafka_consumer_lag{group=events-consumer} = 1.4M on partition 7 only. Diagnose and remediate."
+task: "ALERT kafka_consumer_lag_p7 = 1.4M; the other partitions are normal. Diagnose and remediate."
 world:
   services: [events-consumer, kafka, analytics-sink]
   logs:
@@ -9,8 +9,8 @@ world:
     - "2026-09-10T06:00:00Z kafka INFO brokers healthy, ISR full"
     - "2026-09-10T06:01:30Z analytics-sink INFO writes normal"
   metrics:
-    kafka_consumer_lag_p7: { "5m": [1350000, 1380000, 1400000] }
-    kafka_consumer_lag_other: { "5m": [120, 90, 110] }
+    kafka_consumer_lag_p7: { "5m": [1350000, 1380000, 1400000], "1h": [1310000, 1350000, 1400000], "24h": [524000, 524000, 1310000, 1400000] }
+    kafka_consumer_lag_other: { "5m": [120, 90, 110], "1h": [128, 120, 110], "24h": [128, 128, 128, 110] }
   effects:
     - when: { tool: restart_service, args: { name: events-consumer } }
       logs:
@@ -21,8 +21,8 @@ endpoint:
   required_effects:
     - { tool: page_oncall }
 golden_trajectory:
-  - { tool: search_logs, args: { query: events-consumer partition 7 } }
-  - { tool: get_metric, args: { name: kafka_consumer_lag, window: 5m } }
-  - { tool: page_oncall, args: { message: (predicted) } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: search_logs, args: { query: "events-consumer partition 7" } }
+  - { tool: get_metric, args: { name: kafka_consumer_lag, window: "5m" } }
+  - { tool: page_oncall, args: { message: "(predicted)" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

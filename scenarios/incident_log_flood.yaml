@@ -9,8 +9,8 @@ world:
     - "2026-09-10T13:30:02Z log-store WARN ingest backlog 1800s"
     - "2026-09-10T13:30:30Z api INFO healthy"
   metrics:
-    log_pipeline_ingest_lag_s: { "5m": [1700, 1750, 1800] }
-    log_lines_per_s: { "5m": [47000, 48000, 48000], "1h": [3000, 46000, 48000] }
+    log_pipeline_ingest_lag_s: { "5m": [1700, 1750, 1800], "1h": [1620, 1700, 1800], "24h": [648, 648, 1620, 1800] }
+    log_lines_per_s: { "5m": [47000, 48000, 48000], "1h": [3000, 46000, 48000], "24h": [1200, 1200, 3000, 48000] }
   effects:
     - when: { tool: restart_service, args: { name: checkout-api } }
       metrics:
@@ -27,9 +27,9 @@ endpoint:
   required_effects:
     - { tool: restart_service, args: { name: checkout-api } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: log-shipper input rate } }
-  - { tool: get_metric, args: { name: log_lines_per_s, window: 1h } }
+  - { tool: search_logs, args: { query: "log-shipper input rate" } }
+  - { tool: get_metric, args: { name: log_lines_per_s, window: "1h" } }
   - { tool: restart_service, args: { name: checkout-api } }
-  - { tool: get_metric, args: { name: log_lines_per_s, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: log_lines_per_s, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

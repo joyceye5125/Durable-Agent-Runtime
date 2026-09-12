@@ -10,11 +10,18 @@ world:
     - "2026-09-10T08:35:00Z object-store INFO put latency p99 60ms"
     - "2026-09-10T08:35:30Z thumbnailer INFO healthy"
   metrics:
-    image_api_latency_p99_ms: { "5m": [3900, 4800, 5200] }
-    image_api_cpu_throttled_ratio: { "5m": [0.62, 0.70, 0.71] }
-    image_api_replicas: { "5m": [2, 2, 2] }
-    object_store_put_latency_ms: { "5m": [58, 61, 60] }
+    image_api_latency_p99_ms: { "5m": [3900, 4800, 5200], "1h": [2860, 3900, 5200], "24h": [1144, 1144, 2860, 5200] }
+    image_api_cpu_throttled_ratio: { "5m": [0.62, 0.7, 0.71], "1h": [0.548, 0.62, 0.71], "24h": [0.219, 0.219, 0.548, 0.71] }
+    image_api_replicas: { "5m": [2, 2, 2], "1h": [2, 2, 2], "24h": [2, 2, 2, 2] }
+    object_store_put_latency_ms: { "5m": [58, 61, 60], "1h": [56, 58, 60], "24h": [22, 22, 56, 60] }
   effects:
+    - when: { tool: scale_service, args: { name: image-api, replicas: { gte: 3 } } }
+      metrics:
+        image_api_latency_p99_ms: { "5m": [5200, 3200, 3000] }
+        image_api_cpu_throttled_ratio: { "5m": [0.71, 0.45, 0.43] }
+        image_api_replicas: { "5m": [2, 3, 3] }
+      logs:
+        - "2026-09-10T08:41:11Z image-api INFO scaled out; still throttled, runbook RB-44 calls for 5 replicas during bulk imports"
     - when: { tool: scale_service, args: { name: image-api, replicas: { gte: 5 } } }
       metrics:
         image_api_latency_p99_ms: { "5m": [5200, 1100, 380] }
@@ -27,8 +34,8 @@ endpoint:
     - { tool: scale_service, args: { name: image-api, replicas: { gte: 5 } } }
 golden_trajectory:
   - { tool: search_logs, args: { query: image-api } }
-  - { tool: get_metric, args: { name: image_api_latency_p99_ms, window: 5m } }
+  - { tool: get_metric, args: { name: image_api_latency_p99_ms, window: "5m" } }
   - { tool: scale_service, args: { name: image-api, replicas: 5 } }
-  - { tool: get_metric, args: { name: image_api_latency_p99_ms, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: image_api_latency_p99_ms, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

@@ -9,8 +9,8 @@ world:
     - "2026-09-10T10:44:30Z web INFO serving flag snapshot from 09:02"
     - "2026-09-10T10:45:00Z api INFO healthy"
   metrics:
-    feature_flag_staleness_s: { "5m": [5300, 5350, 5400] }
-    web_error_rate: { "5m": [0.002, 0.002, 0.002] }
+    feature_flag_staleness_s: { "5m": [5300, 5350, 5400], "1h": [5220, 5300, 5400], "24h": [2088, 2088, 5220, 5400] }
+    web_error_rate: { "5m": [0.002, 0.002, 0.002], "1h": [0.002, 0.002, 0.002], "24h": [0.002, 0.002, 0.002, 0.002] }
   effects:
     - when: { tool: restart_service, args: { name: flag-sync } }
       metrics:
@@ -24,8 +24,8 @@ endpoint:
     - { tool: restart_service, args: { name: flag-sync } }
 golden_trajectory:
   - { tool: search_logs, args: { query: flag-sync } }
-  - { tool: get_metric, args: { name: feature_flag_staleness_s, window: 5m } }
+  - { tool: get_metric, args: { name: feature_flag_staleness_s, window: "5m" } }
   - { tool: restart_service, args: { name: flag-sync } }
-  - { tool: get_metric, args: { name: feature_flag_staleness_s, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: feature_flag_staleness_s, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

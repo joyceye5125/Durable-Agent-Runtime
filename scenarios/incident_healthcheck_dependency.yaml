@@ -1,6 +1,6 @@
 id: incident_healthcheck_dependency
 kind: eval
-task: "ALERT load balancer marks 9/12 api instances unhealthy; capacity dropping. Diagnose and remediate."
+task: "ALERT api_healthy_instances = 3 of 12: the load balancer is ejecting instances and capacity is dropping. Diagnose and remediate."
 world:
   services: [api, config-service, load-balancer, postgres]
   logs:
@@ -9,9 +9,9 @@ world:
     - "2026-09-10T18:03:05Z load-balancer WARN api-3,4,5,6,7,8,9,11,12 removed from pool (healthz 503)"
     - "2026-09-10T18:03:30Z postgres INFO healthy"
   metrics:
-    api_healthy_instances: { "5m": [11, 6, 3] }
-    config_service_up: { "5m": [0, 0, 0] }
-    api_latency_p99_ms: { "5m": [180, 420, 910] }
+    api_healthy_instances: { "5m": [11, 6, 3], "1h": [17, 11, 3], "24h": [17, 17, 17, 3] }
+    config_service_up: { "5m": [0, 0, 0], "1h": [0, 0, 0], "24h": [0, 0, 0, 0] }
+    api_latency_p99_ms: { "5m": [180, 420, 910], "1h": [0, 180, 910], "24h": [0, 0, 0, 910] }
   effects:
     - when: { tool: restart_service, args: { name: config-service } }
       metrics:
@@ -27,9 +27,9 @@ endpoint:
   required_effects:
     - { tool: restart_service, args: { name: config-service } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: healthz api unhealthy } }
-  - { tool: get_metric, args: { name: config_service_up, window: 5m } }
+  - { tool: search_logs, args: { query: "healthz api unhealthy" } }
+  - { tool: get_metric, args: { name: config_service_up, window: "5m" } }
   - { tool: restart_service, args: { name: config-service } }
-  - { tool: get_metric, args: { name: api_healthy_instances, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: api_healthy_instances, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

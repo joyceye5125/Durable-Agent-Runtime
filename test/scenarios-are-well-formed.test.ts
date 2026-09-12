@@ -1,0 +1,74 @@
+import { describe, expect, it } from "vitest";
+import { listScenarioIds, loadScenario, type Scenario } from "../server/scenarios";
+import { currentWorld, getTool, runTool } from "../server/tools/registry";
+
+/**
+ * Scenario bugs look like agent failures: a live baseline run burned its whole
+ * step budget because one log line was unsearchable and one remediation had no
+ * visible effect. These checks catch that class before an API key is spent.
+ */
+const scenarios: Scenario[] = listScenarioIds().map(loadScenario);
+
+describe.each(scenarios.map((s) => [s.id, s] as const))("%s", (_id, s) => {
+  it("alerts name metrics that exist in the world", () => {
+    for (const m of [...s.task.matchAll(/ALERT ([a-z_][a-z0-9_]*)/g)].map((x) => x[1])) {
+      expect(Object.keys(s.world.metrics), `task names metric "${m}"`).toContain(m);
+    }
+  });
+
+  it("answers at both windows an agent is likely to ask for", () => {
+    for (const [name, windows] of Object.entries(s.world.metrics)) {
+      expect(Object.keys(windows), `metric ${name}`).toEqual(expect.arrayContaining(["5m", "1h"]));
+    }
+  });
+
+  it("targets services that exist, and their evidence is findable by searching the service name", () => {
+    const world = currentWorld(s, []);
+    for (const effect of s.endpoint.required_effects) {
+      const name = effect.args?.name;
+      if (name === undefined) continue;
+      expect(s.world.services).toContain(String(name));
+      const found = runTool("search_logs", { query: String(name) }, world) as { matches: string[] };
+      expect(found.matches.length, `search_logs("${name}") finds nothing`).toBeGreaterThan(0);
+    }
+  });
+
+  it("makes an under-sized scale-out visible instead of silent", () => {
+    const thresholds = new Map<string, number[]>();
+    for (const e of s.world.effects ?? []) {
+      const replicas = e.when.args?.replicas as { gte?: number } | undefined;
+      if (e.when.tool !== "scale_service" || !replicas?.gte) continue;
+      const key = String(e.when.args?.name);
+      thresholds.set(key, [...(thresholds.get(key) ?? []), replicas.gte]);
+    }
+    for (const [service, gtes] of thresholds) {
+      // Scaling one step above the current replica count has to change
+      // something, or the agent polls a metric that will never move.
+      expect(Math.min(...gtes), `${service}: the lowest scale threshold is too high to ever be hit by a cautious step`).toBeLessThanOrEqual(5);
+    }
+  });
+
+  it("only requires tools that exist, and every effect targets a real service", () => {
+    for (const e of [...s.endpoint.required_effects, ...(s.world.effects ?? []).map((x) => x.when)]) {
+      expect(getTool(e.tool), `unknown tool ${e.tool}`).toBeDefined();
+      if (e.args?.name !== undefined) expect(s.world.services).toContain(String(e.args.name));
+    }
+  });
+
+  it("can be solved: the required remediation changes what the agent reads", () => {
+    const before = currentWorld(s, []);
+    const ledger = s.endpoint.required_effects.map((e) => ({ tool: e.tool, args: liftArgs(e.args) }));
+    const after = currentWorld(s, ledger);
+    const readsChange = JSON.stringify(after.metrics) !== JSON.stringify(before.metrics) || after.logs.length !== before.logs.length;
+    // Escalate-only incidents legitimately leave the world unchanged.
+    const escalateOnly = s.endpoint.required_effects.every((e) => e.tool === "page_oncall");
+    expect(readsChange || escalateOnly, "required remediation has no observable effect").toBe(true);
+  });
+});
+
+/** `{ replicas: { gte: 6 } }` describes a class of calls; a ledger row holds one concrete call. */
+function liftArgs(args: Record<string, unknown> = {}): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(args).map(([k, v]) => [k, v && typeof v === "object" && "gte" in (v as object) ? (v as { gte: number }).gte : v]),
+  );
+}

@@ -9,10 +9,17 @@ world:
     - "2026-09-10T19:01:12Z redis-pubsub INFO cpu 22%"
     - "2026-09-10T19:01:30Z api INFO healthy"
   metrics:
-    realtime_connection_rejections: { "5m": [900, 2600, 3800] }
-    realtime_connections: { "5m": [58000, 60000, 60000] }
-    realtime_replicas: { "5m": [3, 3, 3] }
+    realtime_connection_rejections: { "5m": [900, 2600, 3800], "1h": [0, 900, 3800], "24h": [0, 0, 0, 3800] }
+    realtime_connections: { "5m": [58000, 60000, 60000], "1h": [56400, 58000, 60000], "24h": [22560, 22560, 56400, 60000] }
+    realtime_replicas: { "5m": [3, 3, 3], "1h": [3, 3, 3], "24h": [3, 3, 3, 3] }
   effects:
+    - when: { tool: scale_service, args: { name: realtime, replicas: { gte: 4 } } }
+      metrics:
+        realtime_connection_rejections: { "5m": [3800, 2000, 1800] }
+        realtime_connections: { "5m": [60000, 79000, 80000] }
+        realtime_replicas: { "5m": [3, 4, 4] }
+      logs:
+        - "2026-09-10T19:08:40Z realtime INFO scaled out; still rejecting connections at this replica count"
     - when: { tool: scale_service, args: { name: realtime, replicas: { gte: 6 } } }
       metrics:
         realtime_connection_rejections: { "5m": [3800, 400, 0] }
@@ -24,9 +31,9 @@ endpoint:
   required_effects:
     - { tool: scale_service, args: { name: realtime, replicas: { gte: 6 } } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: realtime connections } }
-  - { tool: get_metric, args: { name: realtime_connections, window: 5m } }
+  - { tool: search_logs, args: { query: "realtime connections" } }
+  - { tool: get_metric, args: { name: realtime_connections, window: "5m" } }
   - { tool: scale_service, args: { name: realtime, replicas: 8 } }
-  - { tool: get_metric, args: { name: realtime_connection_rejections, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: realtime_connection_rejections, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

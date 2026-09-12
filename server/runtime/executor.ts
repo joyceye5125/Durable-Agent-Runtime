@@ -1,4 +1,5 @@
-import type { RunMode } from "../core/events";
+import { canonicalJSON } from "../core/canonical";
+import { fold, type RunMode } from "../core/events";
 import type { Scenario } from "../scenarios";
 import type { Store } from "../store/store";
 import { argsHash, currentWorld, isSideEffecting, runTool, ToolError } from "../tools/registry";
@@ -39,7 +40,16 @@ export class DbToolExecutor implements ToolExecutor {
       if (e instanceof ToolError) return { ok: false, error: e.message };
       throw e;
     }
-    if (!isSideEffecting(call.tool)) return { ok: true, result };
+    if (!isSideEffecting(call.tool)) {
+      // A real monitoring API lets you tell "nothing changed" from "I have not
+      // looked yet". Without that, an agent can mistake re-reading for waiting
+      // and poll the same metric until it runs out of steps.
+      const previous = await this.previousIdenticalRead(call);
+      if (previous !== undefined && canonicalJSON(previous.result) === canonicalJSON(result)) {
+        return { ok: true, result: { ...(result as object), note: `unchanged since the identical call at step ${previous.step}` } };
+      }
+      return { ok: true, result };
+    }
 
     if (this.mode === "durable") {
       // ON CONFLICT on idem_key: if a previous attempt already performed this
@@ -55,5 +65,15 @@ export class DbToolExecutor implements ToolExecutor {
       argsHash: argsHash({ tool: call.tool, args: call.args }),
     });
     return { ok: true, result };
+  }
+
+  private async previousIdenticalRead(call: ToolCall): Promise<{ step: number; result: unknown } | undefined> {
+    const state = fold(await this.store.listEvents(this.runId));
+    for (const st of state.steps) {
+      if (!st?.invoked || st.step >= call.step) continue;
+      if (st.invoked.tool_name !== call.tool || canonicalJSON(st.invoked.args) !== canonicalJSON(call.args)) continue;
+      if (st.outcome?.kind === "committed") return { step: st.step, result: st.outcome.result };
+    }
+    return undefined;
   }
 }

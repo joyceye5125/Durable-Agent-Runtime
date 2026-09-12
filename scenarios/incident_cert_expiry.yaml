@@ -1,6 +1,6 @@
 id: incident_cert_expiry
 kind: eval
-task: "ALERT synthetic_check_https{target=api.example.com} failing from all regions. Diagnose and remediate."
+task: "ALERT synthetic_https_success{target=api.example.com} = 0 from every region. Diagnose and remediate."
 world:
   services: [api, edge-proxy, cert-manager]
   logs:
@@ -9,8 +9,8 @@ world:
     - "2026-09-10T00:03:12Z api INFO healthy, 0 requests in last 5m"
     - "2026-09-10T00:04:00Z edge-proxy ERROR TLS handshake failed: certificate for api.example.com expired"
   metrics:
-    synthetic_https_success: { "5m": [0.0, 0.0, 0.0], "1h": [1.0, 0.0, 0.0] }
-    api_requests_per_s: { "5m": [0, 0, 0] }
+    synthetic_https_success: { "5m": [0, 0, 0], "1h": [1, 0, 0], "24h": [1, 1, 1, 0] }
+    api_requests_per_s: { "5m": [0, 0, 0], "1h": [0, 0, 0], "24h": [0, 0, 0, 0] }
   effects:
     - when: { tool: restart_service, args: { name: cert-manager } }
       logs:
@@ -21,8 +21,8 @@ endpoint:
   required_effects:
     - { tool: page_oncall }
 golden_trajectory:
-  - { tool: search_logs, args: { query: TLS certificate api.example.com } }
-  - { tool: get_metric, args: { name: synthetic_check_https, window: 5m } }
-  - { tool: page_oncall, args: { message: (predicted) } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: search_logs, args: { query: "TLS certificate api.example.com" } }
+  - { tool: get_metric, args: { name: synthetic_check_https, window: "5m" } }
+  - { tool: page_oncall, args: { message: "(predicted)" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted

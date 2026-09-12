@@ -9,8 +9,8 @@ world:
     - "2026-09-10T09:41:13Z api ERROR JWT rejected: nbf is in the future (issued by auth)"
     - "2026-09-10T09:42:00Z session-cache INFO hit ratio 0.96"
   metrics:
-    auth_401_rate: { "5m": [0.19, 0.22, 0.23], "24h": [0.001, 0.001, 0.08, 0.23] }
-    auth_clock_offset_s: { "5m": [-92, -93, -94] }
+    auth_401_rate: { "5m": [0.19, 0.22, 0.23], "24h": [0.001, 0.001, 0.08, 0.23], "1h": [0.158, 0.19, 0.23] }
+    auth_clock_offset_s: { "5m": [-92, -93, -94], "1h": [0, 0, 0], "24h": [0, 0, 0, 0] }
   effects:
     - when: { tool: restart_service, args: { name: ntp-agent } }
       metrics:
@@ -24,9 +24,9 @@ endpoint:
   required_effects:
     - { tool: restart_service, args: { name: ntp-agent } }
 golden_trajectory:
-  - { tool: search_logs, args: { query: auth token not yet valid } }
-  - { tool: get_metric, args: { name: auth_clock_offset_s, window: 5m } }
+  - { tool: search_logs, args: { query: "auth token not yet valid" } }
+  - { tool: get_metric, args: { name: auth_clock_offset_s, window: "5m" } }
   - { tool: restart_service, args: { name: ntp-agent } }
-  - { tool: get_metric, args: { name: auth_401_rate, window: 5m } }
-  - { tool: post_status, args: { message: (predicted) } }
+  - { tool: get_metric, args: { name: auth_401_rate, window: "5m" } }
+  - { tool: post_status, args: { message: "(predicted)" } }
 golden_source: predicted
