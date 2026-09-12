@@ -108,7 +108,8 @@ const TOOLS: ToolDef[] = [
   },
   {
     name: "restart_service",
-    description: "Restart all instances of a service. Changes production state.",
+    description:
+      "Restart all instances of a service. Clears whatever state the running processes hold — caches, stuck locks, leaked memory — and brings them back on the same code and configuration. Changes production state.",
     sideEffect: true,
     schema: {
       type: "object",
@@ -123,7 +124,8 @@ const TOOLS: ToolDef[] = [
   },
   {
     name: "scale_service",
-    description: "Set the replica count of a service. Changes production state.",
+    description:
+      "Set the replica count of a service. Adds or removes capacity for load; every replica runs the same code and configuration, and state an existing instance already holds is untouched. Changes production state.",
     sideEffect: true,
     schema: {
       type: "object",

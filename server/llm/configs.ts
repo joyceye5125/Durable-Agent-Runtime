@@ -59,7 +59,10 @@ export const BASELINE: AgentConfig = {
   description: "Strong model, full operating policy. Produces the golden trajectories.",
   modelTier: "strong",
   systemPrompt: BASELINE_PROMPT,
-  maxSteps: 12,
+  // An incident that needs two remediations plus a check after each one runs
+  // to about a dozen steps; 12 cut a correct run off one step before its
+  // answer. The budget is not what this is testing.
+  maxSteps: 16,
   maxInvalidRetries: 2,
 };
 
