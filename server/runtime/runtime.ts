@@ -9,6 +9,15 @@ import { CrashInjected, CrashInjector, type CrashPlan, type CrashPoint, type Cra
 import type { ToolExecutor } from "./executor";
 
 /** Where a runtime reads and appends its events. The database in production; memory for faithful replay. */
+/**
+ * A budget the config sets on purpose wins, so the step-budget candidate keeps
+ * its cut everywhere; otherwise a long scenario may raise the default, since
+ * running out of steps is not what that scenario is testing.
+ */
+export function stepBudget(config: Pick<ResolvedConfig, "maxSteps" | "maxStepsOverride">, scenario: Pick<Scenario, "max_steps">): number {
+  return config.maxStepsOverride ?? scenario.max_steps ?? config.maxSteps;
+}
+
 export interface RunSink {
   load(): Promise<Array<RunEvent | NewEvent>>;
   append(e: NewEvent): Promise<void>;
@@ -110,7 +119,7 @@ export class Runtime {
 
   private async callLlm(step: number): Promise<void> {
     const { config, scenario, llm, paceMs } = this.deps;
-    const maxSteps = scenario.max_steps ?? config.maxSteps;
+    const maxSteps = stepBudget(config, scenario);
     if (step >= maxSteps) {
       await this.emit({ step, kind: "RUN_FAILED", data: { error: `max_steps (${maxSteps}) reached without a final answer` } });
       return;

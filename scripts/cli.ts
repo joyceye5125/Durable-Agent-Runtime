@@ -107,7 +107,28 @@ async function recordGolden(store: Store) {
   if (!process.stdin.isTTY) throw new Error("golden trajectories need a human decision: run this in an interactive terminal");
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 
+  const failed: string[] = [];
   for (const id of ids) {
+    try {
+      await reviewOne(id);
+    } catch (e) {
+      const error = (e as Error).message;
+      failed.push(id);
+      console.log(`\n━━ ${id}\n✗ ${error}`);
+      // Nothing after a quota wall can succeed; keep what is already recorded.
+      if (/quota|daily|per day|TPD|billing/i.test(error)) {
+        console.log("Stopping here: this looks like a quota or daily limit. Re-run later; recorded turns are kept.");
+        break;
+      }
+    }
+  }
+  rl.close();
+  if (failed.length) {
+    console.log(`\n${failed.length} scenario(s) could not be recorded: ${failed.join(", ")}`);
+    process.exitCode = 1;
+  }
+
+  async function reviewOne(id: string) {
     const scenario = loadScenario(id);
     if (flag("fresh") && hasRecording("baseline", id)) fs.rmSync(recordingPath("baseline", id));
     const mode: LlmMode = hasRecording("baseline", id) && !flag("live") ? "replay" : "live";
@@ -135,7 +156,7 @@ async function recordGolden(store: Store) {
     if (!ok) {
       console.log("✗ Baseline did not solve this task, so it has no golden trajectory. Fix the scenario or the baseline prompt");
       console.log("  (without leaking the solution into the prompt), then re-run with --fresh.");
-      continue;
+      return;
     }
     const answer = (await rl.question(`Accept these ${calls.length} calls as the golden trajectory for ${id}? [y/N] `)).trim().toLowerCase();
     if (answer === "y" || answer === "yes") {
@@ -145,7 +166,6 @@ async function recordGolden(store: Store) {
       console.log("skipped");
     }
   }
-  rl.close();
 }
 
 async function recordConfigs(store: Store) {
@@ -157,13 +177,37 @@ async function recordConfigs(store: Store) {
   if (!tasks.length) throw new Error("no task has a golden trajectory yet; run record-golden first");
   const jobs = labels.flatMap((label) => tasks.map((task) => ({ label, task })));
   let done = 0;
-  await pool(jobs, Number(opt("concurrency") ?? 4), async ({ label, task }) => {
-    if (flag("fresh") && hasRecording(label, task)) fs.rmSync(recordingPath(label, task));
-    const runId = await createRun(store, { scenario: task, mode: "durable", configLabel: label }, { agent: live });
-    const out = await (await buildRuntime(store, runId, { agent: live })).drive();
-    const n = trajectoryOf(fold(await store.listEvents(runId))).length;
-    console.log(`[${++done}/${jobs.length}] ${label.padEnd(20)} ${task.padEnd(32)} ${out.status} (${n} calls)`);
+  let stopped = "";
+  const failures: Array<{ label: string; task: string; error: string }> = [];
+  await pool(jobs, Number(opt("concurrency") ?? 2), async ({ label, task }) => {
+    if (stopped) return;
+    try {
+      if (flag("fresh") && hasRecording(label, task)) fs.rmSync(recordingPath(label, task));
+      const runId = await createRun(store, { scenario: task, mode: "durable", configLabel: label }, { agent: live });
+      const out = await (await buildRuntime(store, runId, { agent: live })).drive();
+      const n = trajectoryOf(fold(await store.listEvents(runId))).length;
+      console.log(`[${++done}/${jobs.length}] ${label.padEnd(20)} ${task.padEnd(32)} ${out.status} (${n} calls)`);
+    } catch (e) {
+      // One job must not abandon the rest: every response already paid for is
+      // on disk, and re-running resumes from there. A quota wall is different
+      // — nothing after it can succeed, so stop instead of burning retries.
+      const error = (e as Error).message;
+      failures.push({ label, task, error });
+      if (/quota|daily|per day|TPD|billing/i.test(error)) stopped = error;
+      console.log(`[${++done}/${jobs.length}] ${label.padEnd(20)} ${task.padEnd(32)} FAILED ${error.slice(0, 90)}`);
+    }
   });
+
+  const incomplete = labels.filter((l) => tasks.some((t) => !hasRecording(l, t)));
+  console.log(`\n${labels.length - incomplete.length}/${labels.length} configs fully recorded on all ${tasks.length} tasks.`);
+  if (incomplete.length) console.log(`still incomplete (the eval table skips these): ${incomplete.join(", ")}`);
+  if (stopped) {
+    console.log(`\nStopped early — this looks like a quota or daily limit:\n  ${stopped}`);
+    console.log("Every response already recorded is kept; re-run the same command later and it resumes.");
+  } else if (failures.length) {
+    console.log(`\n${failures.length} run(s) failed; re-run the same command to retry just those.`);
+  }
+  if (failures.length) process.exitCode = 1;
 }
 
 async function recordCrashPaths(store: Store) {
@@ -266,9 +310,21 @@ async function experiment(store: Store) {
     console.log(`rows with a correct endpoint and a regressed path: ${table.pathOnlyRows}`);
     const evaluated = table.changes.filter((c) => c.label !== "baseline" && c.status === "evaluated");
     const cell = `${evaluated.length} candidate changes on ${table.tasks.length} tasks → endpoint eval missed **${table.missedByEndpoint}**, trajectory eval caught **${table.missedByEndpoint}**. ${table.pathOnlyRows} task runs kept a correct answer on a worse path.${table.provisionalGolden.length ? ` (${table.provisionalGolden.length} golden trajectories still provisional.)` : ""}`;
+    if (evaluated.length === 0) {
+      console.log("\nNo candidate has been recorded yet, so nothing was measured. README left alone.");
+      console.log("Record one with: npm run record -- --config <label>");
+      return;
+    }
+    if (table.provisionalGolden.length > 0) {
+      // Scoring against a predicted golden measures agreement with a guess,
+      // not divergence from a real baseline run. It must never reach the table.
+      console.log(`\n${table.provisionalGolden.length}/${table.tasks.length} golden trajectories are still provisional predictions.`);
+      console.log("Numbers scored against those are not a result: replace them with reviewed baseline runs first");
+      console.log("  npm run record-golden -- --all        (README left alone until then)");
+      return;
+    }
     console.log(`\nREADME C4 result cell:\n${cell}`);
-    // Nothing was measured if no candidate had recordings; leave the table alone.
-    if (flag("write-readme") && evaluated.length > 0) writeReadmeCell("C4", cell);
+    if (flag("write-readme")) writeReadmeCell("C4", cell);
   } else {
     throw new Error("usage: npm run experiment -- crash|eval");
   }

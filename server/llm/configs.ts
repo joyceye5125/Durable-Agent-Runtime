@@ -10,6 +10,13 @@ export interface AgentConfig {
   systemPrompt: string;
   toolDescriptions?: Record<string, string>;
   maxSteps: number;
+  /**
+   * A budget this config deliberately sets, which beats the scenario's own
+   * `max_steps`. Without it a long scenario that raises max_steps would hand
+   * the step-budget candidate more steps than the candidate is supposed to
+   * have, and silently stop testing anything.
+   */
+  maxStepsOverride?: number;
   maxInvalidRetries: number;
 }
 
@@ -111,7 +118,7 @@ export const CANDIDATES: AgentConfig[] = [
       post_status: "Status.",
     },
   }),
-  candidate("max-steps-6", "Step budget cut from 12 to 6.", { maxSteps: 6 }),
+  candidate("max-steps-6", "Step budget cut from 12 to 6.", { maxStepsOverride: 6 }),
 ];
 
 export const CONFIGS: AgentConfig[] = [BASELINE, ...CANDIDATES];
@@ -142,6 +149,9 @@ export function resolveConfig(label: string, provider: Provider, modelOverride?:
     systemPrompt: base.systemPrompt,
     tools,
     maxSteps: base.maxSteps,
+    // canonicalJSON drops undefined, so configs that set no override hash
+    // exactly as they did before this field existed.
+    maxStepsOverride: base.maxStepsOverride,
     maxInvalidRetries: base.maxInvalidRetries,
   };
   return { ...base, provider, model, temperature: 0, tools, hash: sha256(canonicalJSON(hashed)) };
