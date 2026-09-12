@@ -18,7 +18,7 @@ world:
     - when: { tool: restart_service, args: { name: log-rotator } }
       metrics:
         disk_usage_data: { "5m": [ 0.96, 0.81, 0.62 ], "1h": [ 0.93, 0.96, 0.62 ] }
-        log_rotator_last_success_age_s: { "1h": [ 88200, 90000, 12 ] }
+        log_rotator_last_success_age_s: { "5m": [ 90000, 60, 12 ], "1h": [ 88200, 90000, 12 ] }
       logs:
         - "2026-09-10T05:07:41Z log-rotator INFO stale lock cleared on start; rotated and compressed 188G under /data/logs/api"
 expected_answer: "A stale lock file made log-rotator fail since 02:10, so API logs filled /data. Restarting log-rotator cleared the lock, rotated the logs, and /data fell back under the threshold."

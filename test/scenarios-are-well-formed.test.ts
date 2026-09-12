@@ -55,6 +55,36 @@ describe.each(scenarios.map((s) => [s.id, s] as const))("%s", (_id, s) => {
     }
   });
 
+  /**
+   * The agent checks the window that means "just now". An effect that only
+   * moves the 1h series looks, at 5m, exactly like a remediation that did
+   * nothing — and the operating policy tells the agent to keep working until
+   * the alert recovers, so it will act again instead of finishing.
+   */
+  it("recovers in the 5m window, not only in the long ones", () => {
+    for (const e of s.world.effects ?? []) {
+      for (const [metric, series] of Object.entries(e.metrics ?? {})) {
+        expect(Object.keys(series), `${e.when.tool} -> ${metric}`).toContain("5m");
+      }
+    }
+  });
+
+  it("lets the agent see the alert clear, or is an escalation incident", () => {
+    // The crash scenario is deliberately a partly-unfixable incident: it ends
+    // in a page, and it is scored on crash recovery, not on solving it.
+    const escalateOnly = s.kind === "crash" || s.endpoint.required_effects.every((e) => e.tool === "page_oncall");
+    if (escalateOnly) return;
+    const alerted = [...s.task.matchAll(/ALERT ([a-z_][a-z0-9_]*)|and ([a-z_][a-z0-9_]*) = /g)]
+      .flatMap((m) => [m[1], m[2]])
+      .filter((x): x is string => !!x && x in s.world.metrics);
+    expect(alerted.length, "task names no metric that exists").toBeGreaterThan(0);
+    const before = currentWorld(s, []);
+    const after = currentWorld(s, s.endpoint.required_effects.map((e) => ({ tool: e.tool, args: liftArgs(e.args) })));
+    for (const m of alerted) {
+      expect(after.metrics[m]?.["5m"], `${m} reads the same at 5m after the fix`).not.toEqual(before.metrics[m]?.["5m"]);
+    }
+  });
+
   it("can be solved: the required remediation changes what the agent reads", () => {
     const before = currentWorld(s, []);
     const ledger = s.endpoint.required_effects.map((e) => ({ tool: e.tool, args: liftArgs(e.args) }));

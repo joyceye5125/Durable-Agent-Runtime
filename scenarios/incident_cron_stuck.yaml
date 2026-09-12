@@ -15,8 +15,8 @@ world:
   effects:
     - when: { tool: restart_service, args: { name: billing-cron } }
       metrics:
-        invoices_generated_today: { "1h": [0, 0, 1180] }
-        billing_cron_lock_wait_s: { "1h": [7200, 0, 0] }
+        invoices_generated_today: { "5m": [0, 410, 1180], "1h": [0, 0, 1180] }
+        billing_cron_lock_wait_s: { "5m": [7200, 8, 0], "1h": [7200, 0, 0] }
       logs:
         - "2026-09-10T10:16:30Z billing-cron INFO stale lock from dead host billing-2 released on startup; run 1843 generating invoices"
 expected_answer: "billing-cron has been waiting since 06:00 on a lock held by a run on a host that no longer exists. Restarting billing-cron released the stale lock and invoice generation started."
