@@ -4,7 +4,7 @@
   "provider": "openai",
   "model": "gpt-4.1",
   "config_hash": "916ae0334f038bd28049d5f8511f42e6da89eefcb39d9f2fa0dea43e638449f2",
-  "recorded_at": "2026-09-12T01:09:35.724Z",
+  "recorded_at": "2026-09-12T01:15:02.909Z",
   "entries": [
     {
       "key": "67efd5acb345cb6d596e5bbcf1713961204cd867d85fac09fa9cdec0c6d72554",
@@ -264,6 +264,110 @@
         },
         "tokensIn": 1712,
         "tokensOut": 21
+      }
+    },
+    {
+      "key": "08d25aaa3fd1d1010728266e7cf3f89a0b1088a349dd1df588b81a40052c0104",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"payments error\"}"
+        },
+        "tokensIn": 785,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "25c34d5df73109dc83c8b838c05ee1b29cdb0329820a03748304251b1a214120",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"payments_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 939,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "edfde6356c65044ba94c70611e2e06582e5bf6a2b951cbb6ff2047a7779c04b3",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"payments_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 990,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "d752c82c577284922c94892eaa6147483349cb49228fdd4e6312e465da35ef6d",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1045,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "e846eb32a719fd592f717dd337e463e95382383cbbb07145ca4339cb3e686207",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"session-cache\"}"
+        },
+        "tokensIn": 1100,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "15b81a6cefb5cb414cd73036e131bab6be156d96ab8aabf4bd50e315e463b1be",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"order-worker\",\"replicas\":8}"
+        },
+        "tokensIn": 1223,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "03f408624940f93fbaffe667d7d45caa4fecbee6e4939ab3e0f1ed29e53fbcd6",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"orders_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1266,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "f631efa15b480e334850c1457e518c924e5a663e9f8e9ed685174c35b5124ce7",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1318,
+        "tokensOut": 23
       }
     }
   ]

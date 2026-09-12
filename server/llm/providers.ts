@@ -3,6 +3,10 @@ import type { ResolvedConfig } from "./configs";
 import type { ChatMessage, LLM, LlmRequest, LlmResponse } from "./types";
 
 const MAX_OUTPUT_TOKENS = 1024;
+// Recording a full task set is a long burst of calls, and a rate limit in the
+// middle would otherwise fail the run and waste everything recorded so far.
+// Both SDKs honour Retry-After and back off between attempts.
+const MAX_RETRIES = 8;
 
 export function providerLLM(config: ResolvedConfig): LLM {
   return config.provider === "anthropic" ? new AnthropicLLM(config) : new OpenAILLM(config);
@@ -13,7 +17,7 @@ class AnthropicLLM implements LLM {
 
   async complete(req: LlmRequest): Promise<LlmResponse> {
     const { default: Anthropic } = await import("@anthropic-ai/sdk");
-    const client = new Anthropic();
+    const client = new Anthropic({ maxRetries: MAX_RETRIES });
     const res = await client.messages.create({
       model: this.config.model,
       max_tokens: MAX_OUTPUT_TOKENS,
@@ -48,7 +52,7 @@ class OpenAILLM implements LLM {
 
   async complete(req: LlmRequest): Promise<LlmResponse> {
     const { default: OpenAI } = await import("openai");
-    const client = new OpenAI();
+    const client = new OpenAI({ maxRetries: MAX_RETRIES });
     const res = await client.chat.completions.create({
       model: this.config.model,
       temperature: this.config.temperature,
