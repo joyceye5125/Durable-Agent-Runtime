@@ -203,8 +203,8 @@ async function recordConfigs(store: Store) {
   const labels = flag("candidates") ? CANDIDATES.map((c) => c.label) : (opt("config") ?? "").split(",").filter(Boolean);
   if (!labels.length) throw new Error("pass --config <label,...> or --candidates");
   labels.forEach(getConfig);
-  const tasks = opt("scenario") ? [opt("scenario")!] : listScenarioIds("eval").filter((id) => loadScenario(id).golden_trajectory?.length);
-  if (!tasks.length) throw new Error("no task has a golden trajectory yet; run record-golden first");
+  const tasks = opt("scenario") ? [opt("scenario")!] : listScenarioIds("eval").filter((id) => goldenIsUsable(loadScenario(id)));
+  if (!tasks.length) throw new Error("no task has a reviewed golden trajectory yet; run record-golden first");
   const jobs = labels.flatMap((label) => tasks.map((task) => ({ label, task })));
   let done = 0;
   let stopped = "";

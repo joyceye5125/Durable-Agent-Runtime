@@ -51,7 +51,11 @@ export async function runEvalExperiment(
 ): Promise<EvalSummary> {
   const agent = opts.agent ?? defaultAgentFactory();
   const all = opts.tasks ?? listScenarioIds("eval").map(loadScenario);
-  const tasks = all.filter((s) => s.golden_trajectory?.length);
+  // Only a golden that is a measurement counts: reviewed, from this scenario,
+  // from this baseline. A caller that brings its own agent brings its own
+  // scenarios too, and has no recordings for them to check against.
+  const usable = opts.agent ? (s: Scenario) => !!s.golden_trajectory?.length : goldenIsUsable;
+  const tasks = all.filter(usable);
   const labels = opts.labels ?? CONFIGS.map((c) => c.label);
   const changes: ChangeResult[] = [];
 
@@ -106,11 +110,11 @@ export async function runEvalExperiment(
   const candidates = changes.filter((c) => c.label !== "baseline" && c.status === "evaluated");
   return {
     tasks: tasks.map((t) => t.id),
-    tasksWithoutGolden: all.filter((s) => !s.golden_trajectory?.length).map((s) => s.id),
+    tasksWithoutGolden: all.filter((s) => !usable(s)).map((s) => s.id),
     changes,
     missedByEndpoint: candidates.filter((c) => c.endpointVerdict === "PASS" && c.trajectoryVerdict === "BLOCKED").length,
     pathOnlyRows: candidates.reduce((s, c) => s + (c.pathOnlyRegressions ?? 0), 0),
-    provisionalGolden: tasks.filter((t) => !goldenIsUsable(t)).map((t) => t.id),
+    provisionalGolden: tasks.filter((t) => !usable(t)).map((t) => t.id),
   };
 }
 
@@ -134,7 +138,8 @@ async function evaluateTask(store: Store, agent: AgentFactory, label: string, ta
 /** Rebuilds the comparison table from the latest persisted eval run of every config. */
 export async function latestEvalTable(store: Store): Promise<EvalSummary & { evaluatedAt?: string }> {
   const all = listScenarioIds("eval").map(loadScenario);
-  const tasks = all.filter((s) => s.golden_trajectory?.length);
+  // Only a golden that is a measurement counts: reviewed, from this scenario, from this baseline.
+  const tasks = all.filter(goldenIsUsable);
   const latest = new Map<string, Awaited<ReturnType<Store["listEvalRuns"]>>[number]>();
   for (const r of await store.listEvalRuns(1000)) if (!latest.has(r.change_label)) latest.set(r.change_label, r);
   const results = await store.listEvalResults([...latest.values()].map((r) => r.id));
@@ -172,7 +177,7 @@ export async function latestEvalTable(store: Store): Promise<EvalSummary & { eva
   const evaluatedAt = [...latest.values()].map((r) => r.started_at).sort().at(-1);
   return {
     tasks: tasks.map((t) => t.id),
-    tasksWithoutGolden: all.filter((s) => !s.golden_trajectory?.length).map((s) => s.id),
+    tasksWithoutGolden: all.filter((s) => !goldenIsUsable(s)).map((s) => s.id),
     changes,
     missedByEndpoint: candidates.filter((c) => c.endpointVerdict === "PASS" && c.trajectoryVerdict === "BLOCKED").length,
     pathOnlyRows: candidates.reduce((s, c) => s + (c.pathOnlyRegressions ?? 0), 0),
