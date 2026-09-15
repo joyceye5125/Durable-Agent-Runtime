@@ -1,0 +1,123 @@
+{
+  "config_label": "act-fast",
+  "task_id": "incident_cert_expiry",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "0ef91e9b98682226cadbfb1c89908a3fb998975183386666b8c4a385a298b100",
+  "recorded_at": "2026-09-13T04:17:52.637Z",
+  "entries": [
+    {
+      "key": "4ae1991c70057a36ece69d53dba464b8cb62c76d7f0df87b9cab556cec9a66de",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"synthetic_https_success\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 809,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "c08c2a5c52765a3c55af536ed53092e5b928a43f7daaf26e71571321a51f7ea2",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_requests_per_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 860,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "17fa987318f89e57c2570f091c2f5264e1e4d61e1cef6b996fb941dffc184491",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"edge-proxy error\"}"
+        },
+        "tokensIn": 911,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "ae37acfedec9ec36e8d0269060611ca2db54ef6e226f2851d498cde17670560e",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"cert-manager error\"}"
+        },
+        "tokensIn": 1045,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "6960c74b99ce3d3fd24312dc4e93e55d14528f442905dbb9cc4185e23f25add7",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"cert-manager\"}"
+        },
+        "tokensIn": 1178,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "d8559f8970c23dd91195b1f655cf7ca4fd2e0146cabffb59a3d82d4f3bc14cd1",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"cert-manager\"}"
+        },
+        "tokensIn": 1212,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "60489f050a64905ae9a2ab8bd49ac14a1513fac90d309c9b16a03b182aaa6a26",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"cert-manager is unable to renew the TLS certificate for api.example.com due to a DNS-01 challenge failure (API token revoked). Certificate is expired and synthetic HTTPS checks are failing. Manual intervention required to restore certificate renewal.\"}"
+        },
+        "tokensIn": 1378,
+        "tokensOut": 58
+      }
+    },
+    {
+      "key": "2cd32140acf50496e13c89bc4294d37393fb1a5a397f22dc206e3eed3f653188",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are investigating an outage affecting api.example.com. Our team has identified an issue with certificate renewal and is working to restore service.\"}"
+        },
+        "tokensIn": 1459,
+        "tokensOut": 39
+      }
+    },
+    {
+      "key": "2a89126ab72f2419a16ffd64e58f3a54d7ca9042ae368edbd7a4022a6d85c4fa",
+      "turn": 17,
+      "response": {
+        "text": "Root cause: The TLS certificate for api.example.com expired because cert-manager cannot renew it due to a DNS-01 challenge failure (API token revoked). Restarting cert-manager did not resolve the issue.\n\nAction taken: Paged the on-call engineer for manual intervention, as this requires updating credentials or DNS configuration. Affected service: api (and edge-proxy).",
+        "tokensIn": 1511,
+        "tokensOut": 74
+      }
+    }
+  ]
+}

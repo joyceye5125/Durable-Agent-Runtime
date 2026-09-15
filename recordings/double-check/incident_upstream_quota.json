@@ -1,0 +1,162 @@
+{
+  "config_label": "double-check",
+  "task_id": "incident_upstream_quota",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "18d4ef692a4e6f1c85f7366a9ee5cbc7fabf6a754350cac299ec615e26a65168",
+  "recorded_at": "2026-09-14T02:42:58.512Z",
+  "entries": [
+    {
+      "key": "f11f387335ec79d0a6bb8a17ed90d35f5d2a14602ef8d85a31a13f0a62e50742",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_service_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 811,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "821ffbc448646d902374166f3ff0195a5aa6950d105d4e131a28f8e2b5995fcb",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"maps_api_calls_per_min\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 868,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "8f650bcbd2878dd78d80889e5c571629a9be6af0072877b064f34069081fafb1",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_cache_hit_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 924,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "7d071cae50034d5b1957e8d494cf20ef92dfbb4add6fca6729589ecc80f61c4a",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"geo-cache\"}"
+        },
+        "tokensIn": 977,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "1161d326d0f4f70aeca2f6087ab52a19aa071e7f1316966b26382136d7e8533c",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"geo-service\"}"
+        },
+        "tokensIn": 1093,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "e3690294664c98791c650a89b57494d3a212c81bc3b6c9e9f2e48247a7dbcc69",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"api\"}"
+        },
+        "tokensIn": 1209,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "ea4f4cadffcf08b9ca044141f9bd8fd08df589fb625457d71066db5caebfcae9",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"geo-cache\"}"
+        },
+        "tokensIn": 1311,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "bfd00d56e716e7db3218fa125d4aa1c6c2fc8c4dc3107fd9d598b18534a8782e",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_cache_hit_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1345,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "bd47663361265e917b031cad0e6f93ada747798a341b7db23f9a9201e7c60838",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"maps_api_calls_per_min\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1400,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "019190141ad01163264e70a0a0b6fa686aaf700320dca152e8238a8ac4a938db",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_service_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1456,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "469b52bc7f7cc42940e86551e0561a51d51f18af5898f849057709bc03327e9e",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Geo-service error rates have returned to normal after restoring geo-cache. Maps API usage and cache hit ratio are healthy.\"}"
+        },
+        "tokensIn": 1513,
+        "tokensOut": 36
+      }
+    },
+    {
+      "key": "3511f70c81683306320d1461572b19814ea0625cad36ba03f80a4b4a4ae49ba0",
+      "turn": 23,
+      "response": {
+        "text": "Root cause: The geo-cache service experienced an OOM event and became stuck, causing the geo-service to bypass the cache and overload the upstream maps API, resulting in 429 errors and a high error rate.\n\nAction taken: Restarted the geo-cache service, which restored cache functionality, reduced maps API calls, and brought the geo-service error rate back to normal.\n\nAffected service: geo-service.",
+        "tokensIn": 1562,
+        "tokensOut": 80
+      }
+    }
+  ]
+}

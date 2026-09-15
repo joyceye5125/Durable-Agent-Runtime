@@ -1,0 +1,97 @@
+{
+  "config_label": "weak-model",
+  "task_id": "incident_partition_consumer",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "e902a1553c56f907d9306fe4ab57d9fe1cd263f3131f0d39d3d35e98d3014e91",
+  "recorded_at": "2026-09-12T22:30:36.551Z",
+  "entries": [
+    {
+      "key": "41b7cf602ecf27e8ab5b3ebc5b5619d81f2a23f9794d0bf867fc442cf97d53a9",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"kafka_consumer_lag_p7\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 797,
+        "tokensOut": 26
+      }
+    },
+    {
+      "key": "6903de9ea4ba9c3ccaf458754c6aa86c355fcf0a3483e4329cc131e31ce976f3",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"events-consumer error partition 7\"}"
+        },
+        "tokensIn": 862,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "f4a3f142c6119585753f96b587ec73d7ba6d564fe4903eac873f840d5775518c",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"events-consumer\"}"
+        },
+        "tokensIn": 962,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "9eb58d02f53d0b317d054d608dfedb949ead756bb979bcfaa77fd353e3f3be7d",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"kafka_consumer_lag_p7\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 998,
+        "tokensOut": 26
+      }
+    },
+    {
+      "key": "dd1a2303fd7d1f20d0a68532a533bb7dfe3661926d5c210b42b6f61ef5954af2",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"High consumer lag on partition 7 due to poison message causing infinite retries in events-consumer. Restarted events-consumer service but lag remains high. Manual intervention needed to handle poison message and resume consumption.\"}"
+        },
+        "tokensIn": 1063,
+        "tokensOut": 55
+      }
+    },
+    {
+      "key": "b5297782c1f5795c48634e64baca1f15f5037e79b81c6e33a3ac2d88dc0a7cb8",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are investigating high consumer lag on Kafka partition 7 caused by a poison message in events-consumer. The consumer service was restarted but the issue persists. We will update once resolved.\"}"
+        },
+        "tokensIn": 1141,
+        "tokensOut": 50
+      }
+    },
+    {
+      "key": "9e2116440fcd0a573da151e6cfb2344ee7886ee3632643e0b2fc1805740060d2",
+      "turn": 13,
+      "response": {
+        "text": "The root cause is a poison message at offset 88123410 on Kafka partition 7 causing the events-consumer to retry infinitely and accumulate lag. I restarted the events-consumer service to clear any stuck state, but the lag remains high. I have paged the on-call engineer for manual intervention to handle the poison message and resume normal consumption. The affected service is events-consumer. A public status update has been posted.",
+        "tokensIn": 1204,
+        "tokensOut": 87
+      }
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "config_label": "both-windows",
+  "task_id": "incident_queue_backlog",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "da0cdfc5b92ab330d67c566b641281c3b5c2ff73079adb94125b08ee4bc6298c",
+  "recorded_at": "2026-09-13T04:13:12.775Z",
+  "entries": [
+    {
+      "key": "766aed28fec44b1888d1a220775a48871439e8d217f6b9510c1e441f47784a7e",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 817,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "ebc9c1f6818142d7692ade7a38a5997433d7ad2a2c4adff38404c62b243d6a64",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_queue_depth\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 869,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "a6b01bc1f6c65d7dffc478fe3c54f0ae4de568eb87f6f37285a647306f96033e",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_worker_throughput\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 921,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "2ca23b68001a41b275c04e29fe24906e6551ed64475534d637e429141b27613e",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_worker_throughput\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 974,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "d2e8deeba98bae9e942c0edd44f1ecef013e831b8040e79f0f58ec3b3b3cc8b4",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"smtp_relay_errors\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1027,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "9c603b2c3874b38440d1f08ab831b927a919dd3eda16138e660b5a94cb17a3c5",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"smtp_relay_errors\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1078,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "af7bd7487eb19042c5dbea20618f35c1a468c6f357c801bd8e967c542c7fed85",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"email-worker\"}"
+        },
+        "tokensIn": 1129,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "f8859869fbc399ec39703baae7e24d82f7b620448c4ed8d2184985a1b2a262be",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"email-worker\"}"
+        },
+        "tokensIn": 1237,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "0e07ecc197ab595d79996ce379a30237729e97d03e86b65cba68d1e2c810373c",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_worker_throughput\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1271,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "8b574aefcd99691c5dfeb586680c5144a985741ab088b027ff19a535cabb6537",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1326,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "c011a2b8e54b5420180cae9e5723189150007e5c02d8640d2a50992e90173322",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We identified and resolved an issue with delayed password-reset emails. Email processing has resumed and the backlog is clearing.\"}"
+        },
+        "tokensIn": 1378,
+        "tokensOut": 35
+      }
+    },
+    {
+      "key": "a1468e316c92888282b127217a33b2196874f2ccca0ba8a53348b150e2971475",
+      "turn": 23,
+      "response": {
+        "text": "Root cause: The email-worker service was blocked due to a stale connection, causing it to stop processing emails and resulting in a growing queue.\nAction taken: Restarted the email-worker service, which restored throughput and is clearing the backlog.\nAffected service: email-worker.",
+        "tokensIn": 1426,
+        "tokensOut": 54
+      }
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "config_label": "weak-model",
+  "task_id": "incident_orphan_lock",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "e902a1553c56f907d9306fe4ab57d9fe1cd263f3131f0d39d3d35e98d3014e91",
+  "recorded_at": "2026-09-12T22:30:30.183Z",
+  "entries": [
+    {
+      "key": "5571e7854664ea0a8bed60191e59d528eaf2df096b5e145f91a2076b51a93190",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 790,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "ad85e6dd617b6c5976a0adbbda188fea518a9f646e76cb3377666765402e3e3c",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"inventory-sync error\"}"
+        },
+        "tokensIn": 848,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "c14e956961b8fcd01347d22b51d1b8c4d44719a94a56cf7cdb0bcae4bc076591",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"inventory-sync\"}"
+        },
+        "tokensIn": 966,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "5909421fbb4ca65c17d5b1bcfa5aa37d662dd87d3470eb96945b2438594fe3ca",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1000,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "eb97b5a6e782fcd4b0456e1d503cc0614716ff308c315cccdf3d8fb7f0ac4b67",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"inventory-sync service was stuck due to an advisory lock left held by a previous session, causing sync to stall. Restarted inventory-sync service to clear the lock and resume sync. Inventory sync success age metric is now back to normal.\"}"
+        },
+        "tokensIn": 1056,
+        "tokensOut": 59
+      }
+    },
+    {
+      "key": "780ae6b57e3a335c37b473efadd79dcbd798059da0bbbcb2d66eab7de8456fa4",
+      "turn": 11,
+      "response": {
+        "text": "The root cause was an advisory lock left held by a previous session in the inventory-sync service, causing the sync process to stall and stock counts to become stale. I restarted the inventory-sync service to clear the lock and resume normal operation. The inventory_sync_last_success_age_s metric is now back to normal, indicating the issue is resolved. The affected service was inventory-sync.",
+        "tokensIn": 1128,
+        "tokensOut": 75
+      }
+    }
+  ]
+}

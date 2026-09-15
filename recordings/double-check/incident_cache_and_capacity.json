@@ -1,0 +1,218 @@
+{
+  "config_label": "double-check",
+  "task_id": "incident_cache_and_capacity",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "18d4ef692a4e6f1c85f7366a9ee5cbc7fabf6a754350cac299ec615e26a65168",
+  "recorded_at": "2026-09-14T01:33:59.801Z",
+  "entries": [
+    {
+      "key": "96e1faa93599dea422f306e5fbff9d369dbc50f6447538205af72c546e60b0ec",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 822,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "84cb863c871827e958588ab01acc00e58ffb5d0eecc94a990ae93d94d8fcd7c7",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_cpu\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 880,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "c67a1b1d0e975163da8f64b1c371ee95e18fd891e76697b73dac8f2693bd794e",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 935,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "744756e9600351cea075cd65133f3d05d1176ca69c3b5935e8d8b122a3abf14a",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"price_cache_hit_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 988,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "bc2b9d862ff575748f9eefe3ec4526b84e9163fc247c761b5c8eb3eebf9265f3",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"pricing-api error\"}"
+        },
+        "tokensIn": 1039,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "7f5f94193e008350d1ffa58ed46f71eb798701357c260ea1c1a582461195a34a",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"pricing-api\",\"replicas\":6}"
+        },
+        "tokensIn": 1159,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "6509b25a86c6fa0379b038cfdb0538f09271c31aaaca88d6f981225e5ba58f04",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1202,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "6715b4e3447c5e9788aa1a1d71266225bd340b478655795383c86ea6d193a5c1",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_cpu\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1260,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "692f53c823e0761d604ddcda77747c05ec3235084afb51249dd1c7d1b4ae926c",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1315,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "91ae5c13dc64a52e8b7fef0154f50e4771cd99fc88a148dd7a2c19d59bcde9c6",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"price-cache error\"}"
+        },
+        "tokensIn": 1392,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "3abe91cdadac0a56bd218d5951aac7f10ee8c4d5e7e2a922287edc85026bac20",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"price-cache snapshot restore\"}"
+        },
+        "tokensIn": 1475,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "f1fa9d7cc1bbdac11b922aa9a7de4a86bd7786316cb76f05c54d493a7893227e",
+      "turn": 23,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"price-cache\"}"
+        },
+        "tokensIn": 1559,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "a65a40de210ddd9804072db85b3ec8e1bfa763702653574eeb6e98ad936ce180",
+      "turn": 25,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"price_cache_hit_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1593,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "4f206758791da313b226785f29c5c372c7110d51fa5151f3b3420900cf5c51eb",
+      "turn": 27,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1648,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "25dccc3d9df79f70f99def980c449465b855383a36ecb2acfcff307f82f64ca9",
+      "turn": 29,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_cpu\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1704,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "de340c619ad0e17fbe13349a8edc6d521646f29cc70c76f8f29fdff9241e1003",
+      "turn": 31,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: pricing-api latency and CPU returned to normal after restoring price-cache and scaling pricing-api for flash sale traffic.\"}"
+        },
+        "tokensIn": 1759,
+        "tokensOut": 37
+      }
+    }
+  ]
+}

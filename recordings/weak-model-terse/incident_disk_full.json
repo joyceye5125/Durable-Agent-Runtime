@@ -1,0 +1,84 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_disk_full",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:31:34.189Z",
+  "entries": [
+    {
+      "key": "a60619d7e681ce61bce5811f156a04bc0669d59d102e1fd4f482964fcb76486e",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"disk_usage_data\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 479,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "48803840743417b5add6344c79bc13cadaeaf2d38ca7a554c156c7f47665b901",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"disk usage /data\"}"
+        },
+        "tokensIn": 534,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "add40f41850ad00559499477eae91c378d5cce7cfdd78962e03b24382c90e4dc",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"log-rotator\"}"
+        },
+        "tokensIn": 698,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "39f98a3a7d02de83b342ae1b600c91291d612d30b9287153f1b04416ec558ca0",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"disk_usage_data\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 736,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "b089e71dc7636a2e97f6d2c1aa749d5982a8feff0b1b446f600f782f2762d306",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Disk usage on /data partition of host storage-1 reached 96%, exceeding threshold of 90%. Investigation showed log-rotator service was failing to rotate logs due to a stale lock file, causing disk space to fill up. Restarted log-rotator service to clear the stale lock and resume log rotation. Disk usage dropped to 62% shortly after restart. Issue remediated.\"}"
+        },
+        "tokensIn": 791,
+        "tokensOut": 93
+      }
+    },
+    {
+      "key": "1f4c1713dc1899aa99301fb7675724cd8ffaaec70e2638273fae1f80cf0aa1c2",
+      "turn": 11,
+      "response": {
+        "text": "The disk usage on the /data partition of host storage-1 reached 96%, exceeding the 90% threshold. Logs indicated that the log-rotator service was failing to rotate logs due to a stale lock file, causing disk space to fill up. I restarted the log-rotator service to clear the stale lock and resume log rotation. After the restart, disk usage dropped to 62%. I also posted a status update about the incident and remediation.",
+        "tokensIn": 897,
+        "tokensOut": 94
+      }
+    }
+  ]
+}

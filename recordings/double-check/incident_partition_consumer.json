@@ -1,0 +1,175 @@
+{
+  "config_label": "double-check",
+  "task_id": "incident_partition_consumer",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "18d4ef692a4e6f1c85f7366a9ee5cbc7fabf6a754350cac299ec615e26a65168",
+  "recorded_at": "2026-09-13T03:59:30.484Z",
+  "entries": [
+    {
+      "key": "5badc8f67a520f52fcaac1c00b2fc83339aa69da2391835816266ae8c73a79c8",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"kafka_consumer_lag_p7\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 817,
+        "tokensOut": 26
+      }
+    },
+    {
+      "key": "b7c37129f0297098f51da7ce86f9d3a1e543e6d2be7d59d0264a78b52e9001c1",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"kafka_consumer_lag_other\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 882,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "c18824f2f68aca131b09d2d8ab3c9fd8d1d1a894376a576d90ee13282eae3218",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"events-consumer error\"}"
+        },
+        "tokensIn": 939,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "a2b6a9fd0e2b35fd63e921703c8bdade5e25726f2a0f5cbfbeb1a04911114878",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"events-consumer partition 7\"}"
+        },
+        "tokensIn": 1036,
+        "tokensOut": 19
+      }
+    },
+    {
+      "key": "a9b24c98f5e03e123ed8ee1953b44c2c90ca707463e85386339385a621cb476c",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"kafka partition 7\"}"
+        },
+        "tokensIn": 1135,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "91b51d9a5e773b5841e05f60c31332d6cddd86a1b0b06d428bd8c7bae45ffcef",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"analytics-sink\"}"
+        },
+        "tokensIn": 1254,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "ee2c0b2e1f56dd79358f4e18243272a4ad332ecb013f744c48dcab511195a612",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"schema v9\"}"
+        },
+        "tokensIn": 1302,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "bdf9e2ecf25ca9b55a665694a316ca79a0cd995f35e281031763597555bd66ba",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"events-consumer\"}"
+        },
+        "tokensIn": 1370,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "a2687f393590edd829cb898d89db2a2dc454ee0b4cd8a09854734f7591362d8d",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"kafka_consumer_lag_p7\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1406,
+        "tokensOut": 26
+      }
+    },
+    {
+      "key": "1b37a33d6b8157d73a8696a33db8a3c82f8d02db186914c5fd4ed6cf06d366c8",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"kafka_consumer_lag_other\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1471,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "9fa332191257acdcccf695b66f2b031cf5b13cdf6b4098659d97fdaea8ae7307",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"events-consumer is stuck retrying a poison message with unknown schema v9 on Kafka partition 7, causing consumer lag to grow. Restart did not resolve. Manual intervention required to handle or skip the poison message at offset 88123410.\"}"
+        },
+        "tokensIn": 1528,
+        "tokensOut": 63
+      }
+    },
+    {
+      "key": "a9ee8e225288893cd722ce7b51bf656dfcbd3d37da5c4fae8f766be62cae47d5",
+      "turn": 23,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident: Kafka consumer lag on partition 7 due to poison message. Engineering investigating. Other partitions unaffected.\"}"
+        },
+        "tokensIn": 1613,
+        "tokensOut": 34
+      }
+    },
+    {
+      "key": "85181b006d2c6361b9dcb1b0774050819b6212bbc1e2af2b205f52c016e347d8",
+      "turn": 25,
+      "response": {
+        "text": "Root cause: A poison message with unknown schema v9 at offset 88123410 in Kafka partition 7 is causing the events-consumer to retry indefinitely, resulting in growing consumer lag for that partition. \n\nAction taken: Restarted the events-consumer service, but the issue persisted. Paged the on-call engineer for manual intervention to handle or skip the poison message.\n\nAffected service: events-consumer.",
+        "tokensIn": 1660,
+        "tokensOut": 83
+      }
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_cpu_throttle",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T13:34:32.154Z",
+  "entries": [
+    {
+      "key": "a5d54409d805283c2d5e460eaedadb9a2c8eaf58bdaff463666ec71b81372467",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 805,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "e77069f28827a592e29a272bd3bb57cc8565b46c951e2d7d96b74c9c397ee9b2",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"object_store_put_latency_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 863,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "f2c08587a5a5c4b2a4c1b1215e07971e355a3102c168ef5c49e6fa6c19d38f9b",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_cpu_throttled_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 916,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "2b379a3e0294e33de27e90299328574e1003e9c6a70446ecb5af619ecb6b31a2",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 979,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "5036f0f05a2941db8b39b88c145c1396a9f5e12741ce19bbc2b34c1790028345",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"image-api error\"}"
+        },
+        "tokensIn": 1032,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "ef56419362100fb8bcdb32a15aac6ba09036860a274b669d1ba4547d9872af0b",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"image-api\",\"replicas\":5}"
+        },
+        "tokensIn": 1157,
+        "tokensOut": 20
+      }
+    }
+  ]
+}

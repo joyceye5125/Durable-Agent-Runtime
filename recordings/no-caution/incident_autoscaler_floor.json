@@ -1,0 +1,110 @@
+{
+  "config_label": "no-caution",
+  "task_id": "incident_autoscaler_floor",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "735e03f703dd19ab918608ab16e8a756c77285f35b60bcabe42cd675c9d41b76",
+  "recorded_at": "2026-09-13T03:41:06.779Z",
+  "entries": [
+    {
+      "key": "5bff9d2784f8bd93bd29719ad04053c542787221125e278453351f68351b59d7",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"search_index_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 756,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "80c574af13df659b2050c21c064cfae915f8ebf86791539dab94637f5aa079c5",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"search_api_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 811,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "3ad294898d7464b2ba7e36ab4bf2e3c785636cff6c7fecc44232cb036480b25a",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"search_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 864,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "0247ca7820921f0638f69c0bd2ae4a5e64803580b82abec95526b6a74db80b29",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"search-api error\"}"
+        },
+        "tokensIn": 918,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "314bef9149efcd1933cfc44c2993a1cdae244fab78aaecc28324c0e0430c0c74",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"search-api\",\"replicas\":6}"
+        },
+        "tokensIn": 1057,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "b7b5c1e604b71b50ea4bbc6de07e60970c558d194b08d2ffad17b1b36e08005f",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"search_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1100,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "92ac0e8ccd09a4daaa5a3bffe14836bd87fec5ae81bac7be195447316880e34c",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We experienced elevated search latency due to insufficient search-api capacity. The issue has been mitigated and search performance is back to normal.\"}"
+        },
+        "tokensIn": 1154,
+        "tokensOut": 39
+      }
+    },
+    {
+      "key": "6a59087d3cdb923db6451ecc55ccc17eecceada00f63693d318b5c48ce96578a",
+      "turn": 15,
+      "response": {
+        "text": "Root cause: The autoscaler failed to increase search-api replicas due to a permissions error, leaving it at minimum capacity during high load. This caused high search latency.\n\nAction taken: Manually scaled search-api from 2 to 6 replicas, restoring normal latency.\n\nAffected service: search-api.",
+        "tokensIn": 1206,
+        "tokensOut": 60
+      }
+    }
+  ]
+}

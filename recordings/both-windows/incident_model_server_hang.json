@@ -1,0 +1,162 @@
+{
+  "config_label": "both-windows",
+  "task_id": "incident_model_server_hang",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "da0cdfc5b92ab330d67c566b641281c3b5c2ff73079adb94125b08ee4bc6298c",
+  "recorded_at": "2026-09-13T04:12:10.945Z",
+  "entries": [
+    {
+      "key": "57647da60459eb2b1b9f18c4cbc703975a63a22657926534f30f938d7bda7ae4",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_check_timeout_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 818,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "af0265bd2b5a506b55cffc530d98c2f2fb43dd68a089b73dcf0606d58fe7b927",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_check_timeout_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 877,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "cf541bb5b414ba5341d91c4f331abe4acc936f1e0a14880623c45b9b918117cd",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_model_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 936,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "5d506e63a677bcdfae01bff4704c2db1f60680c32f1749c54785f95cd01f200c",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_model_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 996,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "9e38eb9e900096370135cd434223986fbaf91da66bb02998c41b14c526c01145",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"feature_store_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1056,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "359b7e14608a6c18dfe675ba1ee84ad1875e7ad6f476fe10bdb6e86e3a8291a6",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"feature_store_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1111,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "5f4502fa4d508e3c39a09d6df17ca955de93f3bbe8933fcd3d1ba9e2ba7f56e5",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"fraud-model error\"}"
+        },
+        "tokensIn": 1166,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "cedd0c1dabc39c0f0529ffcd3f6974d472d57d5876f29efba61cb1206c6ea413",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"fraud-model\"}"
+        },
+        "tokensIn": 1276,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "90571f4e420af39e60e975fc89db45162363b7a20d64c6fd5cd314e0407a6d00",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_model_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1312,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "2237a1f797558ac08676c4b815ab85b0c24f508fabf0c394f9a0faa1f86b58a0",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_check_timeout_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1370,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "274e023f7a957f5bf423f3c5632a610a2dd5898308d3833c93d9d482caa9a622",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: Fraud checks were timing out due to a hung inference worker in the fraud-model service. Service has been restarted and is operating normally.\"}"
+        },
+        "tokensIn": 1429,
+        "tokensOut": 42
+      }
+    },
+    {
+      "key": "918090602446eca249d8eb87761e580b41898dc262242a93a34d4bc0eb7d562c",
+      "turn": 23,
+      "response": {
+        "text": "Root cause: The fraud-model service experienced a CUDA device-side error, causing inference workers to hang and resulting in high fraud check timeouts.\nAction taken: Restarted the fraud-model service, which restored normal latency and resolved the timeout rate.\nAffected service: fraud-model.",
+        "tokensIn": 1484,
+        "tokensOut": 55
+      }
+    }
+  ]
+}

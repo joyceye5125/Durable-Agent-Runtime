@@ -1,0 +1,84 @@
+{
+  "config_label": "no-status-update",
+  "task_id": "incident_disk_full",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70a689f783281f39d436d765aaf486317dbba515e634a87d6f6b9c10ce390dd7",
+  "recorded_at": "2026-09-13T03:26:34.111Z",
+  "entries": [
+    {
+      "key": "c0bbe365d0f1928e28e08932b757f9dbe928cd0d579b3df89c8d2d955829d9cc",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"storage-1 disk full OR no space OR disk usage OR /data\"}"
+        },
+        "tokensIn": 784,
+        "tokensOut": 27
+      }
+    },
+    {
+      "key": "2afecdcea509b19b629442a22eaef3bf81aaff45f3793caaa5de2c48911b06a5",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_rotator_last_success_age_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 977,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "7022eeb448c585bcbc7991ff884b7786ee0a57c36708b6b7d27027d7208c8b36",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"log-rotator\"}"
+        },
+        "tokensIn": 1037,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "c14d00061ba31e7ab390a039a43bbccf7e549c2f2df4bc897c79f9f190dc1ed7",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"disk_usage_data\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1075,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "34c9bd36396848b63bc02f8da74c6cc0cd69ae6a9d7ea2f2274672742fa09f71",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_rotator_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1130,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "b70431696568b5aa7d4df591ddd241dc2d60f00f4aa75aa20fe371a803820b65",
+      "turn": 11,
+      "response": {
+        "text": "Root cause: The /data partition on storage-1 was filled primarily by unrotated logs in /data/logs/api due to a stale lock file preventing the log-rotator service from running. \n\nAction taken: Restarted the log-rotator service, which cleared the stale lock and allowed log rotation to proceed, freeing disk space.\n\nAffected service: log-rotator (and indirectly, storage-agent and api due to disk pressure).",
+        "tokensIn": 1188,
+        "tokensOut": 91
+      }
+    }
+  ]
+}

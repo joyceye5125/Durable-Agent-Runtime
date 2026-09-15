@@ -1,0 +1,71 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_crashloop_image",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:31:23.956Z",
+  "entries": [
+    {
+      "key": "c2f94f87e86027d3fbe32d24bbb88a52b35045386345cdb99b6a0b40466adcf7",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pdf_renderer_restarts\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 463,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "214bb775cff0f6903f4439f3dc704c6bdfb145b3601324fdb537ac2c97f5e772",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"pdf-renderer error\"}"
+        },
+        "tokensIn": 514,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "abcc3e261ed89d75d3853a5597ab754accf33fa8d95226562221d4403376f622",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"pdf-renderer\"}"
+        },
+        "tokensIn": 671,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "e0e6d254976d1454df717a26e975e21e4926bb54defe813eca0f852a49719570",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We identified that the pdf-renderer service was repeatedly restarting due to a missing font 'NotoSans-Regular' in the image after the recent deploy. We have restarted the pdf-renderer service to clear the error state. We are investigating a permanent fix for the missing font issue.\"}"
+        },
+        "tokensIn": 707,
+        "tokensOut": 69
+      }
+    },
+    {
+      "key": "05335c48b2a72c0a0da448c4561ec0d31b2e1946968d4b27801946e5f5cb9639",
+      "turn": 9,
+      "response": {
+        "text": "The pdf-renderer service was restarting frequently due to a missing font 'NotoSans-Regular' in the image after the recent deploy. I confirmed the restart metric spike and error logs indicating the font issue. I restarted the pdf-renderer service to clear the error state and posted a status update to inform customers. Further investigation is needed to fix the missing font in the image permanently.",
+        "tokensIn": 789,
+        "tokensOut": 77
+      }
+    }
+  ]
+}

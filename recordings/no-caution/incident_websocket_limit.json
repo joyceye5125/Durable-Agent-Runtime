@@ -1,0 +1,123 @@
+{
+  "config_label": "no-caution",
+  "task_id": "incident_websocket_limit",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "735e03f703dd19ab918608ab16e8a756c77285f35b60bcabe42cd675c9d41b76",
+  "recorded_at": "2026-09-13T03:49:47.085Z",
+  "entries": [
+    {
+      "key": "835aef0b4cda218bbfd0ab67aeb98706083c382e3cc1d95476b01f6a1f9a9225",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connection_rejections\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 750,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "3381a5fc6136f81b86bda1294c50b0a32b20964eb0df675f5730905b1a4815ea",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connections\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 804,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "519f635e39a05552cc977e79678bf4d6a89f55fcfe8a87c0685f4746b9126a0d",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 856,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "71976a53225f49d6bbfc8b67fd3b248b5c1a1401464f57b7741f200151cd7b69",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"connection rejected\"}"
+        },
+        "tokensIn": 909,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "e92a60cbad2cc7dd8b2122ce1978a83faaa5e37643aacd12eb2a75af32ad05b7",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"realtime\",\"replicas\":6}"
+        },
+        "tokensIn": 970,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "a171eea2ada381b5f858b3a63ac4aa07966bc93d22063d4eba9ce9cef33c5b43",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connection_rejections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1013,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "92ef415e7c92785e7664d911bfb249a8853862f9cdb31e690ec62b75c582f58a",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1067,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "69a9dabcd755da0ce1529ccfc78cebc48a666114cdf6b73810e53a3f74a5a100",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Live updates are restored. The realtime service was scaled up to handle increased connection load. All systems are now operating normally.\"}"
+        },
+        "tokensIn": 1119,
+        "tokensOut": 37
+      }
+    },
+    {
+      "key": "ccb083553d1c0d46608c14373ca74e8628f704c339c360f172c0555f29b4a178",
+      "turn": 17,
+      "response": {
+        "text": "Root cause: The realtime service reached its maximum connection limit per instance (20,000), causing connection rejections and live update failures. \n\nAction taken: Scaled the realtime service from 3 to 6 replicas to increase capacity.\n\nAffected service: realtime.",
+        "tokensIn": 1169,
+        "tokensOut": 53
+      }
+    }
+  ]
+}

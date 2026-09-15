@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_flag_sync",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T13:51:28.124Z",
+  "entries": [
+    {
+      "key": "da9ac2f441cba63d97b29a89ab94f899bc1cfa975dbdf35aeb3e117b4421c640",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"feature_flag_staleness_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 804,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "1a12e22d746df385c889f4ede264567960b980029f228d5f3da1c38bbb567262",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"flag-sync\"}"
+        },
+        "tokensIn": 862,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "59e3022d7a5fba887c14281aa06597727b1a2830453cc166971d88789c7ae92f",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"flag-store\"}"
+        },
+        "tokensIn": 971,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "a5630d3bca9aae2640d05c9f5d63a899afb3b0e3a6d5ceaa898194f484dae7e9",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"web\"}"
+        },
+        "tokensIn": 1080,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "b586026f38edda49e58266bc9666354145942d236c47199dd803decbe2731603",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"flag-sync\"}"
+        },
+        "tokensIn": 1130,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "a5433413138be8a48fee806abd56f384068c22db0b325741246515eafe923536",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"feature_flag_staleness_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1164,
+        "tokensOut": 24
+      }
+    }
+  ]
+}

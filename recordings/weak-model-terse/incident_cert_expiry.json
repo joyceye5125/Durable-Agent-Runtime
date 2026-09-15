@@ -1,0 +1,84 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_cert_expiry",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:31:16.175Z",
+  "entries": [
+    {
+      "key": "52c6d3d9a344a1457dabb2448b5de87869009a13c3ea77d49a3efb365b1c2b5e",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"synthetic_https_success\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 461,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "9746ae71292c51d7479ecf310065cbe34ab2dbee38f3691d343c98e9c82bbe89",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"https error\"}"
+        },
+        "tokensIn": 512,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "bb712d7373ddecda974b2a4674e5ae0df08e0d80d4acbe9a00eb47f72223b58a",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"cert-manager\"}"
+        },
+        "tokensIn": 644,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "4154eeff53742599d8513135c3d406c70388657e9f6de074dcd18e5bc391d628",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"cert-manager renewal success\"}"
+        },
+        "tokensIn": 678,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "46d60cc0f62fa1d89a130866e95e50a0f0c308013826b6235f1f9698b8df673e",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Certificate for api.example.com expired and renewal is failing due to DNS-01 challenge rejected (API token revoked). Manual intervention needed to update API token for cert-manager to renew certificate.\"}"
+        },
+        "tokensIn": 846,
+        "tokensOut": 50
+      }
+    },
+    {
+      "key": "6a59a41aad0850dd5ac692c95a87bd5825170b578809860f41502a012ce890ae",
+      "turn": 11,
+      "response": {
+        "text": "The synthetic HTTPS success metric for api.example.com is zero from every region. Logs show the TLS certificate for api.example.com expired and cert-manager renewal attempts are failing due to a DNS-01 challenge rejection caused by a revoked API token. I restarted the cert-manager service to attempt recovery, but renewal errors persist. I have paged the on-call engineer to manually update the API token for cert-manager so it can renew the certificate and restore HTTPS success.",
+        "tokensIn": 919,
+        "tokensOut": 91
+      }
+    }
+  ]
+}

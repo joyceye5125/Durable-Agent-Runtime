@@ -1,0 +1,110 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_queue_backlog",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T11:38:42.339Z",
+  "entries": [
+    {
+      "key": "05c4b8ed883a8ac527a7ef31534cf20ae0eb34dabae13362d288759ea45ffe69",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_worker_throughput\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 663,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "466a2ddbb8176a38df956cab6aea134f8ffada8537938d816804265636f43296",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"smtp_relay_errors\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 716,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "53e3cd121836fba8f7d1c9bea5f178480d1dad29d1e2772b0fb992807b37a6b4",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"email-worker\"}"
+        },
+        "tokensIn": 767,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "3b8c0ff5988227419fdb19d86dd08e635b4641f86c1ab1536b87e64084446d0c",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"email-worker\"}"
+        },
+        "tokensIn": 875,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "818abddd8da0f6c8384a88e64a5d01c17464e1feddb3402bb8a712f0ee73b918",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_worker_throughput\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 909,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "3f23cf25cba01c732ca0b1c3336ecc55d970ea27c9aba6a429dd74cb812a9c32",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 964,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "4e33244163af7f346dbde4cc11487205a6bf5f3651ec7a956b9da8e931e40e33",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Restarted email-worker to resolve blocked consumer thread. Email queue is draining and throughput has recovered. Monitoring for full resolution.\"}"
+        },
+        "tokensIn": 1016,
+        "tokensOut": 37
+      }
+    },
+    {
+      "key": "c7da0b094ae421e845df59e0c511b0e1f4b74e0a576d865526a7337246d10290",
+      "turn": 15,
+      "response": {
+        "text": "Root cause: The email-worker service's consumer thread was blocked on a stale connection, causing it to stop processing messages and resulting in a growing email queue.\nAction taken: Restarted the email-worker service, which restored throughput and is draining the queue.\nAffected service: email-worker.",
+        "tokensIn": 1066,
+        "tokensOut": 57
+      }
+    }
+  ]
+}

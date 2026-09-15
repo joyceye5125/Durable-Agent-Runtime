@@ -1,0 +1,110 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_split_brain",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:32:24.690Z",
+  "entries": [
+    {
+      "key": "55aafaa9c8ed4ef8197b9a2f1b5e01132afea5026fb001074a2995eeaef538e0",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"duplicate_job_executions\",\"window\":\"15m\"}"
+        },
+        "tokensIn": 464,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "9bed05d29d3a368d3592886bd0084072152ff318594c1a002ecd6fb8f265228a",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"duplicate_job_executions\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 523,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "74393d08318f7bc72ebde83219e177ac55bbfa9e7a88c77366233218ed5d8d07",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"duplicate job\"}"
+        },
+        "tokensIn": 576,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "77750b9f68967cd796f82fec4ef08800eb9fbed359470df8ccabac8aebb4f4a5",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"scheduler_leaders\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 633,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "35a24ad015412a067f38a8d5ccffa553ad6d66cd57c1b8bc934835f6645d6d95",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"scheduler\"}"
+        },
+        "tokensIn": 682,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "f23bd27cdd58adc48b9a4fba6336b0af8701c828e5f4d28a98583aed63472dcc",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"duplicate_job_executions\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 714,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "6cea390f108a46862ff708f359dadc1ea56262b39a56ed64cdacca26cc04c79b",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Issue with duplicate job executions causing customers to receive duplicate reports was detected. Root cause identified as multiple scheduler leaders running concurrently, causing jobs to be dispatched twice. Scheduler service was restarted to clear the state and restore single leader operation. Duplicate job executions have now dropped to zero. We are monitoring the system to ensure stability.\"}"
+        },
+        "tokensIn": 767,
+        "tokensOut": 76
+      }
+    },
+    {
+      "key": "376ea3fea32d3f2aa733772685753e11c52d572a2a5c9955fb9a5f7b3393ace5",
+      "turn": 15,
+      "response": {
+        "text": "The alert for duplicate job executions was investigated by checking the metric and logs. It was found that there were multiple scheduler leaders (2 leaders) causing jobs to be dispatched twice, leading to duplicate reports. To fix this, I restarted the scheduler service to clear its state and restore a single leader. After the restart, the duplicate job executions dropped to zero. A public status update was posted to inform customers about the issue and resolution.",
+        "tokensIn": 856,
+        "tokensOut": 87
+      }
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "config_label": "no-investigate-first",
+  "task_id": "incident_gc_pauses",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "2e253278b6d31fea20007b48521dc424d8a39dda9daa309713c13dc9654ce89d",
+  "recorded_at": "2026-09-12T22:39:54.612Z",
+  "entries": [
+    {
+      "key": "cff0ec8ef660072d9a61140f642495232f5092ce1ab71366069ec852d80f705d",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_gc_pause_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 781,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "270a269236f714f190edca675915fedeea199df423fd3fd38d1038e1b6f93d7d",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_query_latency_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 837,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "21da3c4d2455bbda833b808b21305e94e1fba18839dcaf7386fca660873c12be",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 888,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "e9798f87f6897a8d2f7120ed3a4d9b7c78a011365566f0a1a70639b02659cf8f",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"ledger-service error\"}"
+        },
+        "tokensIn": 941,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "45e4b8f10c6c4a81fb31288abc4d4f01d08d1a6fd624c5151e9a3e1b62431903",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"ledger-service\",\"replicas\":8}"
+        },
+        "tokensIn": 1049,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "39232c512305b2cb5287cdabcb1c3a3e91367edd8251a59e39fc2c164aa3b1ba",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1092,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "0df6d098a4d86d30d25cf47e71d089fb24829a2085c3b6607dc1da2f94046dac",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_gc_pause_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1148,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "d4b5e21a069294785f4e51747e693efd6d0625b53469f73aae37d5c8672ff871",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1202,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "6d2b1da51f8a811bba8db29211e9544b30d9a65f1d142a53e9e22afe01e51cef",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Ledger service latency has returned to normal after scaling up to handle increased load. Monitoring for stability.\"}"
+        },
+        "tokensIn": 1255,
+        "tokensOut": 32
+      }
+    },
+    {
+      "key": "285ce328765c2342be63326bb64fb6cc1fa1b67547a76199280e82d106573d95",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The ledger-service was under-provisioned during a period of high load, causing excessive GC pauses and high latency.\nAction taken: Scaled the ledger-service from 3 to 8 replicas, as per capacity plan.\nAffected service: ledger-service.",
+        "tokensIn": 1300,
+        "tokensOut": 54
+      }
+    }
+  ]
+}

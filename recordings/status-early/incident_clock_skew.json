@@ -1,0 +1,162 @@
+{
+  "config_label": "status-early",
+  "task_id": "incident_clock_skew",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4b9140b1ed8e0b227987537032b250ec208630bd67dbe1414d61fb7668885a19",
+  "recorded_at": "2026-09-13T05:44:36.930Z",
+  "entries": [
+    {
+      "key": "625cd35fbc980f9a4a5b4edf463d95183d5f09249f9594b81c9cec9618427a31",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Investigating elevated auth_401_rate and user logouts due to 'token not yet valid' errors.\"}"
+        },
+        "tokensIn": 815,
+        "tokensOut": 34
+      }
+    },
+    {
+      "key": "5e60fae26dd8eac0a09367b5d427cf4aa9fee5b99a0e73bd5c5ead97107052c3",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 862,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "7403bb6a6612f15edb9a80d2f826e1fa0b5d37f6bba765f71956e1389d1733cc",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"token not yet valid\"}"
+        },
+        "tokensIn": 913,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "4b6c9eaafb37bf20e1f1849d2e4ecacfd8b11fe7da94413af2936a1fb85acf56",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 949,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "ade9a8ea172a200f8a57cce217092623da0d3f37f43b98931649c45db0791f81",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"401\"}"
+        },
+        "tokensIn": 1006,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "5db05d5603319c3232913bba39c39e6428a5080d6f28e9627133a69313680f2a",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1039,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "e400d11388239d79fba6fd8935183c82306a48a25679fac1b4f62cd7e5455e06",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1096,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "8a3ca7492e867a8d1fb761546dec1a8436255b6cc37b1f7126d7f76977bfc19c",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"ntp-agent\"}"
+        },
+        "tokensIn": 1148,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "72ea6471f5363f809fb96eceef07f19266c1dd8b37a8237e2aaab5ea25eb6bb4",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1184,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "46c88134d014e5312c8d39a5978f1b7f865198a462516c9b147c767c51177e25",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1236,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "5ffc6570955d313e2201bc52d5b0c9dc1ac528cce875c5471f8eb5a7643407c1",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: authentication errors due to clock skew have cleared after correcting system time.\"}"
+        },
+        "tokensIn": 1293,
+        "tokensOut": 29
+      }
+    },
+    {
+      "key": "5fd4e1bc9d639c9e78c2219a2dd4af1141669c514b1a5929322412e8d998b169",
+      "turn": 23,
+      "response": {
+        "text": "Root cause: The ntp-agent service had drifted system time by over 90 seconds, causing authentication tokens to be considered \"not yet valid\" and resulting in a spike in auth_401_rate.\n\nAction taken: Restarted the ntp-agent service, which corrected the system clock offset and resolved the authentication errors.\n\nAffected service: auth (with root cause in ntp-agent).",
+        "tokensIn": 1335,
+        "tokensOut": 78
+      }
+    }
+  ]
+}

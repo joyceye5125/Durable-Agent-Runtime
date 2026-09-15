@@ -1,0 +1,214 @@
+{
+  "config_label": "double-check",
+  "task_id": "incident_flag_sync",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "18d4ef692a4e6f1c85f7366a9ee5cbc7fabf6a754350cac299ec615e26a65168",
+  "recorded_at": "2026-09-14T02:42:17.653Z",
+  "entries": [
+    {
+      "key": "39eb0ac9376ac09a0e2870b53d3fa616c668c9f0cccd282279401f90ee0ce427",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"feature_flag_staleness_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 824,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "423e0135ce933bdc8e0d6770cd368d48a628d0748d8455976613ba8dab6fafbe",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 882,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "cf25d51426b3f6b9301549aaf1c4ff61d4d9badfbbde9ef55227e0cea8c1be20",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"flag-sync\"}"
+        },
+        "tokensIn": 937,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "c86f180a17e9e72782c36291c475f1fad9973de800d62bf93dbf073947dfc038",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"flag-store\"}"
+        },
+        "tokensIn": 1046,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "91949af1f6679091c4f2bf34306e764e1137d1592e9122390717de6c6011492d",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"web\"}"
+        },
+        "tokensIn": 1155,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "3d7da119f2984adf6835bffad396d726dc5b9ae2e5458134a0c24b969e1d3810",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"api\"}"
+        },
+        "tokensIn": 1205,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "3f30eb90fb75bce95426f7adde8ec1f8b3e28263862f923e33d31cfa53d7beda",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"feature_flag_staleness\"}"
+        },
+        "tokensIn": 1248,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "5dc264a07f1b3554d0d6c0e15bcd2fb7c3fc25748e37a53c1fb2f497b7611361",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"EOF\"}"
+        },
+        "tokensIn": 1360,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "a3e8bd25cab6e0e1cea11c350e41de7239bc12de183bf97619f72d5062022759",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"restart\"}"
+        },
+        "tokensIn": 1415,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "bad9587263db03a87e025d505c32339dbd647a767bb8f7e0156039a8502107a1",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"replica\"}"
+        },
+        "tokensIn": 1448,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "f2a6ba35cb5db569c434b3da74b9395c6eaf09c573aff9e4b105796e6ca3ca7f",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"error\"}"
+        },
+        "tokensIn": 1482,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "4ab442b22ba809f3c75d5dcac7d27feee0ae0e6e74e8f947fba880e1ee4c7b4f",
+      "turn": 23,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"flag-sync\"}"
+        },
+        "tokensIn": 1537,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "0f1eefb5f6c0b35494802b210e6dd4ea48697b97dad7a0fb7c85ff2f14a71f8e",
+      "turn": 25,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"feature_flag_staleness_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1571,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "eea8fa397e6165cbdba8c6082ae7869f7ab2460069b4d73dd0844b372e84cb03",
+      "turn": 27,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"web INFO serving flag snapshot\"}"
+        },
+        "tokensIn": 1627,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "01d8ebbdffccebddc3213fb2d5e1befe486e3e5c321a3c6573592ead642fb505",
+      "turn": 29,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Resolved: Feature flag staleness cleared. The flag-sync service lost connection to flag-store and was restarted, restoring up-to-date flags to users.\"}"
+        },
+        "tokensIn": 1784,
+        "tokensOut": 43
+      }
+    },
+    {
+      "key": "63ac046c0daa4d66cb71888f82967d0273d8e52331e6854d08bcdc6515461d69",
+      "turn": 31,
+      "response": {
+        "text": "Root cause: The flag-sync service lost its watch stream connection to flag-store (EOF error) and stopped syncing flag updates, causing stale feature flags to be served by web.\n\nAction taken: Restarted the flag-sync service, which re-established the connection and pushed updated flags.\n\nAffected service: flag-sync.",
+        "tokensIn": 1840,
+        "tokensOut": 62
+      }
+    }
+  ]
+}

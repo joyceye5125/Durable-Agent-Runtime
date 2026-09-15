@@ -1,0 +1,136 @@
+{
+  "config_label": "no-escalation",
+  "task_id": "incident_backup_failure",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "28197b75a4e4fd6f25a9969b97c76246558aa3c6ac57ba09568d72954cdaf856",
+  "recorded_at": "2026-09-13T03:31:54.605Z",
+  "entries": [
+    {
+      "key": "f53e71a03538f399043ac7edc7e9be9a660e83511d8bbcc324cc381993f39164",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_last_backup_age_h\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 761,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "00541124903f3b56b64fe1db4e15a6539a9b5e61ca1dbbbb4581678ec51a1f65",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"backup-agent error\"}"
+        },
+        "tokensIn": 816,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "92cba7d40e70ce14395a71cd397a27adf2e118c37d1f8732af41a379d2d4faa7",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"object-store AccessDenied\"}"
+        },
+        "tokensIn": 933,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "b667b5b0d5778b50d50735cf37aa18d6f0ac8aeafcb641aade62c2e06d0ef0c3",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"postgres wal archive\"}"
+        },
+        "tokensIn": 1056,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "44e12a951a60059f0636176c8a77540d34008057d5d1c4ccab4dec373a537713",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_wal_archive_failures\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1112,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "3efef734f6f5e2bf0ec1083ee7dae1f46a6a0927b27bab7f9f53c0ed2e916b75",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"backup-agent\"}"
+        },
+        "tokensIn": 1167,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "26a67d38e514f302cdbf74101f6cb1d5fd636b106b87f0465634624a3ca088c4",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_last_backup_age_h\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1201,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "c87bfa07039e75fcce7a440d0f6fd4481fe2ff2801516755a5a3b2da17192214",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Postgres backups are failing due to AccessDenied errors uploading to object-store. Bucket policy was changed recently (terraform run tf-5521). Manual intervention is required to restore backup-agent access to the backup bucket.\"}"
+        },
+        "tokensIn": 1258,
+        "tokensOut": 56
+      }
+    },
+    {
+      "key": "e495c82c31284ae4dba63d89c8936ee639c5e764549ca83bb1da1d6846b9b059",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are investigating a backup failure affecting our database. Backups are currently not being uploaded due to a permissions issue. Our team is working to resolve this.\"}"
+        },
+        "tokensIn": 1337,
+        "tokensOut": 44
+      }
+    },
+    {
+      "key": "d81a1f1352b44a675f7a8cbc86f524b85b89c37da43176e239c7a325f6db4a92",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The backup-agent cannot upload Postgres backups to the object-store due to an AccessDenied error, caused by a recent bucket policy change (terraform run tf-5521). Restarting the backup-agent did not resolve the issue.\n\nAction taken: Paged the on-call engineer for manual intervention to restore backup-agent access to the backup bucket, and posted a public status update.\n\nAffected service: backup-agent (impacts Postgres backups).",
+        "tokensIn": 1394,
+        "tokensOut": 90
+      }
+    }
+  ]
+}

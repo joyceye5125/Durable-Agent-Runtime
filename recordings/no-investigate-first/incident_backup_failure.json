@@ -1,0 +1,123 @@
+{
+  "config_label": "no-investigate-first",
+  "task_id": "incident_backup_failure",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "2e253278b6d31fea20007b48521dc424d8a39dda9daa309713c13dc9654ce89d",
+  "recorded_at": "2026-09-12T22:35:21.341Z",
+  "entries": [
+    {
+      "key": "34407b11cd8e8b497cb7202602f33b5e1fc4ff84a9c3fe73fac420c6ff6424bb",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_last_backup_age_h\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 766,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "db9bf1e3945a0b088702bef80389655c93ba5675e41e178055f031d3998b162c",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"backup-agent error\"}"
+        },
+        "tokensIn": 821,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "ade59a295d6116dd757c022527a4950f4f2de35577934bd56a9ddca2db3918b0",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"object-store error\"}"
+        },
+        "tokensIn": 938,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "6250f9370b507dc3182541e79fe2ad5685564d5d0dc15523bec08459ffaf0aee",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_wal_archive_failures\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1060,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "bd8e9301eaf76f07ddfc8d9271625ecbb6a97f6a4185c769f026599df7ad4e13",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"backup-agent\"}"
+        },
+        "tokensIn": 1115,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "773193b95034fc47d7d1eaa9c0f1030e17d4983db7890f25e142026a630de649",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_last_backup_age_h\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1149,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "be704c8fa7d7eb6a3d3d9e14d3e76943bac01c719037c42e8bf9ef62f44aab4f",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Backups are failing because the backup-agent cannot upload to object-store: AccessDenied due to a recent bucket policy change (terraform run tf-5521). Restarting backup-agent did not resolve the issue. Manual intervention to fix object-store permissions is required.\"}"
+        },
+        "tokensIn": 1206,
+        "tokensOut": 65
+      }
+    },
+    {
+      "key": "0f061eb8b8b00c14b6ee0c26979d7e534e006353eeb21297ad1e39b98264bd92",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are investigating a backup delay due to a permissions issue with our backup storage. Our team is working to resolve this.\"}"
+        },
+        "tokensIn": 1293,
+        "tokensOut": 37
+      }
+    },
+    {
+      "key": "292e68c6a35ebe16eec20e28ad5ea577751af792d74c3a2a3b64e215a9b66df1",
+      "turn": 17,
+      "response": {
+        "text": "Root cause: The backup-agent cannot upload backups to the object-store due to an AccessDenied error caused by a recent bucket policy change (terraform run tf-5521).\nAction taken: Restarted backup-agent (no effect), paged on-call engineer for manual permissions fix.\nAffected service: backup-agent.",
+        "tokensIn": 1343,
+        "tokensOut": 62
+      }
+    }
+  ]
+}

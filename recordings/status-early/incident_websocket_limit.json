@@ -1,0 +1,136 @@
+{
+  "config_label": "status-early",
+  "task_id": "incident_websocket_limit",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4b9140b1ed8e0b227987537032b250ec208630bd67dbe1414d61fb7668885a19",
+  "recorded_at": "2026-09-13T08:52:10.348Z",
+  "entries": [
+    {
+      "key": "c9a09e19d8e9622992a9a6707d7d06fe068b4f741a380de22afd1628b79419ba",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Investigating elevated realtime_connection_rejections causing live updates to fail for users. Diagnosis in progress.\"}"
+        },
+        "tokensIn": 812,
+        "tokensOut": 32
+      }
+    },
+    {
+      "key": "14ef147e002d2416dfe0dfe647fa31af455b8f1a12297d9c669ddc2576f6c8de",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connection_rejections\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 857,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "f1758c20b38e08a48615c9f1abcbee14e56a4682a36699379043422227c8872c",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connections\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 911,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "9323e1a04ee4a7719a2245c533eea0758c9e894fdda1848f86c9930d5c682ba3",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 963,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "d9ecd3aae6d641c6442214c8ceaa75007ce16fe26337b46f58c096c086760cb8",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"realtime connection reject\"}"
+        },
+        "tokensIn": 1016,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "0800a4c430288dbe80a22630a3dc470842bf2d10fd808c0e8221ed56087b019c",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"realtime\",\"replicas\":8}"
+        },
+        "tokensIn": 1117,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "0b66fdee51552600b830dd74e8f082e34d29b0e4482cd5b2953d0357a3f469b8",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connection_rejections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1160,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "1a13afd03de5bd84d71f577e27f7e90a7a321425c0126343feac9f47a9f475e4",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1214,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "d30d5bc58b8f1684a0aa71b066d31b8185a8c4a6bc502c2ad110d254eae58286",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Realtime service scaled up to resolve connection rejections. Live updates are now functioning normally.\"}"
+        },
+        "tokensIn": 1266,
+        "tokensOut": 30
+      }
+    },
+    {
+      "key": "19d27f98c94b53aaff64ce3a565066eae0b0312baf98037d0845955e29a63a4d",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The realtime service reached its maximum connection limit per instance (20,000), causing connection rejections and live update failures. \n\nAction taken: Scaled the realtime service from 3 to 8 replicas to accommodate the increased connection load.\n\nAffected service: realtime.",
+        "tokensIn": 1309,
+        "tokensOut": 56
+      }
+    }
+  ]
+}

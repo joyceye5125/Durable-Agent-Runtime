@@ -216,7 +216,11 @@ async function recordConfigs(store: Store) {
       const runId = await createRun(store, { scenario: task, mode: "durable", configLabel: label }, { agent: live });
       const out = await (await buildRuntime(store, runId, { agent: live })).drive();
       const n = trajectoryOf(fold(await store.listEvents(runId))).length;
-      console.log(`[${++done}/${jobs.length}] ${label.padEnd(20)} ${task.padEnd(32)} ${out.status} (${n} calls)`);
+      // A run can end "failed" without throwing — the loop catches the error
+      // and logs RUN_FAILED. Printing only the status hides why, and a run
+      // that failed at its first call leaves no recording to read back.
+      const why = out.status === "failed" ? ` — ${out.error}` : "";
+      console.log(`[${++done}/${jobs.length}] ${label.padEnd(20)} ${task.padEnd(32)} ${out.status} (${n} calls)${why}`);
     } catch (e) {
       // One job must not abandon the rest: every response already paid for is
       // on disk, and re-running resumes from there. A quota wall is different
@@ -322,7 +326,7 @@ async function experiment(store: Store) {
     console.log("change".padEnd(22), "endpoint".padEnd(9), "edit".padEnd(6), "extra".padEnd(6), "wrong→ok".padEnd(9), "path-only".padEnd(10), "endpoint-eval / trajectory-eval");
     for (const c of table.changes) {
       if (c.status !== "evaluated") {
-        console.log(c.label.padEnd(22), `not recorded (${c.missing?.length ?? 0} tasks missing)`);
+        console.log(c.label.padEnd(22), c.missing?.length ? `not recorded (${c.missing.length} tasks missing)` : (c.error ?? "not recorded"));
         continue;
       }
       console.log(
@@ -339,7 +343,7 @@ async function experiment(store: Store) {
     console.log(`\ncandidates the endpoint eval passes but the trajectory eval blocks: ${table.missedByEndpoint}`);
     console.log(`rows with a correct endpoint and a regressed path: ${table.pathOnlyRows}`);
     const evaluated = table.changes.filter((c) => c.label !== "baseline" && c.status === "evaluated");
-    const cell = `${evaluated.length} candidate changes on ${table.tasks.length} tasks → endpoint eval missed **${table.missedByEndpoint}**, trajectory eval caught **${table.missedByEndpoint}**. ${table.pathOnlyRows} task runs kept a correct answer on a worse path.${table.provisionalGolden.length ? ` (${table.provisionalGolden.length} golden trajectories still provisional.)` : ""}`;
+    const cell = `${evaluated.length}${evaluated.length === CANDIDATES.length ? "" : ` of ${CANDIDATES.length}`} candidate changes on ${table.tasks.length} tasks → endpoint eval missed **${table.missedByEndpoint}**, trajectory eval caught **${table.missedByEndpoint}**. ${table.pathOnlyRows} task runs kept a correct answer on a worse path.${table.provisionalGolden.length ? ` (${table.provisionalGolden.length} golden trajectories still provisional.)` : ""}`;
     if (evaluated.length === 0) {
       console.log("\nNo candidate has been recorded yet, so nothing was measured. README left alone.");
       console.log("Record one with: npm run record -- --config <label>");

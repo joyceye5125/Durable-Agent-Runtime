@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_disk_full",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T13:51:25.057Z",
+  "entries": [
+    {
+      "key": "7286548ae79d85906f90b36699c8c83d64bd08be9b640c313b96cf6caa5d22eb",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"/data\"}"
+        },
+        "tokensIn": 805,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "0a64eb0388056c5d12f9544823b8a4e3e399c943ac806c6ce4ce7590c1ca6786",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_rotator_last_success_age_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 967,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "f57d70f8c9fda7ea7f03bb381250b7564ed4fb389c864af3342c59116478ee50",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"log-rotator\"}"
+        },
+        "tokensIn": 1027,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "797a2b818a68e1e0491d06fc68f354bb3eb7d44439b4419a6e8f9cb07657f814",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_rotator_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1065,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "fc5fadc309295316e8546370f3e2be3364fa795c23744094870608548322e325",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"disk_usage_data\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1123,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "0b36e13e6fcd83de31a5042c7ae4751a0f4e98640795648a2ab281c0993249a3",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Resolved storage-1 /data disk usage alert: log rotation was stuck due to a stale lock, now cleared and disk usage is back to normal.\"}"
+        },
+        "tokensIn": 1178,
+        "tokensOut": 43
+      }
+    }
+  ]
+}

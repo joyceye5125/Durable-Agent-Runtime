@@ -1,0 +1,97 @@
+{
+  "config_label": "no-escalation",
+  "task_id": "incident_clock_skew",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "28197b75a4e4fd6f25a9969b97c76246558aa3c6ac57ba09568d72954cdaf856",
+  "recorded_at": "2026-09-13T03:33:24.077Z",
+  "entries": [
+    {
+      "key": "e7abc1f6acf43ddd4c567c502525bdd8b61c980ab0610f3d555b3690ced6fac2",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 769,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "540f107a84e2f7101da4888d282bacf850259e806872022350196f1f323568d7",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"ntp-agent error\"}"
+        },
+        "tokensIn": 821,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "41221e3ad08a9e39e3916fc49c51c5f86ceb60894f81e0511527f5fb222e8bf3",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"ntp-agent\"}"
+        },
+        "tokensIn": 938,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "41ff448bbaf10856732216372de43b2ddbbcf05d17a04c517c112a0e2f3a845e",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 974,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "cf9ada4a9c7ed33e5cb9f743a16c68f7e467949c716beb9ac2719d1f02a45054",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1026,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "804e02a9910516e63e50b922884ddc39334ccd8711e0c2473998629574dad77c",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Resolved: Users were logged out due to server clock drift causing token validation errors. Time sync restored and authentication is working normally.\"}"
+        },
+        "tokensIn": 1083,
+        "tokensOut": 38
+      }
+    },
+    {
+      "key": "0f933934d5c0de392b73ced211750faa61195ad61c70463299c029ad024d2249",
+      "turn": 13,
+      "response": {
+        "text": "Root cause: The ntp-agent failed, causing the auth service clock to drift by over 90 seconds. This made issued tokens appear \"not yet valid,\" resulting in high 401 rates and user logouts.\nAction taken: Restarted ntp-agent to restore correct time synchronization.\nAffected service: auth (with ntp-agent as the root cause).",
+        "tokensIn": 1134,
+        "tokensOut": 72
+      }
+    }
+  ]
+}

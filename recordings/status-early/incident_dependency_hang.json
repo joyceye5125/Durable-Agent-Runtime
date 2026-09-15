@@ -1,0 +1,136 @@
+{
+  "config_label": "status-early",
+  "task_id": "incident_dependency_hang",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4b9140b1ed8e0b227987537032b250ec208630bd67dbe1414d61fb7668885a19",
+  "recorded_at": "2026-09-13T05:45:41.060Z",
+  "entries": [
+    {
+      "key": "54540a7340709228eab1b1c4e881876629aad8d5bd17a1af89a64b4666ff8e1f",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Investigating elevated 5xx error rate and thread pool saturation on the gateway service. Diagnosis in progress.\"}"
+        },
+        "tokensIn": 815,
+        "tokensOut": 34
+      }
+    },
+    {
+      "key": "8a75d89ed228d27ec3dcf2655e0f97cddd208c148f42925530ac00f6ecc52fb1",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"gateway_5xx_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 862,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "91478d03cc8437890e851649827cc753a8937d085aff8d35f8e5980241111fda",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"gateway error\"}"
+        },
+        "tokensIn": 921,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "b50aebb5d572f52e77b24246927f63ab7f1f5de972e31542da0c36929ebb51f6",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"recommendations_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1004,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "cd4c6690217e8c21840287536426b017e9a7f275e37dbb871fb296973f8efd2b",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"recommendations deadlock\"}"
+        },
+        "tokensIn": 1062,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "68c6d2b95a220d6e7373301dc893cf88b77dd7675d8c773f7aa625ee11ef6dda",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"recommendations\"}"
+        },
+        "tokensIn": 1147,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "57ff6a07f9ad167422777af22368cfd1915f7dfccffd7cb4b88a68be78fddaa7",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"gateway_5xx_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1181,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "99c0e943501eede8aee9f3959e07470a6d5ba142b778badc8c68c5a86cf7c503",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"recommendations_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1240,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "518a0f8763eab7acedca3006f2dcde470207dfb48905899fda21a46ab27bcb8a",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: gateway 5xx errors and thread pool saturation were caused by a deadlock in the recommendations service. Recommendations was restarted and all metrics have returned to normal.\"}"
+        },
+        "tokensIn": 1296,
+        "tokensOut": 47
+      }
+    },
+    {
+      "key": "6b6f1d8a4940c8bebb24943bc4609f88eb41f9d807ce52cf613752925ba2707a",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: A deadlock in the recommendations service caused its handlers to block, which saturated the gateway thread pool and led to elevated 5xx errors.\n\nAction taken: Restarted the recommendations service to clear the deadlock.\n\nAffected service: gateway (symptoms), recommendations (root cause).",
+        "tokensIn": 1356,
+        "tokensOut": 59
+      }
+    }
+  ]
+}

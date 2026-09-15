@@ -1,0 +1,201 @@
+{
+  "config_label": "double-check",
+  "task_id": "incident_memory_leak",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "18d4ef692a4e6f1c85f7366a9ee5cbc7fabf6a754350cac299ec615e26a65168",
+  "recorded_at": "2026-09-13T03:58:21.645Z",
+  "entries": [
+    {
+      "key": "024f7b3972ff5c7bc92d5086ad2ba9478598191d9f98fc4b948f5a6cc8ac8949",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"container_oom_kills\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 818,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "ecff2bc5e0bdd98fbde2e6a7e688a0a3627da3e4f12df80d8f31a1a1c50ae2ee",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"thumbnailer_memory_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 871,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "4d1d74128b2926e1421fe42432943694740dc89e7d79d0aadc823c4bb5a30b76",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 928,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "7a0595d72cf6eb86f1d1df5de12857ef1c2c167b04f5cecd1d14dd475e5fb237",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"thumbnailer OOM\"}"
+        },
+        "tokensIn": 983,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "858b7ae49adc38e5c97b69f3508b300d75c7cea830297597b57be2042e1a5f82",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"media-store OOM\"}"
+        },
+        "tokensIn": 1134,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "dfcace4da6009e1eeb3d9cf2422d00471624382ec6458ed7c9fc6784ba6e0927",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"api OOM\"}"
+        },
+        "tokensIn": 1241,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "9d59efe4d7e3b31aa637027df2b03a7f3652e9d5065d9f9f7b777b164af0c90d",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"cdn-purger OOM\"}"
+        },
+        "tokensIn": 1344,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "2f26085083b23aa392c48ccf98baf522ac6b18470f1def829ae7275db6748a90",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"thumbnailer_memory_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1448,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "8f2500dfcc02eebde794c2f1558163595d5dfd1967f3a4f97dd19996d67484dd",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"thumbnailer\",\"replicas\":2}"
+        },
+        "tokensIn": 1505,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "30753fcc7c6ed690b520a176bd741d64dc137275ec58da0cbc5573a820eac294",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"container_oom_kills\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1548,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "afc3a922cecbba0df87eaae12e799fc240a22d3e97779cd7c35e5e189e03090c",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"thumbnailer_memory_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1601,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "9dc8246a737e933795b53220c825020c304a2cd2aad81d3f5945631f201ca878",
+      "turn": 23,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"container_oom_kills\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1677,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "103d7f4ce7ab4256b0cf572895b4d3ef6660fd7be46e0cad915662ab6e32663a",
+      "turn": 25,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"OOM kills in the media namespace are caused by the thumbnailer service exceeding memory due to an unbounded cache (see logs: 'unbounded LRU after v5.3 config change'). Scaling replicas did not reduce memory pressure or OOMs. Manual intervention is needed to address the cache configuration or memory limits.\"}"
+        },
+        "tokensIn": 1749,
+        "tokensOut": 77
+      }
+    },
+    {
+      "key": "27f14b0212205f0052236f260c40890f0b0d4ae6d9b75ca50c371fb2dcae3f55",
+      "turn": 27,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are investigating elevated errors in media processing due to memory issues. Engineering has been paged and is working to resolve the issue.\"}"
+        },
+        "tokensIn": 1848,
+        "tokensOut": 39
+      }
+    },
+    {
+      "key": "4865f7ce730aea314d6f673ad9cbdd061a8b09b235dd0435645137f1e2d45c70",
+      "turn": 29,
+      "response": {
+        "text": "Root cause: The thumbnailer service in the media namespace is experiencing OOM kills due to an unbounded cache after a recent configuration change (v5.3), causing it to exceed memory limits. Scaling the service did not resolve the issue.\n\nAction taken: Scaled thumbnailer to 2 replicas (no effect), paged the on-call engineer for manual intervention to address the cache configuration.\n\nAffected service: thumbnailer.",
+        "tokensIn": 1900,
+        "tokensOut": 86
+      }
+    }
+  ]
+}

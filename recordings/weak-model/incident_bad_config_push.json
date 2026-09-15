@@ -1,0 +1,110 @@
+{
+  "config_label": "weak-model",
+  "task_id": "incident_bad_config_push",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "e902a1553c56f907d9306fe4ab57d9fe1cd263f3131f0d39d3d35e98d3014e91",
+  "recorded_at": "2026-09-12T22:29:26.405Z",
+  "entries": [
+    {
+      "key": "da9e6f8181f28ecfc7bceb5f4bb2a06cfb8fc1ecd4d9751ed9afd564f7c887a0",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"edge_429_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 789,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "5fb4de544ccae9b75b95c363a15b4db61ec539d30ae605d908cfe1b6798c2b99",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_requests_per_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 844,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "b7134db5dd58dfbd0b9fe9cb7b19d96d5bb324909bcdc449aab19d5514292017",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"rate limit\"}"
+        },
+        "tokensIn": 896,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "632251de6683f015bef7acd48790015f455ba8afe57172a8347adcb74c7265f6",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"edge-proxy\"}"
+        },
+        "tokensIn": 994,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "61870e5a91cab0e72833f65593cdad25127d2f23ef87d9e94578000e4f519ddf",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"edge_429_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1030,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "dd341e2d88825e7b84c2636a7becb6a6aa05cf2abc9ecb9d5d4ae61c310e2465",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"High edge_429_rate (71%) due to recent config change in edge-proxy rate limit from 50/s to 0.5/s causing most requests to be rate-limited. Restarted edge-proxy to clear state but issue persists. Manual intervention needed.\"}"
+        },
+        "tokensIn": 1087,
+        "tokensOut": 68
+      }
+    },
+    {
+      "key": "0756a8154acfe490a8c2f98ed3e433cba322392b21de4aeb392dd400591d764e",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are experiencing high rate limiting on customer requests due to a recent configuration change in the edge-proxy service. Our team is investigating and working on a fix.\"}"
+        },
+        "tokensIn": 1178,
+        "tokensOut": 45
+      }
+    },
+    {
+      "key": "66e57881c10adc1cb2b580b3e31fa4a6ed192c90dcf56b62bcccc569599531f6",
+      "turn": 15,
+      "response": {
+        "text": "The root cause is a recent configuration change in the edge-proxy service that drastically lowered the rate limit from 50 requests per second to 0.5 requests per second, causing 71% of customer requests to be rate-limited. I restarted the edge-proxy service to clear any stuck state, but the issue persists due to the config change. I have paged the on-call engineer for manual intervention. The affected service is edge-proxy.",
+        "tokensIn": 1236,
+        "tokensOut": 92
+      }
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "config_label": "act-fast",
+  "task_id": "incident_traffic_spike",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "0ef91e9b98682226cadbfb1c89908a3fb998975183386666b8c4a385a298b100",
+  "recorded_at": "2026-09-13T04:40:06.875Z",
+  "entries": [
+    {
+      "key": "788f4b81838da163738b6c0e6f73dd0dd31f51d295a65abd0d47cb26a7c4dfec",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_cpu_utilization\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 825,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "2b450991ffdd84553cc481332b2ad8ce9b518e4d8c6725fd637e9664dc532c7b",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 882,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "8ab2d0756c14ef0719aa28449c60304f2465d015a688d9379117602270c8234e",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 933,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "8c6bdf45768a15595e111e6d1d68a7b4a106d4888888de2774d8bdf98b5884b4",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_cpu\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 989,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "aeac5c1ffd7eac960e3458c7ac020d9a7ed9f776f04366323846b0ee444b33bd",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"web error\"}"
+        },
+        "tokensIn": 1042,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "ad04e8675ad49b57e5c0046e09c9858f46f2b1a58d03c0e2eb86487051197cdc",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"web\",\"replicas\":12}"
+        },
+        "tokensIn": 1139,
+        "tokensOut": 19
+      }
+    },
+    {
+      "key": "c047fa116daf458a293686a3ffeba5029b292e0b4726a4ed171854395c6dd921",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_cpu_utilization\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1180,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "3e21115e777f02bc9a32f8808d81f76c951e04fca69e07e10353767264c8ed06",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1237,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "ed13e13ed7b7d60be04e7a65593e27d0368a3d33d34642d56bf75e6835fb75d6",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident mitigated: web service experienced high CPU and latency due to traffic surge. Capacity increased to restore normal performance.\"}"
+        },
+        "tokensIn": 1291,
+        "tokensOut": 36
+      }
+    },
+    {
+      "key": "169f92b8bce8704a5b21a893135497ba9b338ab340e72d0a62ac85b96ccecc70",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The web service was overloaded due to a traffic surge, saturating all replicas and causing high CPU utilization and latency.\nAction taken: Scaled the web service from 4 to 12 replicas to match documented capacity planning for peak loads.\nAffected service: web.",
+        "tokensIn": 1340,
+        "tokensOut": 56
+      }
+    }
+  ]
+}

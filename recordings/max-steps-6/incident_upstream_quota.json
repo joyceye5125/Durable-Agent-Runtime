@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_upstream_quota",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T15:29:46.249Z",
+  "entries": [
+    {
+      "key": "6ed40f187df612bb4e6c38475e1d2f570d1ca3615825df72058822c78f9270cf",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_service_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 791,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "f5d3a0e09ec9e6b6f8da8718c575598c94638b7e8a026d152ae3bb7e6140a3c7",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"maps_api_calls_per_min\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 848,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "054b803a61bfcfd52b5d5f6f8c1c177f9861a7f120db2bba499570b028f69e35",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_cache_hit_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 904,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "7a22c11f0c64c20b893c489fa3cde003808d0000990045e931dfd51344e77754",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"geo-cache error\"}"
+        },
+        "tokensIn": 957,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "7de01af72c2d067d6246ec1203e19aebdb39350b5eb9f64c949d90e41d83baeb",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"geo-cache\"}"
+        },
+        "tokensIn": 1074,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "7139069f29cef47959fcefc88a97ee6e5a21ad1c297c4eeabc7757d13fbace4f",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_cache_hit_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1108,
+        "tokensOut": 22
+      }
+    }
+  ]
+}

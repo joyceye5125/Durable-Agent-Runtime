@@ -1,0 +1,62 @@
+{
+  "config_label": "no-status-update",
+  "task_id": "incident_log_flood",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70a689f783281f39d436d765aaf486317dbba515e634a87d6f6b9c10ce390dd7",
+  "recorded_at": "2026-09-13T03:28:08.189Z",
+  "entries": [
+    {
+      "key": "f0667d3e4e8be1e80fb00adc961dcac043345cbff61a4ef0b1458ba9214a8bd2",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_pipeline_ingest_lag_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 778,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "6262e0d36f9e8b7995b139506ca7402d2100997d833964ea16b7deffe220238a",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_lines_per_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 838,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "8a551f8f0bcdafa641137f4280d2f8db83c3a236f75bd1df912ae3c69ad15a96",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-shipper error\"}"
+        },
+        "tokensIn": 892,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "c2c48c65556f3c0975f870fbdf90c1305980caf8e89e6c6590c2dc2a5ae903f3",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-store error\"}"
+        },
+        "tokensIn": 1014,
+        "tokensOut": 16
+      }
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_dns_failure",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T13:51:28.163Z",
+  "entries": [
+    {
+      "key": "fe3eafa255079549cac90c97ac366bf4954f8a4010770a4b04fa9effb3485fca",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"outbound_http_errors\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 788,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "f9933549976e2c8c40ac26b25b69c260f05b7b3be9ea213596545e287bc51098",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"partner-sync error\"}"
+        },
+        "tokensIn": 845,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "b740073cd952a0da14b732c5f6b982359b54ee4016874e27b7025cb73a117972",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"coredns error\"}"
+        },
+        "tokensIn": 933,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "292f977d68d5f551893ae9d75181322754803350122b294eabaa0a82f939d859",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"coredns_servfail_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1079,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "80e900d413c45fe16ab25fe3ff2e7077a1d7997eed74d44c23d7f64ad502146c",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"coredns\"}"
+        },
+        "tokensIn": 1140,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "77c7aa5fd44bd14fb6aec5d5c08ac3fe2f192c976033eff3947183a51da083f1",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"coredns_servfail_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1176,
+        "tokensOut": 24
+      }
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "config_label": "act-fast",
+  "task_id": "incident_dependency_hang",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "0ef91e9b98682226cadbfb1c89908a3fb998975183386666b8c4a385a298b100",
+  "recorded_at": "2026-09-13T04:19:46.653Z",
+  "entries": [
+    {
+      "key": "7ca4438d96347ceaab4829e806a11055e45a714a2ebdc4edf51850bc4ce24a64",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"gateway error\"}"
+        },
+        "tokensIn": 816,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "a8df68e454e530afa5c082b30443efab49e92d3cff1b365a3685909f6feb2f25",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"recommendations deadlock\"}"
+        },
+        "tokensIn": 899,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "29bda8c89cd4339fee722b0a9582eafc06b98cd13a50cdb5e60b5bf1f58b8f7e",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"recommendations\"}"
+        },
+        "tokensIn": 984,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "ee298138d5cceca74e387099d08f5a6c86a792c7e933686ed173e3bb6542bc0d",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"gateway_5xx_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1018,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "cd557ddf53afdfbc5cd8cbc11d9144cb86d35de41d95c710590283fe881e0085",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"recommendations_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1077,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "cbb1ae41fd30a2e117870d2823d74e18687247c6cef30b949fee61c63208cf30",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"gateway_5xx_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1133,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "67dd7ed5d7698ef299db29cc6279011cc063b35bf044f7c1919e1d0a2d50f9c8",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"catalog_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1211,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "40591c2e7adecb7af56cb492497a29ac9c8ce215fc023c9f1acf3d76392878e3",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"gateway_5xx_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1264,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "bcc64028af9c8fbaa0ed3b0bd1fcb5ecdac538835815cdfcddc70158472c74bf",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: gateway 5xx errors and thread pool exhaustion caused by recommendations service deadlock. Service has been restarted and is now healthy.\"}"
+        },
+        "tokensIn": 1342,
+        "tokensOut": 41
+      }
+    },
+    {
+      "key": "2f75e95e845004b1748a3bc5a41b043a3ee62cd207cbba4f780e1a77cc2949a5",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The recommendations service experienced a deadlock, blocking request handlers and causing the gateway thread pool to exhaust, resulting in elevated 5xx errors.\nAction taken: Restarted the recommendations service to clear the deadlock.\nAffected service: recommendations (impacting gateway).",
+        "tokensIn": 1396,
+        "tokensOut": 55
+      }
+    }
+  ]
+}

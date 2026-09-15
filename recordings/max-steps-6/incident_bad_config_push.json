@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_bad_config_push",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T12:43:13.161Z",
+  "entries": [
+    {
+      "key": "622bcda268e05e4be83414a2fa53be5161d08a58e70f30cf6486dddf9387bdb1",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"edge_429_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 789,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "97c38e8272b901f708a2021fc5fd9964ee94f9160ad94095a0ed70d0482718f9",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_requests_per_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 846,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "91e8b19f14ef9185e565c922865f655e40567dc0813a06aed6a0d3b29bc7c50c",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"edge-proxy error\"}"
+        },
+        "tokensIn": 897,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "04e14811abd0c514737713476efaaa9b1243394de7300d0a5f3ba494deb819b4",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"config-service change\"}"
+        },
+        "tokensIn": 1026,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "7918abffcd93bf98208bdef974b908de05591aa82b82c9ef682dbc7e2984f29e",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"deploy-bot\"}"
+        },
+        "tokensIn": 1125,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "38d934719df512bbceef02fdca7fe6d63747468186552dc9abbdb8d956341b0e",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"edge-proxy config\"}"
+        },
+        "tokensIn": 1200,
+        "tokensOut": 17
+      }
+    }
+  ]
+}

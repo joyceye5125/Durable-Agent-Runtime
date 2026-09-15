@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_model_server_hang",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T15:00:06.162Z",
+  "entries": [
+    {
+      "key": "bfb3d9f24c705833e2f551fec3ae5ddc47638b9b5ebf64cb60241f348c2a209e",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_model_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 796,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "b09e8dd20abd5006c4fa03e55f8a47925e7dd8d456c6d14272eb45de6e69597b",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"feature_store_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 856,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "fc351a088e4c803a9ee8c4af7ad5b0f894f1c80e50a042b83eaa60a9744fe348",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"fraud-check timeout\"}"
+        },
+        "tokensIn": 911,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "729900dccab4a0f8bb20aab89b28343856dfd69e66b87ff36d412adb600d790b",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"fraud-model ERROR\"}"
+        },
+        "tokensIn": 1021,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "b8bab108229e2ce03329f80caeb09ac1e9150c00e81973d4acb142e58ecd29d2",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"fraud-model\"}"
+        },
+        "tokensIn": 1131,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "fb45c774882455bd1440648eac8b913f04d1a06d03a69b489444f496c8c85fee",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_model_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1167,
+        "tokensOut": 25
+      }
+    }
+  ]
+}

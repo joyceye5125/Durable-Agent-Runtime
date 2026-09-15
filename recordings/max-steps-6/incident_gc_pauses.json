@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_gc_pauses",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T13:51:47.196Z",
+  "entries": [
+    {
+      "key": "27526e67fd28b40c327b79c07741c54a5c5ecdf8fadd2c65cdcd984c067533f4",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_gc_pause_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 801,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "8a8ee7b2266930356f3011bf7a0f4ac9b20948065b7e077765d5a93b51c64cd2",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_query_latency_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 857,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "02dc631ec3d06fd0d10c9576fa3059fa094fafb389e4a4f3295161571ea08708",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 908,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "1ecd4f7eeb1d5edb95a672276fc8bc5830df466dd9f6624a2488005c4a4f67b5",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"ledger-service error\"}"
+        },
+        "tokensIn": 961,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "d64b03027f1c70e4b1f6cac8fd38fa4561627003a12d864bd0d35da911b5f401",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"ledger-service\",\"replicas\":8}"
+        },
+        "tokensIn": 1069,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "4b7fd79c4c9553c30373f074110449eab8ec99b39371fb3b2a1dd3d32dae0162",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1112,
+        "tokensOut": 24
+      }
+    }
+  ]
+}

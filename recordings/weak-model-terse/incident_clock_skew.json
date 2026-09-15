@@ -1,0 +1,110 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_clock_skew",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:31:19.759Z",
+  "entries": [
+    {
+      "key": "b1e33dcbd4b2154510f22a352fde78f84bad6389507febc33baa9e0af26c0b56",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 468,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "f21b0fc01bb7c963598a6f003ae89192e4987cf6716c550ebd28aa7b62b62cea",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 525,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "39226f7a8cb72f8343bab613e389ca19557867c705fb58d275caa6493dab3351",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"token not yet valid\"}"
+        },
+        "tokensIn": 576,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "6f8289450f466520efe0e8e28af44633dfd7699f0284128def114779cb77bdac",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"401\"}"
+        },
+        "tokensIn": 612,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "2ca899b358b37424eb3bcd7cc179a12cf6960619b4340302ac0a25a9a567ab4c",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"auth\"}"
+        },
+        "tokensIn": 645,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "f510c9942d7bbf2ed38e307fede185c8f667a0cb9e9a6b6270b5e3b441a24198",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 677,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "c08dbe2448ffe0456ef9b75a983488ab44efbc53efb417752b956c128ce7b8d3",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Auth service restarted due to high 401 error rate with 'token not yet valid'. No clock offset detected. Issue persists, further investigation needed.\"}"
+        },
+        "tokensIn": 734,
+        "tokensOut": 43
+      }
+    },
+    {
+      "key": "8e2e09011fd18fb65c646dffc0418a872c972a5322a6945a996406e3ccb495bd",
+      "turn": 15,
+      "response": {
+        "text": "The alert indicated a high 401 error rate with 'token not yet valid' errors. I checked the auth_401_rate metric and found it elevated around 23%. The auth_clock_offset_s metric showed no clock skew, and no relevant logs were found for the error. I restarted the auth service to clear any stuck state. The error rate remains high, so I have paged the on-call engineer for further investigation.",
+        "tokensIn": 800,
+        "tokensOut": 86
+      }
+    }
+  ]
+}

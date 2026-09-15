@@ -1,0 +1,149 @@
+{
+  "config_label": "status-early",
+  "task_id": "incident_bad_config_push",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4b9140b1ed8e0b227987537032b250ec208630bd67dbe1414d61fb7668885a19",
+  "recorded_at": "2026-09-13T05:43:21.972Z",
+  "entries": [
+    {
+      "key": "36bdfe379798908ab2d2957c5c9f72d2125a492e55f89b6870f463e4878c0b24",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Investigating elevated edge_429_rate alert. Most customer requests are being rate-limited. Diagnosis in progress.\"}"
+        },
+        "tokensIn": 810,
+        "tokensOut": 35
+      }
+    },
+    {
+      "key": "7f805e3753dec3c134f0fd52835c47233c8d2cd37ccb14d948d7008a8f2117a6",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"edge_429_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 858,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "dd3b15b58bb5c642f16a2867ebc3f83266803ce48a5a7fed5c174f3aed8156bb",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_requests_per_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 913,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "873751abcaf2a104ac5c228264a14c5a04f16365195dfa28e82fc6f7508e710d",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"edge-proxy 429\"}"
+        },
+        "tokensIn": 965,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "86a1ce468a2b1b45432417898c55cc5189326bd959e797c6bb9cdd0748494ba5",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"config-service CR-7781\"}"
+        },
+        "tokensIn": 1095,
+        "tokensOut": 19
+      }
+    },
+    {
+      "key": "20ef924f60d05c0105f6b4103b6a160a56fbabc20fe7158fc4a88f506ef127f5",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"edge-proxy\"}"
+        },
+        "tokensIn": 1197,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "706e139208f3a7eab2a6521fed6df751a5526abae2df63d904c7301f64c4b8a4",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"edge_429_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1233,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "1fddfcd8a0bcc1ce07cf9192048132c874745e191f6bc840d14091498a8ce9b3",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"edge-proxy rate_limit\"}"
+        },
+        "tokensIn": 1290,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "36686975d8e78e7ddb15f04a8388b6371f7c5780abf9e6aa17c753028213d670",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Edge-proxy rate_limit.per_ip was changed from 50/s to 0.5/s by config-service (CR-7781), causing 71% of requests to be rate-limited. This configuration change is the root cause and cannot be reverted with available tools. Please review and revert the config change.\"}"
+        },
+        "tokensIn": 1481,
+        "tokensOut": 77
+      }
+    },
+    {
+      "key": "7186fb08dc662a606820a76fd8b4dc63aaffbe791dee9fa7ad1c5f0d322611f0",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Root cause identified: a config change drastically lowered edge-proxy rate limits, causing widespread 429 errors. On-call engineer has been paged to revert the configuration.\"}"
+        },
+        "tokensIn": 1580,
+        "tokensOut": 46
+      }
+    },
+    {
+      "key": "44c367f2b265b0cafc0132189673cd3a8f2d396982dad409410326fedc64ab89",
+      "turn": 21,
+      "response": {
+        "text": "Root cause: The edge-proxy rate_limit.per_ip was changed from 50/s to 0.5/s by a config-service deployment (CR-7781), causing 71% of requests to be rate-limited.\nAction: Paged the on-call engineer, as reverting the configuration is not possible with available tools.\nAffected service: edge-proxy.",
+        "tokensIn": 1639,
+        "tokensOut": 74
+      }
+    }
+  ]
+}

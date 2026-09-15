@@ -1,0 +1,110 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_cron_stuck",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T10:15:43.128Z",
+  "entries": [
+    {
+      "key": "dffb063ded80d81cb22d0ce0d72de28995cd2d3732849a2ae31788765d8b974d",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"billing_cron_lock_wait_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 663,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "aff1c7305ea47ba8c763445c8e4603d44e14d6ec9c11d79b4d2cb8df5773bc73",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"billing-cron error\"}"
+        },
+        "tokensIn": 721,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "2df9564c53b3e29233f39bb10076ece416a908e6149bff8895bd55129c326a9e",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"postgres error\"}"
+        },
+        "tokensIn": 867,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "eb8e655214de01bd99c2798542aac180e8e0ea57e61607bc309470d4088dab1d",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"billing-cron lock\"}"
+        },
+        "tokensIn": 901,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "8702c88ab50ba34995c8d1d3af7d7b10ca58adf9169143a314a643b48c6986e7",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"billing-cron\"}"
+        },
+        "tokensIn": 1047,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "2ac5110f5de829024d469586c8c1317f7f516dc303de771060322a56004673eb",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"invoices_generated_today\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1083,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "1b801333dc5a120432fed0e5f6893a515a07eea941f7f29ae6b77eaba8ae0c76",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Restarted billing-cron to clear a stale lock held by a decommissioned host. Invoice generation has resumed and is recovering.\"}"
+        },
+        "tokensIn": 1135,
+        "tokensOut": 39
+      }
+    },
+    {
+      "key": "57666cbb0c8926e745c8f617adab6db8ad8ed10ee9f98d4f7f47559252634566",
+      "turn": 15,
+      "response": {
+        "text": "Root cause: The billing-cron service was stuck waiting for a lock held by a previously decommissioned host, preventing invoice generation.  \nAction taken: Restarted billing-cron to clear the stale lock.  \nAffected service: billing-cron.",
+        "tokensIn": 1187,
+        "tokensOut": 51
+      }
+    }
+  ]
+}

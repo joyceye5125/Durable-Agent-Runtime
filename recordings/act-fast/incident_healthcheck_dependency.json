@@ -1,0 +1,110 @@
+{
+  "config_label": "act-fast",
+  "task_id": "incident_healthcheck_dependency",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "0ef91e9b98682226cadbfb1c89908a3fb998975183386666b8c4a385a298b100",
+  "recorded_at": "2026-09-14T02:44:01.884Z",
+  "entries": [
+    {
+      "key": "cb54b7b4efabdf09bfcb838b9bc2d353508bb9a53760171c7a2191c7ca81d8de",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"api error\"}"
+        },
+        "tokensIn": 824,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "17b37e1d69db946ba3086382d35e1a4941f1a5acb2fe496b288f435ed0dc5521",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"config_service_up\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 957,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "baa33d9981e3eceeeef47b2a31f6377cfcfbf177dbfcfabb611f12524710d4df",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"too many open files\"}"
+        },
+        "tokensIn": 1006,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "16933efdb5aaf27a3ff6faa0196e20c57e2785b3a99c1b6f66dbb0a3014c7722",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"config-service\"}"
+        },
+        "tokensIn": 1064,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "1d01dfea5335348308a00a5cede2994ce21e1ae5fd8637b57cce2f3ae8d7b5eb",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"config_service_up\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1098,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "1b2602b81e3f39cd3961918811395bd60ac891742216d8a25a1e1da240792471",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_healthy_instances\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1147,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "34cf6d9a7ee111d0653e2187152738ffe9066811b5e6ccd297e8f96d45b3f7d4",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: API capacity restored after restarting config-service due to file descriptor exhaustion. All services healthy.\"}"
+        },
+        "tokensIn": 1198,
+        "tokensOut": 33
+      }
+    },
+    {
+      "key": "d8916b538c45389f0a631aada356db7272c1213219c8b88dc85baccf224b66b5",
+      "turn": 15,
+      "response": {
+        "text": "Root cause: The config-service crashed due to \"too many open files,\" causing API health checks to fail and the load balancer to eject most API instances. \n\nAction taken: Restarted the config-service, which restored its health and allowed API instances to recover.\n\nAffected service: config-service (impacting API).",
+        "tokensIn": 1244,
+        "tokensOut": 64
+      }
+    }
+  ]
+}

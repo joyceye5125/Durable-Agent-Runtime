@@ -1,0 +1,162 @@
+{
+  "config_label": "weak-model",
+  "task_id": "incident_clock_skew",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "e902a1553c56f907d9306fe4ab57d9fe1cd263f3131f0d39d3d35e98d3014e91",
+  "recorded_at": "2026-09-12T22:29:44.527Z",
+  "entries": [
+    {
+      "key": "fd04266d41a21282749c54becc4f7d9c436c31d7547c6d0292682453e435a472",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 794,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "550c43ec02a9e4a00166e52abb4f43d76a2818bbdf494550c67a64a5a5fb9237",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 851,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "c168b4829a7b08b10b979eb3f575db4f45f3e0a7f7563c4cf672da291f93227e",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"token not yet valid\"}"
+        },
+        "tokensIn": 902,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "cb879a84f4bd7b728689223cd8ecff7af2854e07e33f6ccbd8a9299c1d3ee269",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"token\"}"
+        },
+        "tokensIn": 938,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "26e1314867b45bb86f4bb389f02a95f980a09817e405769b5671dbc1cd9a5196",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"clock\"}"
+        },
+        "tokensIn": 971,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "ecf9057a9e874974bdf1c06e8b4bac094eeece340e43fb05aa636fca542a6a31",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"24h\"}"
+        },
+        "tokensIn": 1023,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "a04b718b64d5cfc93d7323a28b7b4d4c7c7412c44ef4cad4e7b1f8ea8c29657e",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"ntp-agent\"}"
+        },
+        "tokensIn": 1076,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "21580a4036fc97b619eb66fab3280fb17b80953301cd521aaba68857519865ef",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"ntp-agent\"}"
+        },
+        "tokensIn": 1162,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "897f83e8461b540f18319e776f3f91a7ad411e7036689b8660f2b92bdef3e0fa",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1198,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "440b6f87f37686cc2e8b502a7ccc6fe926b538c41e69f93d73c60b097e841703",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1255,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "4570e8ef46b9e31fbeb19aa556b01c3aec3f4542bb3fe9e0877fa6b2a5723fba",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Issue with auth service logging users out due to 'token not yet valid' caused by ntp-agent failure and clock offset. ntp-agent service was restarted, resolving the clock offset and reducing auth_401_rate to normal levels.\"}"
+        },
+        "tokensIn": 1307,
+        "tokensOut": 59
+      }
+    },
+    {
+      "key": "1179f0a38aab04e4bad2adec59c363ae6dc4f07e5ed03789138163073faad912",
+      "turn": 23,
+      "response": {
+        "text": "The root cause was a failure in the ntp-agent service causing a large clock offset on the auth service, which led to tokens being considered \"not yet valid\" and users being logged out. I restarted the ntp-agent service, which corrected the clock offset and brought the auth_401_rate back to normal. The affected service was auth.",
+        "tokensIn": 1379,
+        "tokensOut": 70
+      }
+    }
+  ]
+}

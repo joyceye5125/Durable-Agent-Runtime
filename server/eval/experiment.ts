@@ -68,9 +68,23 @@ export async function runEvalExperiment(
       changes.push({ ...base, status: "not_recorded", missing: tasks.length === 0 ? [] : missing });
       continue;
     }
+    // A run whose recording was cut short (the recorder died mid-run) replays
+    // fine until the turn it stopped at. Collect every task that does it, so
+    // one free pass says exactly what is missing instead of the first one.
+    const rows = [];
+    const truncated: string[] = [];
+    for (const task of tasks) {
+      try {
+        rows.push({ task: task.id, ...(await evaluateTask(store, agent, label, task)) });
+      } catch (e) {
+        truncated.push(`${task.id} (${(e as Error).message.match(/turn (\d+)/)?.[0] ?? "diverged"})`);
+      }
+    }
+    if (truncated.length) {
+      changes.push({ ...base, status: "error", error: `recording incomplete for ${truncated.length}/${tasks.length} tasks: ${truncated.join(", ")}` });
+      continue;
+    }
     try {
-      const rows = [];
-      for (const task of tasks) rows.push({ task: task.id, ...(await evaluateTask(store, agent, label, task)) });
       const endpointPass = rows.filter((r) => r.endpoint_ok).length;
       const pathOnly = rows.filter((r) => r.path_regressed).length;
       const trajFlagged = rows.filter((r) => !r.endpoint_ok || r.path_regressed).length;
@@ -148,7 +162,15 @@ export async function latestEvalTable(store: Store): Promise<EvalSummary & { eva
     const run = latest.get(cfg.label);
     if (!run) {
       const missing = tasks.filter((t) => !hasRecording(cfg.label, t.id)).map((t) => t.id);
-      return { label: cfg.label, description: cfg.description, status: "not_recorded", missing };
+      // No eval run and nothing missing means the recordings are there but one
+      // of them stops early; the last eval says which.
+      return {
+        label: cfg.label,
+        description: cfg.description,
+        status: missing.length ? "not_recorded" : "error",
+        missing,
+        error: missing.length ? undefined : "a recording stops before the run does; re-record this config",
+      };
     }
     const rows = results
       .filter((r) => r.eval_run_id === run.id)

@@ -1,0 +1,136 @@
+{
+  "config_label": "double-check",
+  "task_id": "incident_cert_expiry",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "18d4ef692a4e6f1c85f7366a9ee5cbc7fabf6a754350cac299ec615e26a65168",
+  "recorded_at": "2026-09-14T01:34:22.316Z",
+  "entries": [
+    {
+      "key": "6108b68cb424cbda67d25ba91d99ff9d5ddb4f15b0b763a22dcda4c5340f86b7",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"synthetic_https_success\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 807,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "1785cacd98cdb3566e9855a88ed92ddd7fad7a0efe7491abec718df29f43c55b",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_requests_per_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 858,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "3aa19fc3417f6a2f1f72ce838eddd13a9dea97ede45df67d4c557e7e91bb2cea",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"edge-proxy\"}"
+        },
+        "tokensIn": 909,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "9c63993938f9bd3635158e2e605142244aa5c3be91a4bdb3286b78828b7577c0",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"cert-manager\"}"
+        },
+        "tokensIn": 1008,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "ad0f5d1556dd7cc72f90836b9ea1bfe9af9c6000d85b386130fb1297406bbb8e",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"api\"}"
+        },
+        "tokensIn": 1140,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "64e47e94670faeac3077ece1278bc2abc6650e5a3dc73a5c5b4efc9bc874e7db",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"cert-manager\"}"
+        },
+        "tokensIn": 1297,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "65edb93b92975fb2f1208ab7fb9ebe5542a4546ee133cb021d452d3818aad2a0",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"cert-manager\"}"
+        },
+        "tokensIn": 1331,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "13100d5e78a7ab45a799f51ce1c5b0eaf65ddd000e734c19a28a72d28c338746",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"API downtime: TLS certificate for api.example.com expired and cert-manager cannot renew it due to DNS-01 challenge failure (API token revoked). Manual intervention required to restore certificate renewal.\"}"
+        },
+        "tokensIn": 1497,
+        "tokensOut": 50
+      }
+    },
+    {
+      "key": "485c0883cd68519c7e685a71baabfa84fd38510e6a4e391ca6ff4e9b82ad22dd",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are investigating an outage affecting api.example.com. The issue is related to an expired TLS certificate. Our team is working to restore service.\"}"
+        },
+        "tokensIn": 1568,
+        "tokensOut": 41
+      }
+    },
+    {
+      "key": "26f5838ab08d6bacaec08990a0b3eb44ad402c2293746339c3820216ace3199b",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The TLS certificate for api.example.com expired, and cert-manager cannot renew it because the DNS-01 challenge is failing due to a revoked API token. Restarting cert-manager did not resolve the issue.\n\nAction taken: Paged the on-call engineer for manual intervention, as certificate renewal cannot proceed automatically.\n\nAffected service: api (and edge-proxy, due to TLS termination).",
+        "tokensIn": 1622,
+        "tokensOut": 79
+      }
+    }
+  ]
+}

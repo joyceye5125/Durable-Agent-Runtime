@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_clock_skew",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T13:17:16.462Z",
+  "entries": [
+    {
+      "key": "e7d4ecb63f42929a0057c2e963e32468966114fc2cb0cf8132e085798aadc763",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 794,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "e59f2638053bfc1ce5a58f4c46c9184066cf298101347007d97617bdc2031e7e",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"ntp-agent error\"}"
+        },
+        "tokensIn": 846,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "c3e374ef4d2ea1da1139499d14774d04180f72783d89d768f9cfa2ef05df9608",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"ntp-agent\"}"
+        },
+        "tokensIn": 963,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "3bc302881d264de1a579936012e8729a58ff9d06658bf493913de7fa8fcae70f",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 999,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "b3101a4605394c887dc7da309dc297ff66c82019e121880dfb8378026b5adf57",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1051,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "c5e12865b2a2bb33da5826581c8939e99e4eb2216e9670dda29f310de1864eb6",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Resolved: Authentication errors due to clock drift have been fixed. Service is operating normally.\"}"
+        },
+        "tokensIn": 1108,
+        "tokensOut": 30
+      }
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_orphan_lock",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T15:00:05.909Z",
+  "entries": [
+    {
+      "key": "fa6839d1baed3b7c3105ef02f72f8ef5a0748aec3acfb694e6462e17d2ae78fa",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 790,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "5432bd59175d33cbe6f74f46e2b17642f0915e11bd05d2e4316719b9e7af6bb2",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"inventory-sync error\"}"
+        },
+        "tokensIn": 848,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "6c2dd6e2d9971580d6cb966a51c04d1cce49245ed763b0760dcf69c58a6fa3ad",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"postgres advisory lock\"}"
+        },
+        "tokensIn": 966,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "f428d7344f991ab4ac3c085047cebc415f317fb373d50f99b45f5af31391b140",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"inventory-sync\"}"
+        },
+        "tokensIn": 1105,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "6862d98928252e32c786a5e173cad0ceaaec659c8fb7e424e77be18e1b975c44",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1139,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "aadc1c2a9243560caa4229eed1174b5628cc20b871f96d6e6e9583a302a4acad",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Inventory sync issue resolved. Stock counts are up to date and service is operating normally.\"}"
+        },
+        "tokensIn": 1195,
+        "tokensOut": 30
+      }
+    }
+  ]
+}

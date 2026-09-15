@@ -1,0 +1,97 @@
+{
+  "config_label": "terse-prompt",
+  "task_id": "incident_db_connections",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4de4998fc1fa00bfe8d09053dba69e56943d04c1af09a216ca4696695daa35a6",
+  "recorded_at": "2026-09-14T01:28:40.806Z",
+  "entries": [
+    {
+      "key": "b754fe7e53dea5fbd27e6aac1d3389b3d42c0c9d77cac87577624e30191afdd3",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_connections\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 462,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "693e304215689952ab3a6aa19b68270f9549caf558476000f05ab7fce46d6079",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"too many clients\"}"
+        },
+        "tokensIn": 509,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "42cd5b328acd567cffc3fff7ea774b50a154cb1f9c3a464cc34837cf7c1041c3",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"connection leak\"}"
+        },
+        "tokensIn": 592,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "dcb7e5da8a2107f8e67eecc61de89fae61122a952091bc7df727eb10a92b759a",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"reporting-job\"}"
+        },
+        "tokensIn": 679,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "688812341e3d0117a539d82c0e38688ec5755975e4de7872b5dc2b1855c41409",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_connections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 715,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "75777ce436fdb0556054f011c512fc7941be762ddea18a9ef0e02ae80bfbc82d",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 762,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "76d608025c35b004a92a41e747824ce4e56198c688a0a3edc14a84ccc6079aad",
+      "turn": 13,
+      "response": {
+        "text": "Diagnosis:\n- The postgres database was nearly at its connection limit (396/400).\n- Logs showed that the reporting-job service was holding onto 340 connections, likely due to a connection leak (\"connections not returned after query timeout\").\n- This caused the checkout service to fail with \"too many clients\" errors.\n\nRemediation:\n- I restarted the reporting-job service to clear the leaked connections.\n- After the restart, postgres connections dropped from 396 to 61, and checkout error rates returned to near zero.\n\nSummary:\nA connection leak in reporting-job exhausted postgres connections, impacting checkout. Restarting reporting-job resolved the issue and restored normal operation.",
+        "tokensIn": 817,
+        "tokensOut": 130
+      }
+    }
+  ]
+}

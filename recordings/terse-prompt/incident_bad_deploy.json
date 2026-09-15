@@ -1,0 +1,123 @@
+{
+  "config_label": "terse-prompt",
+  "task_id": "incident_bad_deploy",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4de4998fc1fa00bfe8d09053dba69e56943d04c1af09a216ca4696695daa35a6",
+  "recorded_at": "2026-09-12T22:32:49.478Z",
+  "entries": [
+    {
+      "key": "117e2907f359e61b307072add2f789f88f3dfb70f20cb907e42dee0ebbd1eccc",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 469,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "4afd22bfd6291c5f4a729f41a4f7a7aaffe08c093309e197cc87111c96bbe031",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 524,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "a6a64b1abde80b440c11d9d800d66d77ddcf3ef0218bb8a3d4fa9b4cb78c4d56",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_cpu\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 577,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "33a57a80775ffada6329410214d3f272da92b4cef97f113df2a2f682caaad5ae",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"error\"}"
+        },
+        "tokensIn": 630,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "269085b1964decba5015da7c05a759ce30f7f430e9d7c72a0382e9575d301c50",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"api\"}"
+        },
+        "tokensIn": 753,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "fa381319c582c4708e1e2904db8322e6a6eb3315bf13ea577cf9382f91f1af09",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"error\"}"
+        },
+        "tokensIn": 785,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "058dbfcb9a687190a2d5f5f88b0e5c98acd89b2bd34b778949f9cf82ae9500e1",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"High API error rate (18%) due to NullPointerException at CheckoutHandler.applyCoupon in api v2.41.0. Restart did not resolve. Immediate code-level investigation required.\"}"
+        },
+        "tokensIn": 941,
+        "tokensOut": 51
+      }
+    },
+    {
+      "key": "2ef0b6bf23ccf8219efeae07b878a87f90c2992358b2c4043b54f45047f3fa12",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are investigating elevated API errors affecting checkout. Our team is working to resolve the issue.\"}"
+        },
+        "tokensIn": 1014,
+        "tokensOut": 31
+      }
+    },
+    {
+      "key": "8c35f47ff6ad917e70d57252265d4a4a37eeb4e4aebd52e1444ebf0ef279cebb",
+      "turn": 17,
+      "response": {
+        "text": "Diagnosis:\n- The API error rate spiked to 18% (SLO: 1%) starting at 14:02 UTC.\n- Logs show repeated NullPointerExceptions in CheckoutHandler.applyCoupon in api v2.41.0, causing 500 errors on /checkout.\n- API latency and Postgres CPU are within normal ranges, indicating the issue is likely code-related in the API service.\n\nRemediation:\n- I restarted the api service, but errors persisted.\n- I paged the on-call engineer for immediate code-level investigation, as the issue is not resolved by a restart.\n- I posted a public status update to inform customers of the ongoing incident.\n\nSummary: The elevated API error rate is due to a persistent NullPointerException in the checkout handler. A service restart did not resolve the issue, so escalation to engineering was necessary and customers have been notified.",
+        "tokensIn": 1058,
+        "tokensOut": 176
+      }
+    }
+  ]
+}

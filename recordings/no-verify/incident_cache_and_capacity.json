@@ -1,0 +1,214 @@
+{
+  "config_label": "no-verify",
+  "task_id": "incident_cache_and_capacity",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "04ab737ad1f65dd2dbadefdff745d309e6cf95ecc3a369e8acc26c5ece16149d",
+  "recorded_at": "2026-09-13T01:09:36.571Z",
+  "entries": [
+    {
+      "key": "de10a6280906cbd7e23fa5f5e5f10eccb045842212ac75a8300d173cbf1ad375",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 750,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "6d409335b5ca4a05f62dbada64ad30765d576fa64d001e3637c82b595fca7cae",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_cpu\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 808,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "8e15a5612881fa03980eb4f905af2df471e467044bbe7d8ef70403f8f32d13f8",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 863,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "dfdea146296e35c481f9656808ed4e81eccd666bf6ada6051fc254d3e7efafa4",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"price_cache_hit_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 916,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "c9c1c07e0fff4d454576f46ba78dc1e5b6088efcf47c1ac32ef5bbc8c232617e",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"price-cache error\"}"
+        },
+        "tokensIn": 967,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "723c8d48f586a837dcd776d60c62c00953ae389f6641744bd7e35b0fb0f7c745",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"price-cache snapshot restore\"}"
+        },
+        "tokensIn": 1050,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "e21a37d3136bc5ff68b3850b936531eedb25239c812746b4b73fd6e9e0ce4fb2",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"price-cache\"}"
+        },
+        "tokensIn": 1134,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "6e1a723d10413555ce2325223823f3c2194efaf789c4f0b728ecd89e9a18da8e",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"price_cache_hit_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1168,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "7046cc5b198b1a053c4427fe6a73b89688d517403fdc5fb6414add3197682b53",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1223,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "960ed4974b565968b09ad3c9497f27cc5d6f6ea2076e691d5071f792841262af",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_cpu\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1281,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "709da9332eccd7a557e0489b1fe6f8093d666c112eaaf9338c817448de3ec64a",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1336,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "99edb71c1c3a86c625636c966cac6fa09038a37b77a6eb4eb6d273e1a4f77938",
+      "turn": 23,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"pricing-api\",\"replicas\":6}"
+        },
+        "tokensIn": 1413,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "9c8b3d3174d7bfcb54d83a5065d5f14e2d15120b17838dc260587701c11100a7",
+      "turn": 25,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1456,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "489f7a7c241a8e3cf32723d7c3aef3121608f492b33331505543d40ebdec6d36",
+      "turn": 27,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_cpu\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1512,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "5a44122583c3328d708c0fbecf139491e03244e763997f7d1bf08539904e70eb",
+      "turn": 29,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"The pricing API experienced high latency and CPU due to a failed price-cache restore. Cache was restarted and API scaled up; metrics are back to normal.\"}"
+        },
+        "tokensIn": 1567,
+        "tokensOut": 43
+      }
+    },
+    {
+      "key": "fd1111c4fcf6f9414a60b568098c4a5bb6e3516d8c0104f3f2917d3fd74b369a",
+      "turn": 31,
+      "response": {
+        "text": "Root cause: The price-cache service was stuck after a failed snapshot restore, causing 0% cache hit ratio and forcing pricing-api to compute all prices from the catalog, overloading it.\n\nAction taken: Restarted price-cache to restore cache functionality, then scaled up pricing-api to handle backlog and reduce CPU/latency.\n\nAffected service: pricing-api.",
+        "tokensIn": 1623,
+        "tokensOut": 72
+      }
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "config_label": "no-escalation",
+  "task_id": "incident_orphan_lock",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "28197b75a4e4fd6f25a9969b97c76246558aa3c6ac57ba09568d72954cdaf856",
+  "recorded_at": "2026-09-13T03:38:28.961Z",
+  "entries": [
+    {
+      "key": "6c50d05290df7829e4d703453156d737ca494b0fc51e99094e23e2fd5a3e2216",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"inventory-sync error\"}"
+        },
+        "tokensIn": 765,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "14aed03a4789183cccd17448c8134352c4e4a3d4972fe089b0d5f497b6e4d0ed",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"postgres advisory lock 4401\"}"
+        },
+        "tokensIn": 883,
+        "tokensOut": 19
+      }
+    },
+    {
+      "key": "5341fb45357a02385a3858cf23b5e68a44d8f7ba77bafcd1a7d946652fc9d49a",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"inventory-sync\"}"
+        },
+        "tokensIn": 1025,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "c044b14f560d87c793933b96e61e4987afe20d37e8fdb905f2f58a29ca3990f8",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1059,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "66c01b405ebe72fbf6b0ef9c9a5b965193a1892fc4bc6a3695983300a68b1168",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"storefront_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1115,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "5c0526ecbaa3d4627b0f94859138177b577a3cc8fceef402a09e7a5ec7bf8146",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Inventory sync issue resolved: stale stock counts were caused by a stuck advisory lock after a worker panic. Service has been restarted and sync is healthy.\"}"
+        },
+        "tokensIn": 1172,
+        "tokensOut": 42
+      }
+    },
+    {
+      "key": "1d5b22bb8c6b728ee307fe4b81af0be6ffba20755fb6dbc2e9a2d1a15db7dff8",
+      "turn": 13,
+      "response": {
+        "text": "Root cause: The inventory-sync service panicked mid-transaction, leaving a Postgres advisory lock held and blocking further sync cycles. \n\nAction taken: Restarted the inventory-sync service to clear the stuck lock and restore normal operation.\n\nAffected service: inventory-sync.",
+        "tokensIn": 1227,
+        "tokensOut": 53
+      }
+    }
+  ]
+}

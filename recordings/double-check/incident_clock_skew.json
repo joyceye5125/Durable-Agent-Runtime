@@ -1,0 +1,136 @@
+{
+  "config_label": "double-check",
+  "task_id": "incident_clock_skew",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "18d4ef692a4e6f1c85f7366a9ee5cbc7fabf6a754350cac299ec615e26a65168",
+  "recorded_at": "2026-09-13T03:52:23.461Z",
+  "entries": [
+    {
+      "key": "beeff1352eaa9f2e37b6dd4f52ee83beb563f9aa48204c2a773b2cfcaf1971bd",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 814,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "9d63b48fe7ab013f00ac06e8bdf9d079733c2b8ee0a9109744d7ee0afb570d91",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 871,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "9259fc58053e31669a62977b70762a63125ab5622f70a0ee9bd1fceb9726d1ca",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"token not yet valid\"}"
+        },
+        "tokensIn": 922,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "fe6ceafc476ca7e373b33784f7c95f7074865f8605bc11ac98e627c203d640c3",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"ntp-agent error\"}"
+        },
+        "tokensIn": 958,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "9cdf9c0c09ec2c759b5d2a52bce614e3ac77f5d10ba11d53ccf88be0af5e39cf",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1075,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "b4258b8032bff0de29e6c426fe95a5b2ba7b7c2392e8dca2509797e415317578",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"ntp-agent\"}"
+        },
+        "tokensIn": 1127,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "ac265fe4ca55accda5eaa2ad4c5c0d5d7cedeee32e0b0401985409b8b1597aea",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1163,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "e4dedefb12408a722bc76e0e5320679e25dea623c0a2a53d388cca4590a27f7f",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1215,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "b96278ce48e3fb7f64ec310bdb4a95e86868f8926fee63c83dd67b3bb83c1b9b",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Resolved: Users were being logged out due to clock drift in the auth service. The ntp-agent was restarted and time is now synchronized. Authentication is operating normally.\"}"
+        },
+        "tokensIn": 1272,
+        "tokensOut": 46
+      }
+    },
+    {
+      "key": "ec682a3b37c54c6e3cd486e3b9812e241e26c2245689a44151eb85b53174b09a",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The ntp-agent failed, causing the auth service's clock to drift by over 90 seconds. This led to tokens being rejected as \"not yet valid,\" resulting in a spike in 401 errors and user logouts.\n\nAction taken: Restarted the ntp-agent to restore time synchronization.\n\nAffected service: auth (with impact from ntp-agent).",
+        "tokensIn": 1331,
+        "tokensOut": 75
+      }
+    }
+  ]
+}

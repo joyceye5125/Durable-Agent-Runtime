@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_healthcheck_dependency",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T14:23:42.989Z",
+  "entries": [
+    {
+      "key": "f117652b366cc17fc1b3071c2ebe2cf418f738f29d2b7115984fb305e9515e3a",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_healthy_instances\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 802,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "03b5d478733b09fcd0a4276fc3429f9abe49531d9036e1677231efbb41b7f8f5",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 853,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "d8d2cda3c17342630738c403a6236595b5a4482d80aa785939a33975a0c11705",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"api error\"}"
+        },
+        "tokensIn": 906,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "4f9fe781773d0c05f0355182101221e32103fe807939f5ca597bd76498e67fae",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"config_service_up\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1039,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "f69bcef4e75e81e96c62dd274bea3c6d193b16ddf9be38acd5294b7665593fdb",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"config-service\"}"
+        },
+        "tokensIn": 1088,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "ac9e540f4453fc339cc58842d96d24abcd34a30f71e5cf5ac0d6444ce6a8f4b5",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"config-service\"}"
+        },
+        "tokensIn": 1175,
+        "tokensOut": 15
+      }
+    }
+  ]
+}

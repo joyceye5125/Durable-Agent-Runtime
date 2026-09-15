@@ -1,0 +1,136 @@
+{
+  "config_label": "no-investigate-first",
+  "task_id": "incident_websocket_limit",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "2e253278b6d31fea20007b48521dc424d8a39dda9daa309713c13dc9654ce89d",
+  "recorded_at": "2026-09-12T22:44:28.351Z",
+  "entries": [
+    {
+      "key": "aee49920d6a6a0aea9108e0149e125db1912b9437b15caf137cbfd92e3e46c22",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connection_rejections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 771,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "12ce3e2d1400d928767c334aca62ec7dbed79b52f6b30b03116b8944f8db5ef3",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 826,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "c69a5cca750f785d013883ecf1471ad75338887989833f807765221331607ae9",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 878,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "8813a21334d8539cc22532c9af38330fb0f603086bde4deba2836000fc89b510",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"realtime connection rejection\"}"
+        },
+        "tokensIn": 931,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "c74ead3c8cd4ba5a204d48c44065f5c5e8279268fb6ec485a4f15faac058ca38",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"realtime\",\"replicas\":8}"
+        },
+        "tokensIn": 1032,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "e5511ed1bcd406d49017e23137cb540707c100fd2ac2fdf29eb8fa3027a1273a",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connection_rejections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1075,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "859e209abd5c691b35226e6eaa6ee3a1535a7244567ce3155e7f81024c5b7f52",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1129,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "dfc04e788d15957240dba8016040b5abe677f205892b7965ce7ace9424a78bd1",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1181,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "366a586c2c688eca8c2f8c6d552af5a9ecd5f5a2a46dd0384d32e86799930101",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Live updates are restored after scaling up realtime service capacity to handle increased user connections during a high-traffic event.\"}"
+        },
+        "tokensIn": 1234,
+        "tokensOut": 35
+      }
+    },
+    {
+      "key": "fa7ccc29ef8482063507c30256cf73a3a866005bf6633104248a6292168aa5ec",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The realtime service reached its maximum connection limit per instance due to a surge in user connections, causing connection rejections and live update failures.\nAction taken: Scaled the realtime service from 3 to 8 replicas to match demand.\nAffected service: realtime.",
+        "tokensIn": 1282,
+        "tokensOut": 55
+      }
+    }
+  ]
+}

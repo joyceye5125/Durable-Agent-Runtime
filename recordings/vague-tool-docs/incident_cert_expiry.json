@@ -1,0 +1,123 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_cert_expiry",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T09:57:32.190Z",
+  "entries": [
+    {
+      "key": "55bac750497d3c8cfcd799486cf09132a5888cb90a1f26da72aacf0b1704cd20",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"synthetic_https_success\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 655,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "6b5125a188c55dde4791b639557aca4c13c04922b31c0f501ebf717559b1dcb6",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_requests_per_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 706,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "68e5901b7f7536f432af8d8eb5c00cde716b23dd6db7f02d21dc2feeccfbd01d",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"edge-proxy\"}"
+        },
+        "tokensIn": 757,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "8be78ea7391338dc070cb84369efdba40c94d7b0d8a6714ec1d68e8fb73746c6",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"cert-manager\"}"
+        },
+        "tokensIn": 856,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "0b44487b7d967e6fe2002329465bc171a03eaee242738c464dc084113e9b5a3d",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"cert-manager\"}"
+        },
+        "tokensIn": 988,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "6a290a429ef22efd1d0a71ff01cefcf9b98baa1ece6812d693558ead3da761f0",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"cert-manager\"}"
+        },
+        "tokensIn": 1022,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "73447ac0e5c1ca13b0db7a4a9f8d1da4d26bc6254785484707a2acfdecddaa95",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"cert-manager is unable to renew the TLS certificate for api.example.com due to a DNS-01 challenge failure (API token revoked). Synthetic HTTPS checks and API traffic are fully down. Manual intervention to restore or update the DNS API token is required.\"}"
+        },
+        "tokensIn": 1188,
+        "tokensOut": 63
+      }
+    },
+    {
+      "key": "6514891f17f697d15afa938ad49e35f6270c5ce4426940635a225f47335a470a",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident ongoing: api.example.com is down due to expired TLS certificate. cert-manager cannot renew the certificate because the DNS-01 challenge fails (API token revoked). On-call engineer has been paged for manual intervention.\"}"
+        },
+        "tokensIn": 1272,
+        "tokensOut": 56
+      }
+    },
+    {
+      "key": "5dc8bc03b3c2a14eb648414900b952641f1bd102828a75360a5654a19d368b1e",
+      "turn": 17,
+      "response": {
+        "text": "Root cause: The TLS certificate for api.example.com expired, and cert-manager cannot renew it because the DNS-01 challenge fails due to a revoked API token. \n\nAction taken: Restarted cert-manager (no effect), then paged the on-call engineer for manual intervention to restore or update the DNS API token.\n\nAffected service: api (and edge-proxy, cert-manager).",
+        "tokensIn": 1341,
+        "tokensOut": 77
+      }
+    }
+  ]
+}

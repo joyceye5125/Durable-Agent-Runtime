@@ -1,0 +1,110 @@
+{
+  "config_label": "weak-model",
+  "task_id": "incident_inode_exhaustion",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "e902a1553c56f907d9306fe4ab57d9fe1cd263f3131f0d39d3d35e98d3014e91",
+  "recorded_at": "2026-09-12T22:30:21.082Z",
+  "entries": [
+    {
+      "key": "2d9ef740e39c8c54869fff5ec476252505b94cb2fd74c0675aa3c64a536e575f",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inode_usage_var\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 807,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "1a332f619cd704ce409ed250cb10f37f07bea0565adcd460bef8ded927131409",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"No space left on device\"}"
+        },
+        "tokensIn": 860,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "80159942a6e1b88aaaf0ae2b884dadd878e495d33aeb94489797cee0b61791c1",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"disk_usage_var\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1001,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "1503b76c4c4a03696fddaacb95eb412d23d9edc8b7ef28c0228e3b7794adc801",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"tmp-cleaner\"}"
+        },
+        "tokensIn": 1056,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "8b7041637ca6e8dcd8a831240777e9127911e66466ad52d6b76efa9ecadc8f01",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inode_usage_var\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1092,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "4104e39acae7b3f152d1b73757a947d08cb5a80411d4cea8bc7998303dcde440",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"app_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1145,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "ce88905a075a02a744ef9005db4e7d73c9744fecdbc654515d8305d116fff6ff",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Issue with inode usage on /var caused writes to fail with 'No space left on device'. tmp-cleaner service was not running due to a config error and was restarted. Inode usage dropped and app error rate is decreasing.\"}"
+        },
+        "tokensIn": 1200,
+        "tokensOut": 59
+      }
+    },
+    {
+      "key": "66e4471e74bb0cb128bdb84677f143608fb1c630b43e42eff37633b2ed15cfd9",
+      "turn": 15,
+      "response": {
+        "text": "The root cause was inode exhaustion on /var due to excessive files in /var/lib/php/sessions. The tmp-cleaner service responsible for cleaning was not running because of a config parse error. I restarted the tmp-cleaner service, which cleared many inodes and reduced inode usage from 100% to 18%. The app error rate is also dropping. The affected service was tmp-cleaner and the app service was impacted by the inode exhaustion.",
+        "tokensIn": 1272,
+        "tokensOut": 91
+      }
+    }
+  ]
+}

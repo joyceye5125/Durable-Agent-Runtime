@@ -1,0 +1,162 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_memory_leak",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T11:38:17.995Z",
+  "entries": [
+    {
+      "key": "2a8b6d0a46bdb947a3e6e1056cc0869d625e848e56aea950cf4e2c881a726f00",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"thumbnailer_memory_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 666,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "ce7be61b40085e6e1f759c36dd771fc21ddec1892b0b0a34308325b41bd1f363",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"container_oom_kills\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 723,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "676d911183c5085f1fb9eb148a548c3f79e67071fe013e3210a7292364c3b068",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 776,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "8df81b351456cadb1e18887dda0b2fd009a7fdd8952a3dd2dbe61e0e0987cddf",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"OOM\"}"
+        },
+        "tokensIn": 831,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "e9c10e2a6badf26abef16b91319002c02e3004e61bba14b433ed152345e60f5b",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"thumbnailer\",\"replicas\":2}"
+        },
+        "tokensIn": 909,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "371c42e66b85c40d0d1c6705e3320af6d65be5880d0d6b53b75dece97e9ed06a",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"container_oom_kills\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 952,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "f32c0833dfb3abbc953a49f8c1950ad48f6672057edae6e6b229ad0d65bbe0e0",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"thumbnailer_memory_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1005,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "8b884c2dfe0a0db08082dd7d9a0e0b7be341b2c267c49cdc9382a2146db7f0a3",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"thumbnailer\"}"
+        },
+        "tokensIn": 1062,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "e791066e7e0a12a31b9ffc21aa6a8f10a7387a62b269685f45f74130d8f14010",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"container_oom_kills\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1096,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "de20ce190eed5eb6925fa2d8003a61c2d953ac730b5530f39544975d72385a49",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"thumbnailer_memory_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1149,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "1e63a8c7ef68b7429766679e92e7a552e3fe2abaa624562ed5754d7abc1eb5cf",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"OOM kills in the media namespace were caused by the thumbnailer service exceeding memory limits. The service was scaled up and restarted, resolving the issue.\"}"
+        },
+        "tokensIn": 1206,
+        "tokensOut": 42
+      }
+    },
+    {
+      "key": "0126b985607233430518144b61e7137d08a86b24f039d93007c7c975b4281744",
+      "turn": 23,
+      "response": {
+        "text": "Root cause: The thumbnailer service in the media namespace was exceeding its memory limits, leading to repeated OOM kills.\nAction taken: Scaled up the thumbnailer service and restarted it to distribute load and clear memory pressure.\nAffected service: thumbnailer.",
+        "tokensIn": 1261,
+        "tokensOut": 52
+      }
+    }
+  ]
+}

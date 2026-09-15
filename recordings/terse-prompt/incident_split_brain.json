@@ -1,0 +1,110 @@
+{
+  "config_label": "terse-prompt",
+  "task_id": "incident_split_brain",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4de4998fc1fa00bfe8d09053dba69e56943d04c1af09a216ca4696695daa35a6",
+  "recorded_at": "2026-09-14T02:42:12.536Z",
+  "entries": [
+    {
+      "key": "6c189950e09a4ee74f08f019e78eaccbba4949eeba2d07d3bbafe38ecae1374f",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"duplicate job execution\"}"
+        },
+        "tokensIn": 464,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "9f11c94db104d0bf1a790f96a1f92c98dfedbf3c6acdd037f84dd61814842c54",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"scheduler_leaders\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 522,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "2bc1d37b7fbece160dc783be0427814e126061a92dc68d504bda37e3a7ec5dc0",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"scheduler leader election\"}"
+        },
+        "tokensIn": 571,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "a71e13d83c606b75c2aa30882b74a0daa8c6cb620aca02e612f8108c51b2f2ab",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"scheduler\"}"
+        },
+        "tokensIn": 668,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "cedeed8014ab3bd0fb17bc71ea26f58ec7bc38a299cb00ff4e0a217064140952",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"scheduler_leaders\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 700,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "0ffad3d898ba61ff774a41c62aec63a5d9821c48dc2057692bc67828723bf3d5",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"duplicate_job_executions\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 749,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "7a45e8004722ed7b8b18d6c82e3bd3653cef6eb9948fb4f9e494b3b93bf4aad5",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: Duplicate job executions were caused by a split-brain in the scheduler service, resulting in multiple leaders dispatching jobs. The scheduler service has been restarted and the issue is now resolved. No further duplicate reports are being generated.\"}"
+        },
+        "tokensIn": 802,
+        "tokensOut": 60
+      }
+    },
+    {
+      "key": "936b8be0e7e7b49965f04367ae79b2db4fc4cf837106eef7281ef2156a080546",
+      "turn": 15,
+      "response": {
+        "text": "Diagnosis:\n- Duplicate job executions were occurring because two scheduler instances (scheduler-a and scheduler-b) both believed they were leaders, causing jobs to be dispatched twice.\n- Logs confirmed a split-brain scenario: both schedulers held leadership due to a failed leader step-down.\n- Metrics showed two scheduler leaders for the past hour, instead of the expected single leader.\n\nRemediation:\n- I restarted the scheduler service to force a new, correct leader election.\n- After the restart, metrics confirmed only one leader remained, and duplicate job executions dropped to zero.\n- I posted a public status update indicating the incident is resolved and no further duplicate reports are being generated.\n\nThe issue is now resolved.",
+        "tokensIn": 875,
+        "tokensOut": 138
+      }
+    }
+  ]
+}

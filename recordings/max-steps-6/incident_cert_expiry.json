@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_cert_expiry",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T13:01:16.194Z",
+  "entries": [
+    {
+      "key": "a14ef093fb81a00f6c17c459070ede16618650f42a40e61e5498c369bcec40dc",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"synthetic_https_success\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 787,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "ad1d5211856e33da9e54fe3c7bd07a10ba010552197490a7c872d1f40f4f501e",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_requests_per_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 838,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "d8a4b747f5f6188098e68a0bc81347ab64d50a989f8496c9073fe98d66968878",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"edge-proxy error\"}"
+        },
+        "tokensIn": 889,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "1fe6114f7937e259ebb0a1f02bc9b4ea552758ebdb4817b1a2b05fae7008a838",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"cert-manager error\"}"
+        },
+        "tokensIn": 1023,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "98dfce4333bbb81cc9c9472829fb47d610c3f9609a111150fcd6f8cb3f782ce6",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"cert-manager\"}"
+        },
+        "tokensIn": 1156,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "03edd74c28f2d7822737f4358c918ba59478d0ce4f1e849ba02aec09e2312537",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"cert-manager\"}"
+        },
+        "tokensIn": 1190,
+        "tokensOut": 15
+      }
+    }
+  ]
+}

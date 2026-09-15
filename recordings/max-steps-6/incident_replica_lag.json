@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_replica_lag",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T15:00:12.679Z",
+  "entries": [
+    {
+      "key": "fa04bb7a4045aa8e33812c172a6e881b70d0f618e8ae7d2941d0f06099c8f1fa",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_replica_lag_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 795,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "db4803c216b4b3a3b310fbaa7a1e5c6b8e1374767be4d54dcdb6af17e95717e1",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"replica-1\"}"
+        },
+        "tokensIn": 850,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "8efc22c4a5c3669ef09cf3a3aac932abf5db770b8bb3382ab82bc207421ff1e4",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"analytics-etl\"}"
+        },
+        "tokensIn": 947,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "8dd3a758b664e7deab5354c5eddec6cf74906c6054cb8f8de2a280846fce130a",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"postgres-replica error\"}"
+        },
+        "tokensIn": 1043,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "8b19c0568b6b6c47beee719ab451c66e0683d565a359d2c233e0d573c037b65f",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"analytics-etl\"}"
+        },
+        "tokensIn": 1160,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "7269096b3f92f540faabd3dd0ec67c458aa62dcff4f14cd555f9dc54b5304e67",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_replica_lag_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1196,
+        "tokensOut": 24
+      }
+    }
+  ]
+}

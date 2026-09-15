@@ -1,0 +1,71 @@
+{
+  "config_label": "terse-prompt",
+  "task_id": "incident_memory_leak",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4de4998fc1fa00bfe8d09053dba69e56943d04c1af09a216ca4696695daa35a6",
+  "recorded_at": "2026-09-12T22:34:05.469Z",
+  "entries": [
+    {
+      "key": "6014821fce5f85018fbe8ffeefbce973601725fc727a81e454d8cfbcd83f9f3f",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"thumbnailer_memory_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 472,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "8907588f19882ef266d69bdc05ef3c33e18b944743f311181fa5024d77ae7abb",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"OOM killed namespace=media\"}"
+        },
+        "tokensIn": 529,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "891f1765431b849b7e6221a813da1b59bc1d6531368aca39ef4fdfe311250c87",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"thumbnailer\",\"replicas\":2}"
+        },
+        "tokensIn": 637,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "5b3ced897d6e4cb0930d2e55b11dcbd407518788a65d73c1197765ac10b30f5b",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are investigating and mitigating an issue causing instability in the media processing pipeline. Some thumbnail generation tasks may have been delayed due to resource constraints. Service capacity has been increased and we are monitoring recovery.\"}"
+        },
+        "tokensIn": 680,
+        "tokensOut": 52
+      }
+    },
+    {
+      "key": "3b8d651c6959d7cbc72a027b7905738bcb0ca002a3d616c355a3cde7afed050c",
+      "turn": 9,
+      "response": {
+        "text": "Diagnosis:\n- The alert was triggered by 14 container OOM (Out Of Memory) kills in the \"media\" namespace in the last hour.\n- Investigation of metrics showed the \"thumbnailer\" service's memory usage ratio peaked at 0.99, indicating it was close to or exceeding its memory limits.\n- Log search confirmed multiple recent OOM kills specifically affecting the \"thumbnailer\" service.\n\nRemediation:\n- Increased the replica count for the \"thumbnailer\" service to 2, adding capacity to reduce memory pressure and distribute the workload.\n- Posted a public status update to inform customers about the issue and ongoing mitigation.\n\nNext steps: Monitor the service for further OOM events and ensure stability.",
+        "tokensIn": 745,
+        "tokensOut": 143
+      }
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "config_label": "terse-prompt",
+  "task_id": "incident_clock_skew",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4de4998fc1fa00bfe8d09053dba69e56943d04c1af09a216ca4696695daa35a6",
+  "recorded_at": "2026-09-14T01:28:31.699Z",
+  "entries": [
+    {
+      "key": "deeb06e73577154b96df851a21a1f76899309f612ed225636fb8cf744cb17d40",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 468,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "20e9c838812decce73b50ce054cc7c59b539d3a811045e815ac23244ea546078",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"ntp-agent\"}"
+        },
+        "tokensIn": 520,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "3c0463e202cb14d5cacea44bce5d65f65716c13ae8c87c4be30e23765380071c",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 556,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "e3105f25ea9577bf0badfae039776c158cd478d55f780cc31a3a593f99617a80",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 608,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "afd16d6cd1033bb50546ec08c299c206d2c4b85f3f3fe2020d9a6de28e9686ac",
+      "turn": 9,
+      "response": {
+        "text": "Diagnosis:\n- The alert was triggered because users were being logged out with the error 'token not yet valid'.\n- The metric `auth_clock_offset_s` showed a significant negative offset (about -90 seconds), indicating the system clock was out of sync.\n- This clock skew likely caused authentication tokens to appear \"not yet valid\".\n\nRemediation:\n- I restarted the `ntp-agent` service to resynchronize the system clock.\n- After the restart, the clock offset returned to near zero.\n- The `auth_401_rate` (rate of 401 errors) dropped back to normal levels, confirming the issue is resolved.\n\nSummary: The issue was caused by clock drift. Restarting the NTP agent fixed the clock, and authentication errors subsided. No further action is needed.",
+        "tokensIn": 665,
+        "tokensOut": 159
+      }
+    }
+  ]
+}

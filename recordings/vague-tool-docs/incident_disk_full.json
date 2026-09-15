@@ -1,0 +1,97 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_disk_full",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T10:33:42.830Z",
+  "entries": [
+    {
+      "key": "02cf15de4c404def27e7c09217cb93dccbbfa99764407b7d0221801385f9dd55",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"/data\"}"
+        },
+        "tokensIn": 673,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "2fc4d3eb7ac64ea99e8eaf3375b7d857f1404f3f990442dd3865b3a80208d370",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_rotator_last_success_age_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 835,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "c6b232f58f9d624836e54bd47c067a770d41d4418fe7900400b7b7562eb667a8",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"log-rotator\"}"
+        },
+        "tokensIn": 895,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "79b2f1e22336daecf6ba424b7e299f8f514359338deecd2790e580d24596141a",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"disk_usage_data\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 933,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "809946201fd073127b4b9e8b286a3c1c8d52226c8d7eda30aef30a4eea962066",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_rotator_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 988,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "bd83f2cc67f6bb1bccaaaa2032d3a8070f2e5751f6a330a08796c118e505a9a3",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"/data disk usage on storage-1 dropped from 96% to 62% after restarting log-rotator and clearing stale lock. Issue resolved.\"}"
+        },
+        "tokensIn": 1046,
+        "tokensOut": 44
+      }
+    },
+    {
+      "key": "e5420b046d1296d49500e93f51b522c95f1ae39060e53bcac5d76c8e78453007",
+      "turn": 13,
+      "response": {
+        "text": "Root cause: The log-rotator service failed due to a stale lock file, preventing log rotation and causing /data disk usage to rise to 96%. \n\nAction taken: Restarted log-rotator, which cleared the stale lock and allowed log cleanup, reducing disk usage to normal.\n\nAffected service: log-rotator (impacting /data on storage-1).",
+        "tokensIn": 1103,
+        "tokensOut": 77
+      }
+    }
+  ]
+}

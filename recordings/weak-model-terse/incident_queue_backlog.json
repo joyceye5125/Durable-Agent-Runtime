@@ -1,0 +1,97 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_queue_backlog",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:32:09.320Z",
+  "entries": [
+    {
+      "key": "fe716417b0fd2ac38fb710e95705278c1f35840470b51336ab91d0f4b78fcd38",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_queue_depth\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 469,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "d4953ce286d4cacdd01e9258479767372c0d4ed8dedcf11293e42f4d1d3663df",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_worker_throughput\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 521,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "e7cee2208ff29042bf34f071f0aa55a5765df9383c59c46c6cc6285b1d4bb3db",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"email-worker error\"}"
+        },
+        "tokensIn": 574,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "0dc0b43972972fa3567d103b5886c34119f3dbc686ace4c352e58d2cefaf7bc2",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"email-worker\"}"
+        },
+        "tokensIn": 683,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "02d660681bae27c6331be13d2e7861d2f42bdec4dcb707c7e3722079f47b7771",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 717,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "b198a8bd951dd79e3e3837bd3c97cd070ead3c93aebf66d06110ba78a10118b3",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Issue with email queue depth causing delays in password-reset emails was identified. The email-worker service was found to be blocked on a stale connection and not processing messages. The service was restarted, and the queue depth is now decreasing, indicating recovery. We continue to monitor the situation.\"}"
+        },
+        "tokensIn": 769,
+        "tokensOut": 68
+      }
+    },
+    {
+      "key": "efc935219e4b2427bdb54ae2e2722339c8c3e7d0880419bce6f1a740056bf094",
+      "turn": 13,
+      "response": {
+        "text": "The email queue depth was very high and growing, while the email worker throughput was zero, indicating the email-worker service was not processing messages. Logs showed the email-worker was blocked on a stale connection. I restarted the email-worker service, which cleared the blockage. After the restart, the email queue depth started to decrease, showing the issue is resolving. I also posted a status update about the incident and recovery.",
+        "tokensIn": 850,
+        "tokensOut": 83
+      }
+    }
+  ]
+}

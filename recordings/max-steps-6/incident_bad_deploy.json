@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_bad_deploy",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T12:43:30.115Z",
+  "entries": [
+    {
+      "key": "9fb9c627305c805c141f4e5da88c770b82364314743b6f04000c5e26c1bf48ef",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 795,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "87a6671ccdf2de83fe5742fe437dc0f632f6d9d30ca0d1c4cb2a9f1d3af359c8",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 850,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "7d612caa80748043b5621d939648e94b6fa3987102fa39ab5a679fe470655298",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_cpu\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 903,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "15d1455a8bac7368f43978c2fdd1f2d0cd7122f78a8f3f474fc754577f890a2f",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"api error\"}"
+        },
+        "tokensIn": 956,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "8f80dac87eb05be11f46079322159866a0928cbf654d87d2b836becedddbe365",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"NullPointerException\"}"
+        },
+        "tokensIn": 1122,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "64aeff3f17f45967402d37c52bc18240279d6e9df720f8b95f3f8b341f67eb60",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"api\"}"
+        },
+        "tokensIn": 1270,
+        "tokensOut": 14
+      }
+    }
+  ]
+}

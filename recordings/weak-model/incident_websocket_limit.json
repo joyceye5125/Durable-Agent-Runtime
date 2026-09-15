@@ -1,0 +1,136 @@
+{
+  "config_label": "weak-model",
+  "task_id": "incident_websocket_limit",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "e902a1553c56f907d9306fe4ab57d9fe1cd263f3131f0d39d3d35e98d3014e91",
+  "recorded_at": "2026-09-12T22:31:01.223Z",
+  "entries": [
+    {
+      "key": "237d4fc699c60808b54da7f969a0ce8c613f6c98f4f85aeb15101240a2c462fd",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connection_rejections\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 791,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "daf2d985377df1ed4b663d5678623568a850ef6ad942298d3e57f0a0de4cdb05",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connections\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 845,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "e14546bbb839ab8cf4a393e413420fdf433582b4fd7d005567e88b04b0c677ef",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 897,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "9138eae2b168fd7365cc831a56aab9962cd7c44ca365600572074a27925f3fa5",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"connection rejection\"}"
+        },
+        "tokensIn": 950,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "568dc88b8997a109f517aca66394267e690f7279a96e8ef19f967cd1963bf23e",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"realtime\"}"
+        },
+        "tokensIn": 1011,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "b69a8e2341a3b8a28d82821d9d761c8c9caefdd0bee424dcb89f9dabc00e1ece",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connection_rejections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1045,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "a5d7f12577d98b416e532ca23623f4caeee0361825eea75258c9f01fde450caf",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1100,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "ab0cbf2f021d04c122d81c3cd2c1ff5322ce204dfc4b2c2ecde9a8108b2ec532",
+      "turn": 15,
+      "response": {
+        "text": "The root cause of the alert is that the realtime service instances have reached the maximum allowed connections per instance (20000 connections per instance on 3 replicas). This caused connection rejections and live updates to fail for users. I restarted the realtime service to clear stuck connections and reset the state. The connection rejection rate is still high, indicating the current replica count is insufficient to handle the load.\n\nNext, I will scale up the realtime service replicas to handle more connections.",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"realtime\",\"replicas\":5}"
+        },
+        "tokensIn": 1152,
+        "tokensOut": 114
+      }
+    },
+    {
+      "key": "1ff2aacf0448deb2aaa953fce8fe7ead5cc3188fa760bfdee7292a9786874999",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connection_rejections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1292,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "f68f95cdf3bb656c323eb961b945cb7f85a8dd2f941d34b84866fbc967968de3",
+      "turn": 19,
+      "response": {
+        "text": "I scaled the realtime service replicas from 3 to 5 to increase capacity and reduce connection rejections. The connection rejection rate is decreasing but not yet back to normal. I will continue monitoring to confirm if this resolves the issue fully.\n\nStatus update: The realtime service was restarted and scaled up from 3 to 5 replicas to address connection rejections caused by max connections per instance reached. Connection rejections are decreasing.\n\nRoot cause: Max connections per instance limit reached on realtime service replicas.\nAction taken: Restarted and scaled up realtime service replicas.\nAffected service: realtime.",
+        "tokensIn": 1348,
+        "tokensOut": 116
+      }
+    }
+  ]
+}

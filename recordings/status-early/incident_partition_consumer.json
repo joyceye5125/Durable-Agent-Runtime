@@ -1,0 +1,136 @@
+{
+  "config_label": "status-early",
+  "task_id": "incident_partition_consumer",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4b9140b1ed8e0b227987537032b250ec208630bd67dbe1414d61fb7668885a19",
+  "recorded_at": "2026-09-13T08:00:06.894Z",
+  "entries": [
+    {
+      "key": "2f6f0e6d265f5d578286ec3d0b073fc659470dff16401bd19bc73de143685952",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Investigating elevated kafka_consumer_lag_p7; other partitions normal. Diagnosis in progress.\"}"
+        },
+        "tokensIn": 818,
+        "tokensOut": 32
+      }
+    },
+    {
+      "key": "b3cc8f7c522661707dc3b6684a26dc932697db52858528d3d9acfa5ad41f35d7",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"kafka_consumer_lag_p7\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 863,
+        "tokensOut": 26
+      }
+    },
+    {
+      "key": "d358c6a8711e4d437005c673d78f3a5d14fe63014187ece5ed4239e9471add35",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"events-consumer error\"}"
+        },
+        "tokensIn": 928,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "673f1817dd2c40d803bbac5c9961700dfeb3af87c0fe9b2c66f1c86d29ad789d",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"kafka partition 7\"}"
+        },
+        "tokensIn": 1025,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "fb09fae7a518d4853e11666c6b62df62ad26bab9616faaff02ac3407ff4a449f",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"analytics-sink error\"}"
+        },
+        "tokensIn": 1144,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "8712983ace2a3a46457caef04bc5d58869441839eb32795f38e31cc941ddee5e",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"events-consumer\"}"
+        },
+        "tokensIn": 1233,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "7a5dd00ce1f3da239472efb61568d3347644ea00db28c9dca54ad2cf74d820ba",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"kafka_consumer_lag_p7\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1269,
+        "tokensOut": 26
+      }
+    },
+    {
+      "key": "36741fa56b3fcf1b586af5cdac95b7b1e4a1ad529fae25f6f0a053a92bbde05e",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"events-consumer is stuck retrying a poison message on kafka partition 7 (schema v9 unknown), causing kafka_consumer_lag_p7 to grow. Restart did not resolve. Manual intervention required to skip or handle the poison message.\"}"
+        },
+        "tokensIn": 1334,
+        "tokensOut": 62
+      }
+    },
+    {
+      "key": "70d256708fcfdf654534c00fa156b71799b6dd3b39bf33cb42b49cd27931a3be",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident requires manual intervention: events-consumer is stuck on a poison message in kafka partition 7. On-call engineer paged.\"}"
+        },
+        "tokensIn": 1419,
+        "tokensOut": 39
+      }
+    },
+    {
+      "key": "755c42cf511de7701289f021e5474cafe12196cf09937d43b3ecbea163f9a94f",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The events-consumer service is stuck retrying a poison message with an unknown schema (v9) on Kafka partition 7, causing kafka_consumer_lag_p7 to increase. \n\nAction taken: Restarted events-consumer (no effect), paged the on-call engineer for manual intervention to skip or handle the poison message.\n\nAffected service: events-consumer.",
+        "tokensIn": 1471,
+        "tokensOut": 78
+      }
+    }
+  ]
+}

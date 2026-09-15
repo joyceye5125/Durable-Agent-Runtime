@@ -1,0 +1,84 @@
+{
+  "config_label": "act-fast",
+  "task_id": "incident_clock_skew",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "0ef91e9b98682226cadbfb1c89908a3fb998975183386666b8c4a385a298b100",
+  "recorded_at": "2026-09-13T04:18:11.019Z",
+  "entries": [
+    {
+      "key": "e9ac600fb58ad7dbc6bf09a5b8829418670a56b701a1eb271ae68887952198e5",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 816,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "7201ba999204a6faec11f829259cdca3b43ea6671a7797bd568bf01470229981",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"ntp-agent\"}"
+        },
+        "tokensIn": 868,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "aface518e44a3f7193fbba5ecad83a0c3a28eff631a3f9c6308f0fcdc5550d02",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 904,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "3da1bfe6fa575cc609ffc5c0d464d011b34d648396ce594146e683ef9195834a",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 956,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "c4a7272e258fb198c190f010399fd463f920cf49423a5f7f16f06e00404e3cc2",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Resolved an authentication issue causing users to be logged out with 'token not yet valid' errors. The ntp-agent was restarted to correct a clock offset, and service is now operating normally.\"}"
+        },
+        "tokensIn": 1013,
+        "tokensOut": 51
+      }
+    },
+    {
+      "key": "6c93393e02fb7330b7a7ba938ddd63149c61dfde219ef056c2e00ba492187f44",
+      "turn": 11,
+      "response": {
+        "text": "The root cause was a significant clock offset in the auth namespace, causing tokens to be considered \"not yet valid\" and resulting in high 401 rates. I restarted the ntp-agent to correct the system clock. This resolved the issue for the auth service.",
+        "tokensIn": 1077,
+        "tokensOut": 53
+      }
+    }
+  ]
+}

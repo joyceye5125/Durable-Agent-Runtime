@@ -1,0 +1,110 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_flag_sync",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T10:33:47.423Z",
+  "entries": [
+    {
+      "key": "3d40fe8bdb6771dd17130469eb3cf4ab1d789a0f232beb2b8ef8b056ee8e5434",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"feature_flag_staleness_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 672,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "f95ffa7e69cc482ced8739883578bb39fb1cc6cd0644324bb17462c64d247fcf",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"flag-sync\"}"
+        },
+        "tokensIn": 730,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "c9d3ede99784f7240ecc2967c243053b07cde3c6a78237dba63ab7d22b24caa8",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"flag-store\"}"
+        },
+        "tokensIn": 839,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "05d42ccb129b65bba78ef22c1adafeda07ec9059c0bd7456a6f8655ce90c4bf1",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"web\"}"
+        },
+        "tokensIn": 948,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "f146f34dee63e4791ea7aade04635b0466fc1481a0a3ebebe1808dc90dfd6451",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"flag-sync\"}"
+        },
+        "tokensIn": 998,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "6250d73d039782e031e62568c3c80f7450f6c649e2dfe57b1de709b59eeffdb4",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"feature_flag_staleness_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1032,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "2794ecfb18310f2e912e77b67c52984a7d23b4896cb948792dcdb712c24691f4",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Restarted flag-sync to restore feature flag updates. Flag staleness is now resolved.\"}"
+        },
+        "tokensIn": 1088,
+        "tokensOut": 31
+      }
+    },
+    {
+      "key": "2338b37abfae3bb57217a025111b76d5a2ecf756b1e751abe91af74d0d958f22",
+      "turn": 15,
+      "response": {
+        "text": "Root cause: The flag-sync service lost its connection to flag-store and stopped updating, causing stale feature flags to be served by the web service.\nAction taken: Restarted the flag-sync service, which restored flag updates and resolved the staleness.\nAffected service: flag-sync.",
+        "tokensIn": 1132,
+        "tokensOut": 57
+      }
+    }
+  ]
+}

@@ -1,0 +1,149 @@
+{
+  "config_label": "status-early",
+  "task_id": "incident_upstream_quota",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4b9140b1ed8e0b227987537032b250ec208630bd67dbe1414d61fb7668885a19",
+  "recorded_at": "2026-09-13T09:07:57.947Z",
+  "entries": [
+    {
+      "key": "832efe9cf0bda27cc5bb9782b2d07a7d9fcf834c99d3cf9c825afbaa24450891",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Investigating elevated error rates in geo-service due to upstream maps API returning 429 errors. Diagnosis in progress.\"}"
+        },
+        "tokensIn": 812,
+        "tokensOut": 35
+      }
+    },
+    {
+      "key": "2bd252381c23fe4463586101044b54f47413dddfc860acc1af2e64f6102ed5cf",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"maps_api_calls_per_min\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 860,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "0c343fd38cb0ed7ead9336e557c7180b16c185926b21a79ea62931f207dec304",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_cache_hit_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 916,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "c4a43b776011a8f42b03f70d6d1604f28026500c076edb6805824fb287b18b5a",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"geo-cache error\"}"
+        },
+        "tokensIn": 969,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "89d20a77d97fcd336cf648bb20c28a9188e2c7db0c5ade0ed4be52d744873cd2",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"geo-cache OOM\"}"
+        },
+        "tokensIn": 1086,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "08158f9efa58d11e99808d3010f6189f1bd0f67184c9d67f97d33b4f9c5e8a76",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"geo-cache\"}"
+        },
+        "tokensIn": 1204,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "71ac24554e45a2c5cd9e10300929d573ba784371fcc02e96d9a53a9fad0ebfcb",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_cache_hit_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1238,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "08128e428e229f9c6a140d8609408d9333fe2266da8b3f93db51d0c9509cf829",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_service_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1293,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "628c8ea8a9943f2a211f48da87e2b5524d47e7825de257a3826bd6fd796c95d8",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"maps_api_calls_per_min\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1350,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "8241d78fcfef0fe7f4088595e545b8931b39d3ffec2ac98dc1f9d66f9443ca1f",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"geo-service error rates have returned to normal. Root cause was geo-cache OOM, causing all requests to hit the upstream maps API and exceed quota. geo-cache has been restarted and is healthy.\"}"
+        },
+        "tokensIn": 1406,
+        "tokensOut": 52
+      }
+    },
+    {
+      "key": "d1264136aef3d5367963603b83a8d51e4d07ed9fb0adb6411a3726ece482d2d1",
+      "turn": 21,
+      "response": {
+        "text": "Root cause: The geo-cache service experienced an out-of-memory (OOM) event, evicting all keys and becoming unavailable. This forced geo-service to bypass the cache and send all requests directly to the upstream maps API, quickly exceeding its quota and resulting in 429 errors.\n\nAction taken: Restarted the geo-cache service, restoring cache availability and reducing load on the upstream API.\n\nAffected service: geo-service.",
+        "tokensIn": 1471,
+        "tokensOut": 84
+      }
+    }
+  ]
+}

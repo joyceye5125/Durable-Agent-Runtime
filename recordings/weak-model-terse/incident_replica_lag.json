@@ -1,0 +1,84 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_replica_lag",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:32:16.078Z",
+  "entries": [
+    {
+      "key": "e8d5a9fb59bade5137701d7a0e237d0964d44ae8bf47bdd581c316c1d824b049",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_replica_lag_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 469,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "284b926e678532c669b2b0eca4b9f04bb6640327b2d23f2be0a31ea96808e3cc",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"replica-1 postgres replication lag\"}"
+        },
+        "tokensIn": 524,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "2644262b16de8cfb2fc09dcca3a1e6a216363195c17bb13af1ac3322928a8796",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"postgres-replica\"}"
+        },
+        "tokensIn": 643,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "e0fa4a223dc0895511d08cd6395fa702233e1b4dbbdb39e915197a10f517720e",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_replica_lag_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 681,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "daf45b5c328db2b9d7d1286f1c060ecaf16f3aef78007ef874b80f260554ebf9",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Postgres replica-1 has high replication lag (910s) due to conflict with long-running analytics-etl query. Restarted postgres-replica service to clear the lag. Monitoring for recovery.\"}"
+        },
+        "tokensIn": 736,
+        "tokensOut": 54
+      }
+    },
+    {
+      "key": "ff0e49d2071c70d76f480ed8862fe0afc77166764c9428292a1fb1ba8cfe9b63",
+      "turn": 11,
+      "response": {
+        "text": "The postgres_replica_lag_s metric showed a high replication lag of 910 seconds on replica-1. Logs indicated the replication was paused due to a conflict with a long-running analytics-etl query. I restarted the postgres-replica service to clear the lag. The lag metric remains high but I have paged the on-call engineer to monitor and take further action if needed.",
+        "tokensIn": 812,
+        "tokensOut": 78
+      }
+    }
+  ]
+}

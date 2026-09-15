@@ -1,0 +1,123 @@
+{
+  "config_label": "act-fast",
+  "task_id": "incident_bad_config_push",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "0ef91e9b98682226cadbfb1c89908a3fb998975183386666b8c4a385a298b100",
+  "recorded_at": "2026-09-13T04:16:59.618Z",
+  "entries": [
+    {
+      "key": "770c360efa199f0e3224303851ea6a69a311507ff1cd3177a94d305adcbcaec2",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"edge_429_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 811,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "4632a2ae29e93a185a1ebb4ad1fe42905e09f48007aea448fab659aa80f2de09",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_requests_per_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 868,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "e74e7d676c2d8c273b6694abbb0a3d80f5d9089aed828f4c6a43c3eeb8590126",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"edge-proxy error\"}"
+        },
+        "tokensIn": 919,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "df18c100e46d40f19aae529cfe147455a3cbe0666d76cb2284fbff6862bc96db",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"config-service change\"}"
+        },
+        "tokensIn": 1048,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "0eecdcf3dc990700ffcf9886a541bb3790e2027d54a2ecc900a1d3632d80eb12",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"deploy-bot\"}"
+        },
+        "tokensIn": 1147,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "c7ddda96dda71cbbdc366b901034818b5e31e33f1df8262351a2be32168bbfa4",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"edge-proxy config\"}"
+        },
+        "tokensIn": 1222,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "3a4e7c1ddf575d2b70efc6d03534c19734d1e29cdcdbc1900a4fb63ed1cd012f",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"A recent automated config change reduced edge-proxy rate_limit.per_ip from 50/s to 0.5/s, causing 71% of requests to be rate-limited. This is likely a misconfiguration and needs urgent correction in config-service.\"}"
+        },
+        "tokensIn": 1351,
+        "tokensOut": 64
+      }
+    },
+    {
+      "key": "0f16654378b588a7f282f8d754864f801fe8e20a7ba92edfccf6e99ba34e1c99",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are investigating elevated rate-limiting errors for customer requests due to a recent configuration change. Our team is working to resolve the issue.\"}"
+        },
+        "tokensIn": 1438,
+        "tokensOut": 41
+      }
+    },
+    {
+      "key": "c31996979de9b7a52c002a6b316487d9c3f481aab1e6e6b04d481e438650b46b",
+      "turn": 17,
+      "response": {
+        "text": "Root cause: An automated config change by deploy-bot reduced the edge-proxy rate_limit.per_ip from 50/s to 0.5/s, causing excessive rate-limiting (71% of requests affected). \n\nAction taken: Paged the on-call engineer, as this requires a config rollback or correction in config-service.\n\nAffected service: edge-proxy.",
+        "tokensIn": 1492,
+        "tokensOut": 75
+      }
+    }
+  ]
+}

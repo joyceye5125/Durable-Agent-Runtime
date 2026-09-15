@@ -1,0 +1,218 @@
+{
+  "config_label": "double-check",
+  "task_id": "incident_replica_lag",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "18d4ef692a4e6f1c85f7366a9ee5cbc7fabf6a754350cac299ec615e26a65168",
+  "recorded_at": "2026-09-14T02:42:35.576Z",
+  "entries": [
+    {
+      "key": "38ad916eaf34b2347b25ee80ac5d02005953751c8b2e4106d41e4ec1d45d30e2",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_replica_lag_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 815,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "00b85397f43beecdbc37af420bf81ae7ffd8a0dcdfb0b1e44166ddf6895c8b1d",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_primary_cpu\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 870,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "23efc58b0ac7f821f6c2ece2702e310cee98494a14856fd29333a3c40256942d",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"replica-1\"}"
+        },
+        "tokensIn": 925,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "6489f44ec0ffd2f382e76d282000a31f11c82bab46d936835f32e7e85ad83b55",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"analytics-etl\"}"
+        },
+        "tokensIn": 1022,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "80516723c1d9539b8c6de2447d700e1a43e7a90e6f14e2f33e6d7b5a2ddf7942",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"postgres-replica\"}"
+        },
+        "tokensIn": 1118,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "232cf47d65c237b9d647c6c1486b4469230bfd901a769fa0827f4e68b8096404",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"dashboards\"}"
+        },
+        "tokensIn": 1234,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "4a016f9a08a7752476c235d6995f2e1a667e3c81fa6e287609e253144e1c76bb",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"long-running query\"}"
+        },
+        "tokensIn": 1282,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "a7854972df4d4f6b0e0a6b1a7e019f23bd05e46309c63d58e7f73ea27ef73060",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"pid 8812\"}"
+        },
+        "tokensIn": 1351,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "a0db95bdf9ed0856d4cbb6a61fc6f2776b66bc4c0e2914b8f763776c45b1af60",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"analytics-etl\"}"
+        },
+        "tokensIn": 1421,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "2c5966a44a9f620d0a7146a92c540168f5984e1ca05a782a85f7ce36d9eedff9",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_replica_lag_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1457,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "9977a96af558d5e4e2384d5b106579c57ab44f6e769e62c07e0cff360e6bc048",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"dashboards\"}"
+        },
+        "tokensIn": 1512,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "9c589a5ccc6ee2295668e8d0dd143fdb713a98ac75d78f075723fc46f787e3f3",
+      "turn": 23,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_replica_lag_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1579,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "8edc597dbfcf3d6a59160bc330c4b8c60d9bb31377a52b8973a4f05181b27f04",
+      "turn": 25,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"dashboards data freshness\"}"
+        },
+        "tokensIn": 1634,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "6a65aa6c624fbbecdccb1b5c617a9265a126328bc334ef7e3fe42f1425a62db6",
+      "turn": 27,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"dashboards\"}"
+        },
+        "tokensIn": 1684,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "924b397e97beb5615029bbfdd3293f43ad3c9824871223de2d5adc632c669996",
+      "turn": 29,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"dashboards\"}"
+        },
+        "tokensIn": 1718,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "50b343adbc4c7e163285ec1e42cf0aa00c8fc51c7c8614f014d1a7ab9a2b07a8",
+      "turn": 31,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"postgres_replica_lag_s is resolved after restarting analytics-etl (which cleared a long-running query blocking replication), but dashboards still shows stale data (data freshness 15m) even after restart. Further investigation required.\"}"
+        },
+        "tokensIn": 1785,
+        "tokensOut": 58
+      }
+    }
+  ]
+}

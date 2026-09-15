@@ -1,0 +1,110 @@
+{
+  "config_label": "terse-prompt",
+  "task_id": "incident_cert_expiry",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4de4998fc1fa00bfe8d09053dba69e56943d04c1af09a216ca4696695daa35a6",
+  "recorded_at": "2026-09-12T22:32:56.631Z",
+  "entries": [
+    {
+      "key": "3e3f9744fb9b40236a28b0b18258262933cd7f8a1e967f1625852e8a6c372ce8",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"synthetic_https_success\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 461,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "fb8b6223e99ac66286dadb34dbb26391126e1ef5f6749d59809953a424175972",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"api.example.com\"}"
+        },
+        "tokensIn": 512,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "8b3c6f95321b346db6bbd9da2d8c0d323c5c668bc645cf8ab3b374f4a3b8947f",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"cert-manager\"}"
+        },
+        "tokensIn": 671,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "ed957b23c75426a646ea60238055e76b0f7a68805c588a3b79141818231134c8",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"cert-manager\"}"
+        },
+        "tokensIn": 803,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "b37bab1827e28b8e68ce3aa2bf2bd864ced56ae5c99b0a10f47f81150b68fa90",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"cert-manager\"}"
+        },
+        "tokensIn": 837,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "d2c8e664d5e369402ee8ae43153ed0a6380f552a3b1c4daadfdbaaea7504a7d6",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"cert-manager is unable to renew the TLS certificate for api.example.com due to a DNS-01 challenge failure (API token revoked). Immediate human intervention is required to restore HTTPS availability.\"}"
+        },
+        "tokensIn": 1003,
+        "tokensOut": 50
+      }
+    },
+    {
+      "key": "ed07874a43d35736cef1c95b5bc6436ae660b11769983b6b5053a4d14f3210f2",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are investigating an outage affecting HTTPS access to api.example.com due to an expired TLS certificate. Our team is working to restore service as quickly as possible.\"}"
+        },
+        "tokensIn": 1076,
+        "tokensOut": 44
+      }
+    },
+    {
+      "key": "06be2f2fbd77e0de8b262f619b6d34e1cf95e42c6479151f155de477341b1325",
+      "turn": 15,
+      "response": {
+        "text": "Diagnosis:\n- All synthetic HTTPS checks to api.example.com are failing.\n- Logs show the TLS certificate for api.example.com expired, and cert-manager is unable to renew it due to a DNS-01 challenge failure (API token revoked).\n- Restarting cert-manager did not resolve the issue; the renewal continues to fail due to the revoked API token.\n\nRemediation:\n- I paged the on-call engineer, as human intervention is required to resolve the DNS-01 challenge and update the API token.\n- I posted a public status update informing customers of the outage and ongoing investigation.\n\nNext steps require updating the DNS-01 challenge credentials or API token to restore certificate renewal.",
+        "tokensIn": 1133,
+        "tokensOut": 135
+      }
+    }
+  ]
+}

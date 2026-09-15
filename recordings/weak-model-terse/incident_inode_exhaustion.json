@@ -1,0 +1,84 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_inode_exhaustion",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:31:46.383Z",
+  "entries": [
+    {
+      "key": "a3d7ace0761dac0a026d59281609d2f7bb2e3734d3d5edb8b3ce6490a813da6f",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inode_usage_var\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 481,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "d31ae863b501e9bbffc0096791694f1b8a698da11d11a8efcf38d464fedaeba2",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"No space left on device\"}"
+        },
+        "tokensIn": 534,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "60d1e3cb2e2cfbfd33dfb2b5526fa632da1b5758e63ea4cff755495cc60f0f46",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"tmp-cleaner\"}"
+        },
+        "tokensIn": 675,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "f0ec813711986f5a4a9ea159b4eaa017f5dfdb0a91a44516e97c97ebd1f8b486",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inode_usage_var\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 711,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "d779dbdb12d056c38f660bfd05f0c92254608f55ee0e7d051826e468da1eb0c0",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"The inode usage on /var reached 100%, causing write failures with 'No space left on device' errors. The issue was traced to excessive files in /var/lib/php/sessions. The tmp-cleaner service responsible for cleaning temporary files was found crashed due to a config error and was restarted. This cleared many inodes and resolved the issue. Monitoring continues.\"}"
+        },
+        "tokensIn": 764,
+        "tokensOut": 86
+      }
+    },
+    {
+      "key": "41bd8b5950f632d079a938195c165bbff5cff542909cd2bcf2ba2867bc87ced0",
+      "turn": 11,
+      "response": {
+        "text": "The inode usage on /var reached 100%, causing write failures with 'No space left on device' errors. Logs showed 6.5 million files in /var/lib/php/sessions and that the tmp-cleaner service had crashed due to a config parse error. I restarted the tmp-cleaner service, which cleared many inodes and reduced inode usage from 100% to 18%. I also posted a status update about the incident and resolution. Monitoring continues.",
+        "tokensIn": 863,
+        "tokensOut": 95
+      }
+    }
+  ]
+}

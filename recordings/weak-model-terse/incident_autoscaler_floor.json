@@ -1,0 +1,97 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_autoscaler_floor",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:31:01.257Z",
+  "entries": [
+    {
+      "key": "dbbea7636e7dd2315b083ac229c933d154cbfaaa1ea6dc85530a32eb2e74619f",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"search_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 471,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "4decd92b45a216cce41b4ecbd60f93eeb0bcf50f6bfd0a00c34c5625c71edb70",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"search_api_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 525,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "474d9dd09317014de0bd992cab10e60a3a0c8551af6f84316fe8984d1a41539b",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"search_index_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 578,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "5197abdcf6e1687a151bdcca84c03a8f58987008fdc0aba03fd6cb9566ffeceb",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"search latency p99 error\"}"
+        },
+        "tokensIn": 633,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "b0a7548e6c16bbbe95df3c8bd15d201b03de452874fbe120806161541d85538f",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"search-api\",\"replicas\":6}"
+        },
+        "tokensIn": 757,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "62097621a9260016dfc387dbbf5ec8d04c0cb313b74bed507506d0dbfee1191b",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We observed high p99 latency for search-api at 1900ms, exceeding the SLO of 400ms. The search-api service was running with only 2 replicas, which is below normal for this load. We scaled the search-api service from 2 to 6 replicas to handle the load better and reduce latency. Monitoring will continue.\"}"
+        },
+        "tokensIn": 800,
+        "tokensOut": 83
+      }
+    },
+    {
+      "key": "f6c8830a206e116a433f2f069223153ab4deda227b6d31b18f3524a4c43779cc",
+      "turn": 13,
+      "response": {
+        "text": "The p99 latency for the search-api service was at 1900ms, well above the SLO of 400ms. The service was running with only 2 replicas, which is below the normal weekday midday count of 6 replicas. I scaled the search-api service from 2 to 6 replicas to improve capacity and reduce latency. A public status update was posted to inform customers of the issue and remediation. Monitoring will continue to ensure latency returns to acceptable levels.",
+        "tokensIn": 896,
+        "tokensOut": 96
+      }
+    }
+  ]
+}

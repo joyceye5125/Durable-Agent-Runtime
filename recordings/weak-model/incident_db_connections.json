@@ -1,0 +1,123 @@
+{
+  "config_label": "weak-model",
+  "task_id": "incident_db_connections",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "e902a1553c56f907d9306fe4ab57d9fe1cd263f3131f0d39d3d35e98d3014e91",
+  "recorded_at": "2026-09-12T22:29:59.209Z",
+  "entries": [
+    {
+      "key": "b5159113539f1c43040483b943ff1c946dc6a175a13e4f992753b2198e7fa2e6",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_connections\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 788,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "76789764327b6b506d740a105dff72621ce0ddb96c155c19032fa197ada68de8",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 835,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "cb28b7d0ba98cd1f6d353b328723794bca3e477d39df58e0676eebae28e7090d",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"too many clients\"}"
+        },
+        "tokensIn": 890,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "7b0ba62374da0ee4a3ad5729308aca902c2b4daac4d1590d85a0b5a660098afb",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"reporting-job connection pool\"}"
+        },
+        "tokensIn": 973,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "3ed8db7156af10548abf9e19b5584cb7bfb874628cea64f7a26eabd67f53067a",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"reporting-job\"}"
+        },
+        "tokensIn": 1090,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "726163cbeab87c9f84ffe5543f6b1638fbb139c98019bae15f2330ca68de76ae",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_connections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1126,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "be46c1ab9d0bc3805429a5c0e4ad2c7a21860a4925719571e020d6d9e2dd69ad",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1173,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "a83b9aa27778a98fc6c6dd6753b3340e947a4e261f17e65355d9781c8d647e10",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Issue with 'too many clients' on postgres caused by reporting-job connection pool leak. Reporting-job service restarted, connections released, and checkout errors resolved.\"}"
+        },
+        "tokensIn": 1228,
+        "tokensOut": 43
+      }
+    },
+    {
+      "key": "a00daa7a3b308345cba829de5a5116739dfab3c8370bbf35a7c0a2899b85d239",
+      "turn": 17,
+      "response": {
+        "text": "The root cause was a connection pool leak in the reporting-job service, which consumed most of the available Postgres connections and caused checkout requests to fail with 'too many clients'. I restarted the reporting-job service to release the connections. Postgres connections dropped from 396 to 61, and checkout error rate returned to normal. The affected service was reporting-job.",
+        "tokensIn": 1284,
+        "tokensOut": 73
+      }
+    }
+  ]
+}

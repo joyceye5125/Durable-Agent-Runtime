@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_memory_leak",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T14:38:46.581Z",
+  "entries": [
+    {
+      "key": "505f051ecbb4e04dcc6e1afe547e095ce7cd51f312487e1c0d8f4845d58db98c",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"thumbnailer_memory_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 798,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "3a591583eea220d9e358c9c7921f285fd1023000249d448965b8a8d3c4bae46d",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"container_oom_kills\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 855,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "ab3c24587050e0a5a76e8d3f3442057f005b3f0d928420ba134fe91326d5d6bb",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 908,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "cf505a104195aa4ce697c8deb8f0f27121c828449ca947a108aae116f8f000b7",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"thumbnailer OOM\"}"
+        },
+        "tokensIn": 963,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "040a77b9939d08c40492d963a72bf59cdfdfe110b1b37250b0299a532c0ffa3d",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"thumbnailer\",\"replicas\":2}"
+        },
+        "tokensIn": 1114,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "835d61c0892af5bf31cd7ea392eff7d33a1f5431fd278084d4a62b0e58049f43",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"container_oom_kills\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1157,
+        "tokensOut": 23
+      }
+    }
+  ]
+}

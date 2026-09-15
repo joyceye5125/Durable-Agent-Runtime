@@ -1,0 +1,97 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_orphan_lock",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T11:38:21.670Z",
+  "entries": [
+    {
+      "key": "ed91ae7e23734a19b8286b1472bb79d3b64270511ac6a0d25773730e649fa130",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 658,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "aa710f76b37902011d56eaf433b73153ef0fbde97c17451b455dbc1cfa7b2232",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"inventory-sync error\"}"
+        },
+        "tokensIn": 716,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "b1245ea9322b317a6a2ce6b7470a9541da49dc47eba1d565fc559d20572ef263",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"postgres error\"}"
+        },
+        "tokensIn": 834,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "e2213d0ac6154e784376c32fba243cace72b579af73f65546c2ca5adee69d46d",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"inventory-sync\"}"
+        },
+        "tokensIn": 916,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "a8d564fbd5c24c33dcf23c4cab9b2e2becb22487fd4dd04c2a13d35706b6863b",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 950,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "e57ef55948d58ef138981f45bd51084d793e3513a985896dae8a4d86e9c67d6c",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Restarted inventory-sync to clear a stuck advisory lock. Inventory syncs are now succeeding and stock counts are up to date.\"}"
+        },
+        "tokensIn": 1006,
+        "tokensOut": 38
+      }
+    },
+    {
+      "key": "7e958bd35b45b7fd3bd92a4df0f1c069f657976933a2f70aa85dbe8216f85717",
+      "turn": 13,
+      "response": {
+        "text": "Root cause: The inventory-sync service was stuck due to a held advisory lock after a worker panic, preventing successful syncs.\nAction taken: Restarted the inventory-sync service to clear the lock.\nAffected service: inventory-sync.",
+        "tokensIn": 1057,
+        "tokensOut": 46
+      }
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "config_label": "no-verify",
+  "task_id": "incident_queue_backlog",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "04ab737ad1f65dd2dbadefdff745d309e6cf95ecc3a369e8acc26c5ece16149d",
+  "recorded_at": "2026-09-13T03:20:40.189Z",
+  "entries": [
+    {
+      "key": "7daa54d83665af93c48558d4baa8525d970fecfc623d26f51f1e00318491ad70",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_worker_throughput\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 743,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "a6cb68a029a26c15acfcc5bbd7d21fd54e1eedf8346f3ce59222163224a50f9f",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"smtp_relay_errors\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 796,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "5947bade6dc3543cbf0311d171babef8c2136dc4a774f0e3b0b3929bef416a5f",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"email-worker error\"}"
+        },
+        "tokensIn": 847,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "516cd54fdb8be4efa43a698aecb2c382eb413c3cbca04cb2ab74c3c02636ce82",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"redis-queue error\"}"
+        },
+        "tokensIn": 956,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "8cf620fa7cf4be65152aa430969b29ab17a84cf4af7d1bbb1b19355b3eb66189",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"email-worker\"}"
+        },
+        "tokensIn": 1076,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "e6ee0ebbc8e9e7bf954d0a9ee545ff950bd72d3a8b3d55ac90263946c407f116",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_worker_throughput\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1110,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "85c22ed55a520f69a34c3da5b90e84b1c366c1c4694e4ffbbd6e9672f123f594",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1165,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "2514a8493af3a87201d780d5c1ebd6a4fa2370dfc669b5c1375bb6449c7aefde",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Password reset email delays are resolving. Email processing has resumed and queue depth is dropping after a temporary email worker outage.\"}"
+        },
+        "tokensIn": 1217,
+        "tokensOut": 36
+      }
+    },
+    {
+      "key": "eee432af0a046388dd1aebc77946f48ac4a867c774075d4dcf80cb036546030c",
+      "turn": 17,
+      "response": {
+        "text": "Root cause: The email-worker service was blocked due to a stale connection to redis-queue, causing it to stop processing emails and the queue depth to grow.\nAction taken: Restarted the email-worker service, which cleared the stale connection and resumed email processing.\nAffected service: email-worker.",
+        "tokensIn": 1266,
+        "tokensOut": 59
+      }
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "config_label": "no-verify",
+  "task_id": "incident_bad_deploy",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "04ab737ad1f65dd2dbadefdff745d309e6cf95ecc3a369e8acc26c5ece16149d",
+  "recorded_at": "2026-09-13T01:09:30.024Z",
+  "entries": [
+    {
+      "key": "3c816c66910d21415cafd83aa486cee151cdd4d31c5b25bddc2b39d2cc81c9d6",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 743,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "1749f3309a9b9b83c179d0a286633752cb26bf463352b3e8dab8c505664dce4e",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 798,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "37b71fc19d8bd67dab3421b0e2ec15d69119c3d2ee8f37e861768af7247bdc2b",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_cpu\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 851,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "c6e0e5482aaffaaa166717cade552fc2a767d15ddc497131d01c87f73eda49fd",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"error\"}"
+        },
+        "tokensIn": 904,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "1c6206b3ad05a32dc54e92882c37a63aa13e34a3c4f50b53eef5edb6026a4346",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"CheckoutHandler\"}"
+        },
+        "tokensIn": 1027,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "d07439c417e2d3efd0c6d892d46a778e6aff9d660cb6088b6e7a855ac376cf86",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"applyCoupon\"}"
+        },
+        "tokensIn": 1193,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "ee17b7b5da5697ac238d75ca67e9391eb9854d12b29be11c1972bfc80f63e9be",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"api\"}"
+        },
+        "tokensIn": 1340,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "71c36f43b7e45823ace6929ca1972df014421859cd9f8003f8e39d6c8b8c2e94",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1372,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "97e8d626e1d8e00b9b4c325adf6d10805565ab66f2d3707d26eabc0d56c5664b",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1427,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "d8559ee2a104bc88dec3ef2ce29906c45ed5a44a58ffa08681eb47f3adbc0afc",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"After the deploy of api v2.41.0, error rate spiked to 18% due to NullPointerException at CheckoutHandler.applyCoupon. Restart did not help. Likely a code or data issue in the new version. Immediate rollback or hotfix needed.\"}"
+        },
+        "tokensIn": 1501,
+        "tokensOut": 69
+      }
+    },
+    {
+      "key": "8c17500b9d356c19411ec10eda2dcc3153a4a1832124ed3876eeea8ee1191a7e",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are investigating elevated error rates on our API following a recent deployment. Our engineering team has been paged and is working to resolve the issue.\"}"
+        },
+        "tokensIn": 1592,
+        "tokensOut": 42
+      }
+    },
+    {
+      "key": "abd852f4eb4228ed6c0e06cf217c41abfcf7879b5b81ef0b37dfc6de053a8c01",
+      "turn": 23,
+      "response": {
+        "text": "Root cause: The spike in API error rate (18%) was caused by a NullPointerException in CheckoutHandler.applyCoupon after the deployment of api v2.41.0. Restarting the service did not resolve the issue, indicating a likely code or data problem in the new version.\n\nAction taken: Paged the on-call engineer for immediate rollback or hotfix. Posted a public status update.\n\nAffected service: api",
+        "tokensIn": 1647,
+        "tokensOut": 85
+      }
+    }
+  ]
+}

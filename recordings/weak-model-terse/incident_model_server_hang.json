@@ -1,0 +1,84 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_model_server_hang",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:31:59.284Z",
+  "entries": [
+    {
+      "key": "2831cdbefd14237916a51f5e338ed80ed716e773348842027cf830bfe259dc51",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_check_timeout_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 470,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "6370e233065a2efeacdaa4187566e561f7ed471a3f542b5605b184d9a6515147",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"timeout error\"}"
+        },
+        "tokensIn": 529,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "89d43631b6e0959914e65bbae970c5e3b4493843be97a9659a4d1cb1969b834a",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"fraud-model\"}"
+        },
+        "tokensIn": 610,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "5a1023e16ff11eb0e15cac85ab1a9b14e4a83e30c01ace60ea26414c569060d6",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_check_timeout_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 646,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "5575044fa0dbd126da85604bcba995ba25a2df9360bdc3dd71c91969c218da66",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"The fraud-model service experienced a CUDA device error causing inference worker hangs and timeouts in fraud-check. The fraud-model service was restarted, which resolved the timeout issue. Fraud check timeout rate has dropped from 41% to near 0%.\"}"
+        },
+        "tokensIn": 705,
+        "tokensOut": 62
+      }
+    },
+    {
+      "key": "db08b431f76c078b40f3f70e3275265fe40f4c925a273b68ed9d381881ccb5ee",
+      "turn": 11,
+      "response": {
+        "text": "The fraud_check_timeout_rate was high at 41%. Logs showed a CUDA device error causing the fraud-model inference worker to hang, leading to timeouts in fraud-check. I restarted the fraud-model service to clear the error state. After the restart, the timeout rate dropped to near 0%. I also posted a status update explaining the issue and resolution.",
+        "tokensIn": 780,
+        "tokensOut": 72
+      }
+    }
+  ]
+}

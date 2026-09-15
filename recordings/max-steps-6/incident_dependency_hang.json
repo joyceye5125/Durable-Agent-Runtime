@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_dependency_hang",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T13:51:24.709Z",
+  "entries": [
+    {
+      "key": "7d38019d13cf9c9a798e9924d7b290763c0ee72cba5ab5b65e7d9f6447dfb973",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"gateway_5xx_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 794,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "de765a103981a21d4fc0c86a1bc6a15ed2bf978e465a81291393ee29585b4016",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"gateway error\"}"
+        },
+        "tokensIn": 853,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "7d477ee59148a62b57b4a87d7490bdd3e1cda19bbe7423e86b3bf836c35abf63",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"recommendations_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 936,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "fb948281a3289db4d098ec95d5b430bf439fd61e2f7963bf7b837e665f281a63",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"recommendations deadlock\"}"
+        },
+        "tokensIn": 994,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "5dcdbd60a0bceb7e4f193b268fec502c59fa91251c68423f8c797fedd5d21ef6",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"recommendations\"}"
+        },
+        "tokensIn": 1079,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "600386f6c939fb6f84d86a316d917c00d5683093a9d97efeea71213250444c99",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"gateway_5xx_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1113,
+        "tokensOut": 23
+      }
+    }
+  ]
+}

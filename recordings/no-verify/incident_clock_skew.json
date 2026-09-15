@@ -1,0 +1,149 @@
+{
+  "config_label": "no-verify",
+  "task_id": "incident_clock_skew",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "04ab737ad1f65dd2dbadefdff745d309e6cf95ecc3a369e8acc26c5ece16149d",
+  "recorded_at": "2026-09-13T01:39:15.434Z",
+  "entries": [
+    {
+      "key": "bd60a719fbbd2835bc3e0f5ca50fbfaf88ca082985411defa7885dd364ecb4f3",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 742,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "422580a713ac9f05b6de4c2aac97a977829e3f5491f13e509b534a1ea41372c2",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"token not yet valid\"}"
+        },
+        "tokensIn": 793,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "41228e6887c63d9cd4893a9b7ad813e1bc6122c0c0338147d778093c614c2ac7",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 829,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "9ca4633177cc6d7a1dfa0fff02608cdbfdea0e399da31388ec236fe021203122",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 886,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "725870eeb6b20971dc70ef384c47dd19b34c6531a635cf33b9613a4b99a89be8",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"401\"}"
+        },
+        "tokensIn": 943,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "22d099d21fb4d84ea403046c1cf767fe10217c45070c53c8b37a378c38ad9500",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"auth\"}"
+        },
+        "tokensIn": 976,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "e698f8d6a0fef5801a67fa0197d667f0fb989bc25dce952089ca4805249e3616",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"ntp-agent\"}"
+        },
+        "tokensIn": 1090,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "26196808dbb6d49f122a3c2a66026384c88b36fec3a90397009d659cdbedc523",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1126,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "7d4f5b19bcba8e6f0ba218b2d300758a95839fc8bb4a72677211e92295811332",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1178,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "659b17a07a5b0c601447274727e0d2a44f87ce38ee695629b835a3387ea26cca",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Resolved an authentication issue causing users to be logged out with 'token not yet valid' errors. The root cause was a clock drift on the auth service, which has been corrected. Service is now operating normally.\"}"
+        },
+        "tokensIn": 1235,
+        "tokensOut": 55
+      }
+    },
+    {
+      "key": "bc458fe4795917d04d6d65db74cae1d579135b253b5b3085e300ab4ac1124235",
+      "turn": 21,
+      "response": {
+        "text": "Root cause: The auth service clock was out of sync by -94 seconds, causing tokens to be issued with a \"not yet valid\" time and resulting in high 401 rates. \n\nAction taken: Restarted the ntp-agent to resynchronize the clock, which resolved the issue.\n\nAffected service: auth.",
+        "tokensIn": 1303,
+        "tokensOut": 64
+      }
+    }
+  ]
+}

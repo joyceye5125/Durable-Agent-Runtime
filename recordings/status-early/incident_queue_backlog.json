@@ -1,0 +1,123 @@
+{
+  "config_label": "status-early",
+  "task_id": "incident_queue_backlog",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4b9140b1ed8e0b227987537032b250ec208630bd67dbe1414d61fb7668885a19",
+  "recorded_at": "2026-09-13T08:17:40.351Z",
+  "entries": [
+    {
+      "key": "2c1c7335999796592e444e95bf6729f180ba8d61fc52fbfe2289cb62b7964e41",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Investigating elevated email queue depth and delayed password-reset emails. Diagnosis in progress.\"}"
+        },
+        "tokensIn": 816,
+        "tokensOut": 29
+      }
+    },
+    {
+      "key": "4042a0dab2ec6c9001aa37aa40c442aeca40c094464fa9fe1ea511b504895ec0",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_worker_throughput\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 858,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "a59435cb986d4eceef468085dc12e04a8f64d05bc8197107aacb4e49f14005a2",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"smtp_relay_errors\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 911,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "692d0a530755446cfcfb1d21131a27d613c3378129fd082fb4949e9db8566e51",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"email-worker error\"}"
+        },
+        "tokensIn": 962,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "406b28731139344b1abc8f0f92db76a627c01b38b7b5f41490bf928fd4f2c691",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"email-worker\"}"
+        },
+        "tokensIn": 1071,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "e6296477ff7fc1e6b12e2c9ef17167eeb1782a875f888ea12b7852a8a83d7117",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_worker_throughput\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1105,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "f0aac8cff690afd04358746910f43d1089061cff7e65dedab15b35f5da40895e",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1160,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "c85d95718becd67ee7a5c459bd7b618981a009906cce0781dc861b77e599e941",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Password-reset email delays resolved. Email queue is draining and email worker throughput has recovered. Monitoring for full normalization.\"}"
+        },
+        "tokensIn": 1212,
+        "tokensOut": 35
+      }
+    },
+    {
+      "key": "e9290d5dc0d9838b104b8a15a951b3a3fd524f8082b17c0a6586031d7601a75c",
+      "turn": 17,
+      "response": {
+        "text": "Root cause: The email-worker service was blocked on a stale connection and stopped processing messages, causing the email queue to grow and password-reset emails to be delayed.\n\nAction taken: Restarted the email-worker service, which restored throughput and allowed the queue to drain.\n\nAffected service: email-worker.",
+        "tokensIn": 1260,
+        "tokensOut": 59
+      }
+    }
+  ]
+}

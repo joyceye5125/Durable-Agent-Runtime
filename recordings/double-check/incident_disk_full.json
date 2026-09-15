@@ -1,0 +1,123 @@
+{
+  "config_label": "double-check",
+  "task_id": "incident_disk_full",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "18d4ef692a4e6f1c85f7366a9ee5cbc7fabf6a754350cac299ec615e26a65168",
+  "recorded_at": "2026-09-13T03:54:47.809Z",
+  "entries": [
+    {
+      "key": "f094923805650717b0285edcc0ae6b83c7dddded0497f3a07417c7d8f44c15c0",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"disk_usage_data\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 825,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "6c281c18bac4fa26ff9a6a769e83f3707ad63a4072f4f38e2f01bb370e8325bf",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-rotator error OR log-rotator failed OR log rotation\"}"
+        },
+        "tokensIn": 880,
+        "tokensOut": 27
+      }
+    },
+    {
+      "key": "d76c83fce7fa1ca4338b96c8fbc916bea2008dcbf4ee4a3bb1170f5f57474396",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_rotator_last_success_age_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1073,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "8f6a6b57561d460409e8feec5c61e6e6d22d206d122fab1d6363d5950cdefcfa",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"storage-agent error OR postgres error OR api error\"}"
+        },
+        "tokensIn": 1133,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "cf11dc26d3b39f053821af2c4a7b694980dcdc3814daae5e092a2fd2e2aa1662",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"log-rotator\"}"
+        },
+        "tokensIn": 1339,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "b288ee7d370c8e449cfd41c1f263e16f7cc4af73844e58fd2e78d473e76e35c4",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"disk_usage_data\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1377,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "0bc432922bc90c0140bc0269311155cb51e7d6e41159104bceaff99b1d86dde0",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_rotator_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1432,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "1a3d46b20a3262e3a187979424f5233a6e805f62df82466330a9909c1f83f18b",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Resolved: Disk usage on storage-1 /data exceeded threshold due to stalled log rotation. Log-rotator was restarted and disk usage has returned to normal.\"}"
+        },
+        "tokensIn": 1490,
+        "tokensOut": 45
+      }
+    },
+    {
+      "key": "566f50bce63528c61e01d4ad99510dc5f700c79f8f87377bac7f9d066dd0226f",
+      "turn": 17,
+      "response": {
+        "text": "Root cause: The log-rotator service was stuck due to a stale lock file, preventing log cleanup and causing disk usage on /data to exceed the threshold.\nAction taken: Restarted the log-rotator service, which cleared the stale lock and resumed log cleanup, reducing disk usage.\nAffected service: log-rotator (impacting storage-1 /data).",
+        "tokensIn": 1548,
+        "tokensOut": 76
+      }
+    }
+  ]
+}

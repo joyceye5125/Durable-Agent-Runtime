@@ -1,0 +1,149 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_healthcheck_dependency",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T11:06:50.159Z",
+  "entries": [
+    {
+      "key": "15eb900f47d11afed1e94b9cc770b8fdd7905fe31a0a74fa1ff6a92f7bab7f37",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_healthy_instances\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 670,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "63acd6dd52760660efa0f9658aeff1e91b36e882cdb62c996ff0c5d61fbba78d",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 721,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "40b78d33e2b03857bac32af08c2caed9b370fbec96daeefad92b2d7cbf0a02df",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"config_service_up\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 774,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "2bc0239909ec2eddd3c191348a7857f091ecfcc78c404d8c844f938ccda010c8",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"config-service\"}"
+        },
+        "tokensIn": 823,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "43d7575a6e99cccba4ba04dafa02048bc2ba36236c1cdf03bfcb7a1210f25d8d",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"too many open files\"}"
+        },
+        "tokensIn": 910,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "225fa2cc053481f53313e49bae654d6ccf5c6c475f3397b082914b09646002fc",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"config-service\"}"
+        },
+        "tokensIn": 968,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "3adac177145ce2e346db53b5f01d709efaa9d5ede8a408bd901ac2ec31caa0e9",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"config_service_up\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1002,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "82e70bf7770dbb553b71cb8e36289a9605a3252014523bf9640915b8f71266e8",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_healthy_instances\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1051,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "d972102ca5ccbf93b91a03e41868bfa0b5a622244273a693be2dd960516ba78b",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1102,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "b3e05a38bc1002d4f3a601d061b0243b5c709adae4d416ad54bbd5063e94283a",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: config-service hit file descriptor limit and crashed, causing API health checks to fail. Service restarted and all metrics are back to normal.\"}"
+        },
+        "tokensIn": 1155,
+        "tokensOut": 42
+      }
+    },
+    {
+      "key": "3fe871425d6a9fc7b4ecc00fb0ea13c60351a9fc2a3400d41fb6f3c94d89b21a",
+      "turn": 21,
+      "response": {
+        "text": "Root cause: The config-service hit the file descriptor limit (\"too many open files\"), causing it to crash and become unreachable. This led to API health checks failing and the load balancer ejecting API instances.\n\nAction taken: Restarted the config-service to restore its availability.\n\nAffected service: config-service (impacting api). All metrics are now normal.",
+        "tokensIn": 1210,
+        "tokensOut": 72
+      }
+    }
+  ]
+}

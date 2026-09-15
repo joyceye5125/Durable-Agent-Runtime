@@ -1,0 +1,136 @@
+{
+  "config_label": "status-early",
+  "task_id": "incident_model_server_hang",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4b9140b1ed8e0b227987537032b250ec208630bd67dbe1414d61fb7668885a19",
+  "recorded_at": "2026-09-13T07:25:16.161Z",
+  "entries": [
+    {
+      "key": "836679f8ff52401bc28b1d033ac574bffd58d6e0b6dea9d84736a773a6796c6b",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Investigating elevated fraud check timeout rate causing orders to be held for manual review.\"}"
+        },
+        "tokensIn": 817,
+        "tokensOut": 29
+      }
+    },
+    {
+      "key": "46a452b28f97954aa95807d11287c05371117eb4e040fc3e763c4fd96ae9e831",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_check_timeout_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 859,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "a86c1b9b95bff325d0233a40454b3d1e4392f82b6f1e1b4805465ad89efb60bc",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_model_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 918,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "a090d7b391a70b26f94c4f16e1a1ba8652ea857568bc9a418cf8b664306d7f1b",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"feature_store_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 978,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "a22454fabf6a4aed076a01b72984b7ccca3972e1890cee7eeb6770de47b91ea5",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"fraud-check error timeout\"}"
+        },
+        "tokensIn": 1033,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "ff864a5801304852625f93c7c363a1e82904445f1bd6bcf4d8a704cc2931af08",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"fraud-model\"}"
+        },
+        "tokensIn": 1144,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "9d4e3deea64a30fdeaf8d2b9bb5519c0bee49429f7d516249451a1193c0e5318",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_check_timeout_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1180,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "0b25943ddb043d0994ee0a3245bae093fd22130e8397edeb5d655973434bcdca",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_model_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1239,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "31ca1ccf8c820b9952cb6a5afeae6afcb04ec7a53beecb4be4953e4447dcf5d7",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Fraud check timeouts resolved. Orders are processing normally again.\"}"
+        },
+        "tokensIn": 1297,
+        "tokensOut": 26
+      }
+    },
+    {
+      "key": "c03318dd4bb50eb60b5ae39d121f7c1d776fadda008e5fc334a58645856f1c14",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The fraud-model service experienced a CUDA device-side assert error, causing inference workers to hang and resulting in high fraud check timeouts.\nAction taken: Restarted the fraud-model service, which resolved the timeouts and restored normal latency.\nAffected service: fraud-model.",
+        "tokensIn": 1336,
+        "tokensOut": 56
+      }
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "config_label": "no-status-update",
+  "task_id": "incident_healthcheck_dependency",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70a689f783281f39d436d765aaf486317dbba515e634a87d6f6b9c10ce390dd7",
+  "recorded_at": "2026-09-13T03:27:57.309Z",
+  "entries": [
+    {
+      "key": "bddfa7d9588c8bcecbb5fdedf46d57d25e379eff3c20f7f22eecda18ab038336",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_healthy_instances\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 781,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "41383bb0cb7fe6eb6213fd32c40b315f59be2b41e9b65b1268dea7c03c3fc011",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 832,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "ea52d016576b363d5120f5d0e064a1240af8425c5ee9b61aa6071d3be30bf81b",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"api error\"}"
+        },
+        "tokensIn": 885,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "a0c79a992f62ce9e4007aa586865704b8367b161cb4e5eb183ea27b88570c794",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"config_service_up\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1018,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "4702acc8c5c3d685e8752e42a34b24ba99f79b2520bb92539b2fac04aef866cc",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"config-service\"}"
+        },
+        "tokensIn": 1067,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "be3c2120b272f41df98de15de9c76a71492f592dd6a542e881831f7dcba9d07b",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"config-service\"}"
+        },
+        "tokensIn": 1154,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "484d32b40cdbab55e7b590d357ca2ce718a78052d77750a596f337004163f89e",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"config_service_up\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1188,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "870a21cac0348723eebaf7cac0480a10c33c12fc8ce67e8c350f4e03d23a5310",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_healthy_instances\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1237,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "b366adc66568f183a9f822e814caf82cb46cd293ff931093c5ae5f71448c9d5c",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1288,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "ebc47ae8c0a740f364561e26a283991d367c4baced48758c9b3aa447fc31efda",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The config-service crashed due to \"too many open files,\" causing it to become unreachable. This led to api health checks failing, resulting in the load balancer ejecting most api instances and a spike in latency.\n\nAction taken: Restarted the config-service to restore its availability.\n\nAffected service: api (dependent on config-service). All metrics have returned to normal.",
+        "tokensIn": 1341,
+        "tokensOut": 77
+      }
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "config_label": "no-escalation",
+  "task_id": "incident_log_flood",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "28197b75a4e4fd6f25a9969b97c76246558aa3c6ac57ba09568d72954cdaf856",
+  "recorded_at": "2026-09-13T03:37:40.958Z",
+  "entries": [
+    {
+      "key": "7d89fefcd09d82099f8ce8e0a2af56c6e137c55e5aba5ecf7ec6e54350494302",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_pipeline_ingest_lag_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 774,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "325b7b1b9ac6f2ee73fc7d045d212381dd8ebe8a6413e8c93c9f43bcfde31bf2",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_lines_per_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 834,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "cdb9c7c4676d09fb67b600378cadb36135967356aca0ec1531769583df64255e",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-shipper error\"}"
+        },
+        "tokensIn": 888,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "17c7a78080c4c3dcc495e020a316037c61bfbac551c87fb5119446388e27f2b8",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-store error\"}"
+        },
+        "tokensIn": 1010,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "c20c6bed9f19284d39ad43723ac8bcf0a39dfc60863a28deaab124bb4b60998e",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"checkout-api TRACE\"}"
+        },
+        "tokensIn": 1130,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "889e7f8f4ade7d1bee8111b089f9414d9d29e2c39de7d89be98f6dfa41f37f55",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-store slow\"}"
+        },
+        "tokensIn": 1244,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "2413884aebcdacf578ffdd88d8fea50c261bc36fa11e5bb65add6bb2603cf4f7",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"log-store\",\"replicas\":2}"
+        },
+        "tokensIn": 1364,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "c3ad7d64904ed101fa0e9a28a37f117deb2a2d419f2a7e719fbea02d67fa4d19",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_pipeline_ingest_lag_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1407,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "098609fafc0e1b53817141b9a9b020c17207a07bc7d70c99fd7df328bf1bc04e",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"log-store\",\"replicas\":4}"
+        },
+        "tokensIn": 1467,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "8f66b66e767ca560fc12b3a8351bd30ae7b2a9848dc859dcec76aaae682a6361",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_pipeline_ingest_lag_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1510,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "0f3ff1a98d54858d5e1578a4b78ef064b3bf6616bcc1ec1dfad9a34456a59876",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Log pipeline ingest lag remains at 1800s despite scaling log-store. Checkout-api switched to TRACE logging, causing log volume to spike from 3k to 48k lines/s. Manual intervention needed to reduce log volume or further investigate log-store performance.\"}"
+        },
+        "tokensIn": 1589,
+        "tokensOut": 66
+      }
+    },
+    {
+      "key": "2b0fdbf02ab6e5e39ffeb5c8e945e599fd52360b524540615ab82b5a884b695b",
+      "turn": 23,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are investigating a delay in log processing affecting all services. Elevated log volume is causing a backlog. Engineering is engaged.\"}"
+        },
+        "tokensIn": 1676,
+        "tokensOut": 37
+      }
+    }
+  ]
+}

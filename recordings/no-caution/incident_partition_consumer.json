@@ -1,0 +1,97 @@
+{
+  "config_label": "no-caution",
+  "task_id": "incident_partition_consumer",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "735e03f703dd19ab918608ab16e8a756c77285f35b60bcabe42cd675c9d41b76",
+  "recorded_at": "2026-09-13T03:48:00.551Z",
+  "entries": [
+    {
+      "key": "e98b936936d18a01d793bc9f826b09aefd479436b4b075d0e9d3623e1cae072e",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"kafka_consumer_lag_p7\"}"
+        },
+        "tokensIn": 756,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "a6e3e1ebdd65fafc118536ba035120a034d6c88d5962a7300dba9f845306d4a2",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"events-consumer\"}"
+        },
+        "tokensIn": 878,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "243fc6dd8f7e687beed21eba0fba949bb49e85e510eff25e6a6a7c37092b039d",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"kafka_consumer_lag_p7\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 914,
+        "tokensOut": 26
+      }
+    },
+    {
+      "key": "a3ce2b79b555ee470c2c716dca6c292ba9eb2877a6b9586aaf8bcf25d67c12f9",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"schema v9 unknown\"}"
+        },
+        "tokensIn": 979,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "52c7ab437db948801155d5a706b408a5d638661b8dfc5b9938e7ce910f95d174",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"events-consumer is stuck retrying a poison message on kafka partition 7 due to 'schema v9 unknown'. Restart did not help. Manual intervention required to handle or skip the poison message at offset 88123410.\"}"
+        },
+        "tokensIn": 1090,
+        "tokensOut": 59
+      }
+    },
+    {
+      "key": "b448022a8d00b6370204c582e04ab25581b8e427e4f61e904138f2380fce9a31",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are investigating a delay in processing for a subset of event data. Our team is working to resolve the issue.\"}"
+        },
+        "tokensIn": 1172,
+        "tokensOut": 36
+      }
+    },
+    {
+      "key": "f7a0cdbfe1e33dd192883b161308137f2904712b2bf3ed60203016f5738091c0",
+      "turn": 13,
+      "response": {
+        "text": "Root cause: The events-consumer service is stuck retrying a poison message on Kafka partition 7 due to \"schema v9 unknown\". Restarting the service did not resolve the issue, as the consumer continues to encounter the same poison message at offset 88123410.\n\nAction taken: Paged the on-call engineer for manual intervention, as this requires handling or skipping the poison message. Affected service: events-consumer.",
+        "tokensIn": 1221,
+        "tokensOut": 87
+      }
+    }
+  ]
+}

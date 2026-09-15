@@ -1,0 +1,84 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_db_connections",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:31:28.873Z",
+  "entries": [
+    {
+      "key": "f6f649220236ed51e581914e0e34aa4ec3374864441318248f270204218fa6a3",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_connections\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 462,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "fbf75d92835c3e9f4289e12bcaa04ce4f59813bd2498682b5e212206eafd4769",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"too many clients\"}"
+        },
+        "tokensIn": 509,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "7fb7fa468588cc4c94e6d7add28a7d2ca3fafc5f629a606d1dbdaa2422bf1b14",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 592,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "9d422495b15af042f550d10c819527dd9795c146958094e785664bb9cf6a207d",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"checkout\"}"
+        },
+        "tokensIn": 645,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "22568de4dbd211ace47436c654296fdc4cf6bee3792cb2f371a37a833bd4be4f",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We observed that the postgres connections reached near the limit of 400, causing checkout requests to fail with 'too many clients' error. Logs indicate connection pool growth and connections not returned after query timeout. We have restarted the checkout service to clear stuck connections and reduce load on postgres. Monitoring continues.\"}"
+        },
+        "tokensIn": 677,
+        "tokensOut": 72
+      }
+    },
+    {
+      "key": "5ef0c1d2a9250d5ee191245132243ff93fe031631795241f4e06d81266bfcc2b",
+      "turn": 11,
+      "response": {
+        "text": "The postgres connections reached near the limit of 400, causing checkout requests to fail with 'too many clients' error. Logs showed connection pool growth and connections not returned after query timeout. I restarted the checkout service to clear stuck connections and reduce load on postgres. I also posted a status update for customers. Monitoring of the situation continues.",
+        "tokensIn": 762,
+        "tokensOut": 68
+      }
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_crashloop_image",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T13:34:34.556Z",
+  "entries": [
+    {
+      "key": "5aa711f545675d897e4a1ffc21f30980af781bf569835b274e5a82193c7c2ef5",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"pdf-renderer error\"}"
+        },
+        "tokensIn": 789,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "a215f1254ab4727c5e4e99886a42a0625a517c38e4d7c8c0a8d4e4cc976addf4",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"NotoSans-Regular\"}"
+        },
+        "tokensIn": 946,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "e455565fa2c222e31506c5ef9bbc7f5e80eebad137029905996379ec97c3fd8f",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"deployer\"}"
+        },
+        "tokensIn": 1041,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "b63951fae9fd41f1876b561899f42a4003804946dfe0b5fb39b0095174176b45",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"pdf-renderer\"}"
+        },
+        "tokensIn": 1106,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "2d9d2a37c35a96b55a2b1a2f0f39d0d0f70a5560dd7c8cc724dcaea6c2525206",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pdf_renderer_restarts\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1142,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "588a485a8975a44a6ae87eeca7fca0df7976e478eb56b97bf0fe2616e01b54f0",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pdf_renderer_restarts\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1193,
+        "tokensOut": 22
+      }
+    }
+  ]
+}

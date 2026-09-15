@@ -1,0 +1,136 @@
+{
+  "config_label": "both-windows",
+  "task_id": "incident_orphan_lock",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "da0cdfc5b92ab330d67c566b641281c3b5c2ff73079adb94125b08ee4bc6298c",
+  "recorded_at": "2026-09-13T04:11:54.530Z",
+  "entries": [
+    {
+      "key": "d38ebabc06c213c4025cb053149d477695f25544ff59e015ada82fca91abf97d",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 812,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "eb93199dffce0900ab23c88d453f937f1b316e13a1f9231627bf6e79bbe23cb3",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 870,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "16e56bf1b66499299ec79d875b898880c0fd8ae8b9a6de974025025e96b2b005",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"storefront_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 928,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "ac0a5789007432218a371fd079d27c76e988265eacdcc705e04832b9bfd98d91",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"storefront_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 985,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "b6565183fc409974ee61a4bd36d37dc9ab292bcdeb02b8cb23008537de1d3212",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"inventory-sync error\"}"
+        },
+        "tokensIn": 1042,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "cd5575d8f60c174f37204f5f9de3f33fd9ba1cd240a6f5f475b01378c0b678e1",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"postgres error\"}"
+        },
+        "tokensIn": 1160,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "8094584e678d2878becea23b7239eb8b6394aaa140be9d187a41613a17322c86",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"inventory-sync\"}"
+        },
+        "tokensIn": 1242,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "0869b2b753d739d8a57e583279ce9fc6b740305dfca02f6f56fe37b62a0944fd",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1276,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "ad0493ed949f7b79e70eaebacf11f72be7473625c8630fa0e8b5a6bcd40143a6",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Inventory sync issue resolved. Stock counts are updating again and storefront data is fresh.\"}"
+        },
+        "tokensIn": 1332,
+        "tokensOut": 29
+      }
+    },
+    {
+      "key": "a69ee6c00b39f9ca16ca3e921d949c97610e164cc460bf6fcf2b754b69ff3b57",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The inventory-sync service was unable to acquire a required advisory lock in Postgres due to a previous worker panic, which left the lock held and blocked further sync cycles.\n\nAction taken: Restarted the inventory-sync service to clear the stuck lock and restore normal operation.\n\nAffected service: inventory-sync.",
+        "tokensIn": 1374,
+        "tokensOut": 62
+      }
+    }
+  ]
+}

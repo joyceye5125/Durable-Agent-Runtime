@@ -1,0 +1,214 @@
+{
+  "config_label": "weak-model",
+  "task_id": "incident_cache_and_capacity",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "e902a1553c56f907d9306fe4ab57d9fe1cd263f3131f0d39d3d35e98d3014e91",
+  "recorded_at": "2026-09-12T22:29:39.105Z",
+  "entries": [
+    {
+      "key": "20c8a5c702125f77948a2816216e0b533e6bfc38918e45aada4d67f7d4af00e2",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 802,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "4984f80692fb174ddbc20e777c877195633291552c0f26e3025ec08dc156f65b",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_cpu\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 860,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "2799d24cb2a8b6c9543359474ebd40f63e6f0d6a365a671b9d48913387c47924",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 915,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "87317b0c5ac9d670ccd6571999b58657360151ac5c0bbf8930af44f64c7ae3af",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"price_cache_hit_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 968,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "ad52f05fc9af40df966f1ec5abbc782e58ecff2c01ddf97303a4d70abf0e39c8",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"pricing-api error\"}"
+        },
+        "tokensIn": 1019,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "1eb8346b5b7ee1433762481d4f6c9a185b2af9946d02febc2120fa0bdaa3bf5a",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"pricing-api\",\"replicas\":6}"
+        },
+        "tokensIn": 1139,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "9bcfcda4618727c292b273ed35a2c73cf1b46ef084b6d6d03312242d6896a393",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1182,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "4f37ca637a5181ea31f5b4b863044bab9b0407029821c0e2734da6d7c1ad5f1b",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_cpu\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1240,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "538e94d4f596c5dce857caa38f12000cd71be0332f61f4d05a70a882a758cb61",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"price_cache_hit_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1295,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "a39fe123e0400c3e6aa261604ce532ff10bc7c7f35c903ec8c84789490cf9c13",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"price-cache error\"}"
+        },
+        "tokensIn": 1346,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "8738795297b78723c5949332fe55b0df0d9e86954e9806e47ae8678e74f11908",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"price-cache\"}"
+        },
+        "tokensIn": 1429,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "99186d5b7c7d606f550f8eaf54bc7ee374e0a98b2366b2541678af77dbd5575d",
+      "turn": 23,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"price_cache_hit_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1463,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "3a6a2d67bd2db3dbad5101983dd2f318c3152dcc3cdee66950dcf2966bf36f8e",
+      "turn": 25,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1518,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "4e5394a6630cecf3bececf8aa20a9da8bca933d78e4901d3bfc021f9ff7112ff",
+      "turn": 27,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_cpu\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1574,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "8b9791f18cb8d0483f13ba27eaa88db0b9f21d9c08577bbfdbecbd098c14bc55",
+      "turn": 29,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Issue with price-cache service caused 100% cache miss and high CPU usage on pricing-api. Restarted price-cache and scaled pricing-api replicas from 3 to 6. Cache hit ratio improved and latency and CPU usage on pricing-api returned to normal.\"}"
+        },
+        "tokensIn": 1629,
+        "tokensOut": 64
+      }
+    },
+    {
+      "key": "f1c77ec5293b06f5868e9be6840fadbf79e028415a4faf21741571927b5ca111",
+      "turn": 31,
+      "response": {
+        "text": "The root cause was the price-cache service stuck in a loading state after a failed snapshot restore, causing 100% cache misses and high CPU usage on pricing-api. I restarted the price-cache service and scaled pricing-api replicas from 3 to 6. This improved the cache hit ratio and brought pricing-api latency and CPU usage back to normal. The affected services were pricing-api and price-cache.",
+        "tokensIn": 1706,
+        "tokensOut": 80
+      }
+    }
+  ]
+}

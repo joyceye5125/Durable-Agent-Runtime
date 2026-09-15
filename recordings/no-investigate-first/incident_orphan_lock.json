@@ -1,0 +1,84 @@
+{
+  "config_label": "no-investigate-first",
+  "task_id": "incident_orphan_lock",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "2e253278b6d31fea20007b48521dc424d8a39dda9daa309713c13dc9654ce89d",
+  "recorded_at": "2026-09-12T22:41:43.720Z",
+  "entries": [
+    {
+      "key": "f72bb56c3d0608f50e23fa0287e04eab3fea988ea20b479165dbf24396fac556",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"inventory-sync error\"}"
+        },
+        "tokensIn": 770,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "209d165bb7b35f26044db35b1a9b2b93bfc1a44330227ee1b4123a92932cf2f6",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"inventory-sync\"}"
+        },
+        "tokensIn": 888,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "db28446527beb681ced858e536f485961d4e84244777cd23bf8c1943db2c5989",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 922,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "7f315767c429054de02ff08b7df3714081b53389e595f8bffe35a86b968406ed",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"storefront_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 978,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "13c9f340f1c004df4afd22389ccddf18e3e4d6dad967032dbf616cc4190aa1c5",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Inventory sync issue resolved. Stock counts are up to date and services are operating normally.\"}"
+        },
+        "tokensIn": 1035,
+        "tokensOut": 30
+      }
+    },
+    {
+      "key": "138bca797ed5c35a312585afecef71e283c85d2a60e827c2d11c746b1c6a06ae",
+      "turn": 11,
+      "response": {
+        "text": "Root cause: The inventory-sync service encountered a worker panic that left a database advisory lock held, preventing further sync cycles and causing stale stock counts.\nAction taken: Restarted the inventory-sync service to clear the stuck lock and resume normal operation.\nAffected service: inventory-sync.",
+        "tokensIn": 1078,
+        "tokensOut": 55
+      }
+    }
+  ]
+}

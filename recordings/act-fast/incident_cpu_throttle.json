@@ -1,0 +1,136 @@
+{
+  "config_label": "act-fast",
+  "task_id": "incident_cpu_throttle",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "0ef91e9b98682226cadbfb1c89908a3fb998975183386666b8c4a385a298b100",
+  "recorded_at": "2026-09-13T04:18:49.544Z",
+  "entries": [
+    {
+      "key": "adb904c11116aeefb00ff1a743c6ae18bbb1d23eeda5b24b7b1ef464f8c35234",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_cpu_throttled_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 827,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "3336427642bcc71c95ee00c344a6debfca86c80e516ff75869d2d1e4b34f4f5c",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 890,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "8395b3d865a7492c03d4cf6a6efd6859817b95f65759bbc350dbf8bdfdb27abb",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"object_store_put_latency_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 943,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "7293168527b5b5a9eb94c34188101164f9670764e3ba6f352ccf1ab3dfb7cc55",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"image-api\"}"
+        },
+        "tokensIn": 996,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "0743b3d1e0a8f0b94416911e5d756b4023def6290cc704b581c12690cc81ba20",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1030,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "79429b91bab704fad586280e06f7c66c051343f029b81f8e92c3d028b98447a7",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"image-api\",\"replicas\":4}"
+        },
+        "tokensIn": 1088,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "3cc0a7dfd5262fd9c713c180a1e690cd0b7082d740ce284e411e885f0d8d4084",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1131,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "d0e7c1456c51de58dab49b7ae69e40922f68b8828120e207e3a17f3da87748d7",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_cpu_throttled_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1189,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "6c1830421846a50efc566fd396d13d3ad709ecec83367b818f1641b1d721436f",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Image uploads are recovering after elevated latency due to CPU throttling on image-api. Scaling up has reduced latency and improved performance.\"}"
+        },
+        "tokensIn": 1252,
+        "tokensOut": 38
+      }
+    },
+    {
+      "key": "54832052b1118867801efe634666342fdc09d0b43836df4930cf94b54486c93e",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: High CPU throttling on the image-api service led to elevated latency and upload timeouts.\nAction taken: Restarted and scaled up image-api to reduce CPU contention and improve latency.\nAffected service: image-api.",
+        "tokensIn": 1303,
+        "tokensOut": 46
+      }
+    }
+  ]
+}

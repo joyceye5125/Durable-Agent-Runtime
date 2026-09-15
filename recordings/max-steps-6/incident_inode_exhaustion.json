@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_inode_exhaustion",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T14:23:43.181Z",
+  "entries": [
+    {
+      "key": "999f41f6f3c3fd796dd6ac69084d380f51114fa662705e553dddf35f9311ebfb",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"app-3 No space left on device\"}"
+        },
+        "tokensIn": 807,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "991b67fa3ecaeca0404f71889bf3a8ddd4e3b42851bba900d6334953341b11f0",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"tmp-cleaner\"}"
+        },
+        "tokensIn": 974,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "89d92435c43359d3789235faeeaf6a70e580d5a4a33d5b67542c28d3f30e2d80",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"tmp-cleaner\"}"
+        },
+        "tokensIn": 1038,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "d8788fe92a60e21b0edbca8ac1511de1daae8d6f54a8854e1500cccd2f3dd4ea",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inode_usage_var\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1074,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "ff1eaea61cb25226facabf4f68533bd8fb33a216938c41636e25f536f459b6c3",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"app_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1127,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "c88cecb63f54ff5cbcb56c1e0c9d7b39e47114da79d151343d0c2d41aad7e60b",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: inode exhaustion on app-3 caused by tmp-cleaner crash. Cleaner restarted and inodes freed; service restored.\"}"
+        },
+        "tokensIn": 1182,
+        "tokensOut": 39
+      }
+    }
+  ]
+}

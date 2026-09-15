@@ -1,0 +1,97 @@
+{
+  "config_label": "weak-model",
+  "task_id": "incident_disk_full",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "e902a1553c56f907d9306fe4ab57d9fe1cd263f3131f0d39d3d35e98d3014e91",
+  "recorded_at": "2026-09-12T22:30:04.597Z",
+  "entries": [
+    {
+      "key": "fe13b0b954f084387bdb85b7030ee8c80cabea3fef753a6a3c17b134e61019e8",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"disk usage /data\"}"
+        },
+        "tokensIn": 805,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "efb2eb8918c7c9476098bb9fedce5086579729fd9ed390cd04d3a9706fad5726",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_rotator_last_success_age_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 969,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "47bcac1885b541ef7b040cc40e111bf845932aa6c8a167a08de815acf684707c",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-rotator error\"}"
+        },
+        "tokensIn": 1029,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "fbf2241e168206e62c5bc489aacfa420c54308cb04b1aeb3725092eda165bb18",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"log-rotator\"}"
+        },
+        "tokensIn": 1194,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "a6515552dd08c44ca0df75f578dc829df810d073ee4818ef96b040a97d17f92d",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"disk_usage_data\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1232,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "0b9d8deb3e9d7deb53fcb9dabb6c509bf9a07cc69f161ef61f7a79e6332e1e16",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Disk usage on /data partition was at 96% due to stale lock file blocking log rotation, causing log accumulation. Restarted log-rotator service to clear the lock and resume log rotation. Disk usage is now decreasing.\"}"
+        },
+        "tokensIn": 1287,
+        "tokensOut": 59
+      }
+    },
+    {
+      "key": "7f23ccfed167442877899eb16fef9e688b83bb0a182a162e8746329fd4d47583",
+      "turn": 13,
+      "response": {
+        "text": "The root cause was a stale lock file held by a non-running process that blocked the log-rotator from compressing and rotating logs, causing disk usage on /data to spike to 96%. I restarted the log-rotator service to clear the stale lock and resume log rotation. The disk usage on /data is now decreasing. The affected service was log-rotator.",
+        "tokensIn": 1359,
+        "tokensOut": 78
+      }
+    }
+  ]
+}

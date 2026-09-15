@@ -1,0 +1,110 @@
+{
+  "config_label": "terse-prompt",
+  "task_id": "incident_gc_pauses",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4de4998fc1fa00bfe8d09053dba69e56943d04c1af09a216ca4696695daa35a6",
+  "recorded_at": "2026-09-14T01:28:47.360Z",
+  "entries": [
+    {
+      "key": "b632b7f519518bb8f02c64d03bf67c5d0abb374d583d529ca732c27bc079159f",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 475,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "1fc8f220a9516b6178f5a1bda6b5ca74a8417c8e16a8c1c12087c07462fb8091",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"ledger-service error\"}"
+        },
+        "tokensIn": 532,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "b532ead7fb19c9c913307e9cd99a53acb703488b12ed7dde7277b2446a72ce73",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_gc_pause_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 640,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "b4ba34c1095b8a3d59c9e85b29c17d2c806bb87316498a81be7acd31aad7901f",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 696,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "e24fb4be997cbffb50af83d926c450de67fd38268feb6faf31dafaa736ab1eb4",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"ledger-service\",\"replicas\":8}"
+        },
+        "tokensIn": 749,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "833c46b78399adf4b393e54f2d4b89b79d9e645a69c8fbd18e4a50faf419d2a0",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are mitigating elevated latency in the ledger service by increasing capacity. Performance should improve shortly.\"}"
+        },
+        "tokensIn": 792,
+        "tokensOut": 31
+      }
+    },
+    {
+      "key": "c449155e729d05c183653940b354be6b170eeac273394c9c4fd2f0fcbf9b0c7d",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 836,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "7a66d326e2825ad065b96ab3dfc85cd189ebc1e7c702c75a18ef9f5e17aa8662",
+      "turn": 15,
+      "response": {
+        "text": "Diagnosis:\n- The ledger service was experiencing high latency (p99 = 3400ms, SLO = 300ms).\n- Logs indicated excessive GC pauses (up to 1.9s) and that only 3 replicas were running, despite a capacity plan calling for at least 6 (8 recommended) during high load.\n- The GC pause metric confirmed sustained high pauses, and the replica count was below the recommended level.\n\nRemediation:\n- I scaled the ledger-service from 3 to 8 replicas to match the expected load.\n- Posted a public status update to inform customers of the mitigation.\n- Latency has since dropped back within SLO (now 240ms p99).\n\nSummary: The issue was caused by under-provisioning during a high-load period, leading to GC pressure and high latency. Scaling up the service resolved the problem.",
+        "tokensIn": 892,
+        "tokensOut": 175
+      }
+    }
+  ]
+}

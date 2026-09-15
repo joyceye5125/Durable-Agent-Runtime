@@ -1,0 +1,136 @@
+{
+  "config_label": "double-check",
+  "task_id": "incident_model_server_hang",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "18d4ef692a4e6f1c85f7366a9ee5cbc7fabf6a754350cac299ec615e26a65168",
+  "recorded_at": "2026-09-14T02:42:24.583Z",
+  "entries": [
+    {
+      "key": "2d72857f715ef78b862cceeea807649ff5477e0482724e2d5db01b4326d7fdb3",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_check_timeout_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 816,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "96c6f20fef12abcbca0279d7f3fd212b4752ed870610b0b74904541436261418",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_model_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 875,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "64b7533ac5eb19633c16d2a1de0460611ed9a488e9833ad338ff3e59becc9e07",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"feature_store_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 935,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "dd59930b27af731df47c7daa1bb58b0b89714b9b2c4b4169127ce5a67ef77efa",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"fraud-check timeout\"}"
+        },
+        "tokensIn": 990,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "1ef01f1b701b9fd4292a586507b999cf4222f12caa3b599ca90f956bb06d56b5",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"fraud-model error\"}"
+        },
+        "tokensIn": 1100,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "8c500f4696d239825e2a3959e092a100cead678cbacbdd131cfe7046a87c4c00",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"fraud-model\"}"
+        },
+        "tokensIn": 1210,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "d099bf4cff4e968503a5acf574a672236b0b84724c6cf21986c7f395b7db857b",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_check_timeout_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1246,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "9249ba1da71ce2c3baf4124af71fa1f0990c3b36d70358ab86b880a7a9d1474a",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_model_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1305,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "d69e6db95b7878b58c0216810469ae81ea1aa37ed6d53bde3d84f19391f35cf4",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: Fraud check timeouts caused by a hung inference worker in fraud-model. Service has been restarted and is operating normally.\"}"
+        },
+        "tokensIn": 1363,
+        "tokensOut": 39
+      }
+    },
+    {
+      "key": "050153621de1e8878ca08bea5f5960f1842a9d03a4b540792655f852e1fabd14",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The fraud-model service experienced a CUDA device-side assert error, causing its inference worker to hang and resulting in high fraud check timeouts.\nAction taken: Restarted the fraud-model service to clear the hung worker.\nAffected service: fraud-model.",
+        "tokensIn": 1415,
+        "tokensOut": 52
+      }
+    }
+  ]
+}

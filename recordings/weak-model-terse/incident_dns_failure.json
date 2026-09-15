@@ -1,0 +1,71 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_dns_failure",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:31:35.427Z",
+  "entries": [
+    {
+      "key": "be815d4c0f80bd180fe015a722699691206154b878151fc87de3819c172f7d94",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"outbound_http_errors\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 462,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "5817607c88012eefc3163009322a28c9e3b639003c7024e0756d1dccec3343a7",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"outbound_http_errors partners\"}"
+        },
+        "tokensIn": 519,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "fb03b58a60aaa7958882a1cb07f819548192a60484d998d58f3dd6a38c473b63",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"partner-sync\"}"
+        },
+        "tokensIn": 609,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "34eefa3c757bfd9836b70aeae13a7fe347b1c5b417e300b68889257a11648e14",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We observed a high rate of outbound HTTP errors (64%) to partner integrations. The partner-sync service showed DNS resolution errors (EAI_AGAIN) for partners.acme-logistics.com. We have restarted the partner-sync service to clear potential DNS cache or transient issues. Monitoring continues.\"}"
+        },
+        "tokensIn": 643,
+        "tokensOut": 70
+      }
+    },
+    {
+      "key": "6a6f8e8965e2af81aece05855b80aff7159af8c4d165537b79f61f852b7e1380",
+      "turn": 9,
+      "response": {
+        "text": "The alert indicated a 64% error rate for outbound HTTP requests to partners. I checked the outbound_http_errors metric and confirmed the high error rate. Logs from the partner-sync service showed DNS resolution errors (EAI_AGAIN) for partners.acme-logistics.com. To remediate, I restarted the partner-sync service to clear any DNS cache or transient issues. I also posted a status update to inform customers of the situation and ongoing monitoring.",
+        "tokensIn": 726,
+        "tokensOut": 90
+      }
+    }
+  ]
+}

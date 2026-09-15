@@ -1,0 +1,71 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_cpu_throttle",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:31:20.271Z",
+  "entries": [
+    {
+      "key": "9edc4b9c103581cb8d86ff771812f9e03687f959005def745ccffca1eb982740",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 479,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "1976b081de5b9a853909c7c83a2f0af771f03bb0127857862ae79eb0d2c391a1",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"image-api timeout error\"}"
+        },
+        "tokensIn": 537,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "f221a11acb4ec7960638e831408a081a4199f1e145634efa39a96b68242dfd98",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"image-api\",\"replicas\":5}"
+        },
+        "tokensIn": 663,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "a0a7aa2645e1616097e822786d22001d3af430dbdd3512a1ece58f172323d7f6",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We observed high p99 latency (5200ms) in image-api due to CPU throttling during a bulk import. We have scaled the image-api service from 2 to 5 replicas to handle the load and reduce latency.\"}"
+        },
+        "tokensIn": 706,
+        "tokensOut": 59
+      }
+    },
+    {
+      "key": "78bf10ba854cfacc9f5c596a59b92063833c8d0a861c8605970774cca61bd91e",
+      "turn": 9,
+      "response": {
+        "text": "The image-api p99 latency reached 5200ms, coinciding with CPU throttling warnings and a bulk import of 180k images. The image-api service was running with 2 replicas, which was insufficient for the load. I scaled the image-api service up to 5 replicas to reduce CPU throttling and improve latency. A status update was posted to inform customers of the mitigation.",
+        "tokensIn": 778,
+        "tokensOut": 80
+      }
+    }
+  ]
+}

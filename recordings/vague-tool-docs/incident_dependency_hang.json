@@ -1,0 +1,123 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_dependency_hang",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T10:33:40.054Z",
+  "entries": [
+    {
+      "key": "0e4f85b9d3322aa23083a1a806320e2d61c7bc9248260e875c26b69ff8eda729",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"gateway error\"}"
+        },
+        "tokensIn": 662,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "0597f2e1326d313fda3f607ee55ac26dbf68ec8bd4d55ec5f2cfe28ea84b4d94",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"recommendations error\"}"
+        },
+        "tokensIn": 745,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "dbdd2af82b0b31b3d0dbcf603655ed67030343c305fe187599c0cb1bd634526c",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"recommendations_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 829,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "8528e4027b211ea6f71495a94b28a7db0536ce1e92f84f4467ce33ec3f0e4898",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"recommendations\"}"
+        },
+        "tokensIn": 887,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "a4f406f3081d6e13102297f4d37caccaef20c9667c584c4ee8590b5ea985ebc3",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"gateway_5xx_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 921,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "9dfe3d0e1a3884298f6fff081a90ea81b23c3161930e5aa1fce24d72167bd2a1",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"recommendations_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 980,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "fd81c39cec1b139d66573f54b649f2de14c78d8dc3e2c0db2be3c5fa2887f790",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"gateway_5xx_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1036,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "c5029f47f3be5e92c5e8cb50b6ac17c17d1a5c7d15c43160133b7f066f7e392c",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident mitigated: recommendations service deadlock caused gateway thread pool exhaustion and high 5xx rate. Recommendations restarted, metrics normal.\"}"
+        },
+        "tokensIn": 1114,
+        "tokensOut": 39
+      }
+    },
+    {
+      "key": "8d2d74276232395d84e41d11b5fcdc3caae9bb799bfcac8d2d5875118f9b370c",
+      "turn": 17,
+      "response": {
+        "text": "Root cause: The recommendations service experienced a deadlock, blocking request handlers and causing the gateway thread pool to exhaust, resulting in a high 5xx error rate.\nAction taken: Restarted the recommendations service to clear the deadlock.\nAffected service: gateway (impacted by recommendations).",
+        "tokensIn": 1166,
+        "tokensOut": 58
+      }
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "config_label": "no-investigate-first",
+  "task_id": "incident_disk_full",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "2e253278b6d31fea20007b48521dc424d8a39dda9daa309713c13dc9654ce89d",
+  "recorded_at": "2026-09-12T22:39:09.911Z",
+  "entries": [
+    {
+      "key": "3b0cb1f55d15ae511cbb7498c73802f94a8b827541184434e83d0a0591df4e55",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"storage-1 disk full OR no space OR disk usage OR /data\"}"
+        },
+        "tokensIn": 785,
+        "tokensOut": 27
+      }
+    },
+    {
+      "key": "b0f4e584423ea4d4624ebae82dd17a7382c9ea72434af3f45239a01e037a6217",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_rotator_last_success_age_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 978,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "91069f605a6ceb2fde5db9cfc0c48af3baa0a0749dd191c00cf09e890b729c95",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"log-rotator\"}"
+        },
+        "tokensIn": 1038,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "a3519e701ab2a9f9e3996a1a2cb693cfa881a5742e292490dbb7b858660fb0bf",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"disk_usage_data\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1076,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "53956ac6e2d1fecd8b161d6e83902ffcbe268bfa29e6850fa035dbf2423114c3",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_rotator_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1131,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "d40388623d3b366ff41f0e4e4e1e7db8306601806ef37c2672eecb795801644a",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Resolved storage-1 /data disk usage incident: log rotation was stuck, causing disk to fill. Rotation restarted and disk usage is back to normal.\"}"
+        },
+        "tokensIn": 1189,
+        "tokensOut": 43
+      }
+    },
+    {
+      "key": "bf4a4d8e641e392e7cce80f8c0830f49dcc1c2631bb92d55197ff58f4fb1628d",
+      "turn": 13,
+      "response": {
+        "text": "Root cause: The log-rotator service was stuck due to a stale lock file, preventing log cleanup and causing disk usage on /data to exceed threshold.\nAction taken: Restarted the log-rotator service, which cleared the stale lock and resumed log cleanup, reducing disk usage.\nAffected service: log-rotator (impacting storage-1 /data partition).",
+        "tokensIn": 1245,
+        "tokensOut": 76
+      }
+    }
+  ]
+}

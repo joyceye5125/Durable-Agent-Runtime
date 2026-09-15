@@ -1,0 +1,84 @@
+{
+  "config_label": "no-status-update",
+  "task_id": "incident_split_brain",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70a689f783281f39d436d765aaf486317dbba515e634a87d6f6b9c10ce390dd7",
+  "recorded_at": "2026-09-13T03:30:03.900Z",
+  "entries": [
+    {
+      "key": "d7d160c5b07f154a49d59dd821e265843b25f8305876a03246b8330cedaff848",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"scheduler_leaders\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 769,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "17a8d464c165a5c28e95dfdaef6f80c9cdd796733fc6b36f067c5c7d7845c795",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"scheduler leader election\"}"
+        },
+        "tokensIn": 818,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "92585f11e6bb10be5fd37e6febafe0628c9ce8dc39f20a22eb57266e0bda8b54",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"etcd error\"}"
+        },
+        "tokensIn": 915,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "62f24b472c42e973c7f933c751f98ba1d07643720c65fd4848b776f43adb7ed9",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"scheduler\"}"
+        },
+        "tokensIn": 986,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "228cfd50038815daa73fab6cb99243e2b2a87d32259095279d3d08108cc7ee69",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"duplicate_job_executions\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1018,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "a8871c8c60a711c3f3644354e3be4b60442fb953370ff612cbe3529869979a6c",
+      "turn": 11,
+      "response": {
+        "text": "Root cause: Both scheduler instances held leadership due to a stale leader not stepping down after an etcd network partition, causing duplicate job executions.\nAction taken: Restarted the scheduler service to reset leadership and resolve the split-brain.\nAffected service: scheduler.",
+        "tokensIn": 1071,
+        "tokensOut": 52
+      }
+    }
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "config_label": "status-early",
+  "task_id": "incident_cache_and_capacity",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4b9140b1ed8e0b227987537032b250ec208630bd67dbe1414d61fb7668885a19",
+  "recorded_at": "2026-09-15T03:59:21.282Z",
+  "entries": [
+    {
+      "key": "05c5c7e34ca4836f5acc5df6b5458aeea05a90683e11e26ade73aea374aa736d",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Investigating elevated latency and CPU usage for pricing-api. Diagnosis in progress.\"}"
+        },
+        "tokensIn": 823,
+        "tokensOut": 28
+      }
+    },
+    {
+      "key": "8770e2d8aaaadca77b49a1babcc0e601438492abd2f2178808518d9d15f33af0",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 864,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "abfde7ce80e942245bd6f0f53910aab2bb337a120436a395c01f9b73cd41cab7",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_cpu\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 922,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "30026480692a755547a3426773079430774bf96fe3745dfe4179266077a8653d",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 977,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "c9476efd98fbb9ea8b36cd3c29499d755a4d7a2d5bb02f5ac993551af30f1174",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"price_cache_hit_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1030,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "e4627c2f6796e496cd09cac7198bbc3d62bb95a97050919a5f378909d7dc895e",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"pricing-api error\"}"
+        },
+        "tokensIn": 1081,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "e9205f14e7be45a344848f28f9491bad439818dc2b32910bcd06dca42465f7c4",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"pricing-api\",\"replicas\":6}"
+        },
+        "tokensIn": 1201,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "de53868e76132345c80c87dd4ed506b24abb0a8d1158c294728a4ee744cf97ee",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1244,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "83e263660f5bc8888c6235e7c8e262dc45e01c0d0f0bb8dfc8947584ad4457b9",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_cpu\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1302,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "45f9bb894dfb808e7d6bb2952554ebb06e394c9f6f0351d21961ff2c5650c1a5",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1357,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "113aeaa5f585f3e11054134cd3ad6fb87b75c295f15663f0854644b9a297b16f",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"price-cache\"}"
+        },
+        "tokensIn": 1434,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "e88ef93d7d652e11dabedf6f7ad59da99cb059ac6f8c0a9f9cb8916e602f2071",
+      "turn": 23,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"price-cache\"}"
+        },
+        "tokensIn": 1516,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "eff42a9465e8b8041f4d60146ea7cd41a9a1578775ebe2c6dc981b63e3d6ba59",
+      "turn": 25,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"price_cache_hit_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1550,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "930d68d6345f8f13b7ab68b8b0c5c1f476b4d7c2757f0832f160c864e240e73f",
+      "turn": 27,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1605,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "ab6e8457a340aedcffd28fb53aaf66cb21f5ca96eae3f99e6086752d2b46674e",
+      "turn": 29,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_cpu\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1661,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "fad544263abd7bc145a86b7e2219ffd51260b821f043d100fc45bdf84fcb28cb",
+      "turn": 31,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: pricing-api latency and CPU returned to normal after scaling up and restoring price-cache. Monitoring continues.\"}"
+        },
+        "tokensIn": 1716,
+        "tokensOut": 35
+      }
+    }
+  ]
+}

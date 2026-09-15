@@ -1,0 +1,162 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_crashloop_image",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T09:57:47.162Z",
+  "entries": [
+    {
+      "key": "1ee96f5803297b02b8412db59c3f8c921fa27e7b021353b0e5130390070bd8a0",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"pdf-renderer\"}"
+        },
+        "tokensIn": 657,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "0f159fa5318dfcf2e5e93e77e7c04ab4af0cb792335a387fbda6aa2c7ed60d4c",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"NotoSans-Regular\"}"
+        },
+        "tokensIn": 813,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "046604cf0c18b8b71efb837e31e6f383157116722bc6338d97ef617ea537b34a",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"deployer\"}"
+        },
+        "tokensIn": 908,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "02304aabfa6349d1d290addc13a0b6afbeef0a11ab75aea38bc37707c154ea9d",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"pdf-renderer\"}"
+        },
+        "tokensIn": 973,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "56e9caeefda76b8b9a754627b969ddda9ab0431dc8832add4fd8aa76a7ff31e0",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pdf_renderer_restarts\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1009,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "c7e116861d0872bc3f24d6f47a254c8fc5cb6869ece2fcf742e4823bfd6fcdfa",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pdf_renderer_restarts\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1060,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "509e91b9eb2fca3dca01bc7ecd4f19ef9fc44fc8e7716483a24d487ae16225b9",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pdf_renderer_restarts\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1111,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "538377e5da099753fdd3dc47d211fa5ed5bc4bd7cc88077fc49007c5e455181c",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"pdf-renderer\",\"replicas\":2}"
+        },
+        "tokensIn": 1181,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "ed0c0b9e48b70ba066545ebc4383a5789badf23297ca21f806b8181516001380",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pdf_renderer_restarts\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1226,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "14ef86371e7dfceb46aa0640ab18bfb05bcae7a9eb6475d2cf79a7085feaba61",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"pdf-renderer is repeatedly crashing after a recent deploy (v3.2.0). Logs show fatal error: missing required font 'NotoSans-Regular' in the image. Restart and scaling did not resolve. Needs image fix or rollback.\"}"
+        },
+        "tokensIn": 1296,
+        "tokensOut": 63
+      }
+    },
+    {
+      "key": "da0ccc781cb9f98ce12407472dd8801d7838b139b2af49a0b109bc32364d2103",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Paged on-call: pdf-renderer is crashing due to missing font after deploy v3.2.0. Restart and scaling did not help; image needs fix or rollback.\"}"
+        },
+        "tokensIn": 1383,
+        "tokensOut": 48
+      }
+    },
+    {
+      "key": "ed0348c10ed7f7d6ecfe641cc277e7054c26159b2a09c798c7de7550b24770c1",
+      "turn": 23,
+      "response": {
+        "text": "Root cause: The pdf-renderer service is crashing due to a missing required font ('NotoSans-Regular') in the newly deployed image (v3.2.0). \n\nAction taken: Restarted and scaled the service, but the issue persisted. Paged the on-call engineer as remediation requires an image fix or rollback.\n\nAffected service: pdf-renderer.",
+        "tokensIn": 1444,
+        "tokensOut": 74
+      }
+    }
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "config_label": "both-windows",
+  "task_id": "incident_memory_leak",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "da0cdfc5b92ab330d67c566b641281c3b5c2ff73079adb94125b08ee4bc6298c",
+  "recorded_at": "2026-09-14T02:43:42.477Z",
+  "entries": [
+    {
+      "key": "699f0f6f95c05c648422f6e492aa081d76cb938dbe69fd9d410f2f8d64d43b39",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"container_oom_kills\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 820,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "c5a17e6e458ae389bfb13243159b9daf795303b2fa29488ae15d03e59a84d341",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"container_oom_kills\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 873,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "6d68f16d72c7874ac537072389e19a162529bc5903c3965b5ddfc800125f2e72",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"thumbnailer_memory_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 926,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "ccc19f2275edc49e4e3a16a9ed803f4dc0a7a8c666996e91c3523737deb65ee7",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"thumbnailer_memory_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 983,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "f4c5751a09e4ed1a1f56c2f167fad06c9dfa3ea2568f1097fad4469ca820ddb1",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"thumbnailer OOM\"}"
+        },
+        "tokensIn": 1040,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "dfe8be943a22a03c3133f62bd1ad9f0490157dffd878a9941a135ea980a1f916",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"thumbnailer\"}"
+        },
+        "tokensIn": 1191,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "87c172bd797598ce92579a1d6637b2d4455ae76b04be647b9ad0f3ff3480f875",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"container_oom_kills\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1225,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "38cb86e2649944791ccdc98554ba5df977ee9372b88c5cd295eae747ff008bef",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"thumbnailer_memory_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1278,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "c35ffff23e0ee4dce9bdf75ebb08ed182814a2030096ab6765c5f82427bcd3d8",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"container_oom_kills\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1335,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "9095d90cadd0111a6b8fe3a6b06be5fbce9460fe144195a7363cb10d414e88a8",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1407,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "467c84022dd9fd256d25b89b8dd71b3a049721f8881d26c621156ba72969e68c",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1462,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "728616077801166b8dc1e4cbf6505c727883d494dad9f9d95eb584578cecf15a",
+      "turn": 23,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"media-store OOM\"}"
+        },
+        "tokensIn": 1517,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "285e2b420519cbba0e7b9e3783d84c716907f63a10edf28cd50a9c4028b4d97d",
+      "turn": 25,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"api OOM\"}"
+        },
+        "tokensIn": 1624,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "e0a8eec90e3b5ca6bc8e9f0395fbe402b3912c7b32fd1418c1113484a11a9a9a",
+      "turn": 27,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"cdn-purger OOM\"}"
+        },
+        "tokensIn": 1727,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "96a27840f60c9df22e3b2363c7ad74da7fa2b48422ab148582e5a2931b301b47",
+      "turn": 29,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"media-store error\"}"
+        },
+        "tokensIn": 1831,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "f38cc098798e5afe9d51780ed1fc6437779a120882a943ae52424d63eb2dd514",
+      "turn": 31,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"api error\"}"
+        },
+        "tokensIn": 1937,
+        "tokensOut": 15
+      }
+    }
+  ]
+}

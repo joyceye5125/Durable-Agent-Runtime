@@ -1,0 +1,97 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_cache_and_capacity",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:31:13.205Z",
+  "entries": [
+    {
+      "key": "80897cb4cad93e447640323b089858bd741da8f8497f54114475a430eb8df813",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 476,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "0ba380b945e62daf598c80c24ba9b36f692eadd654fbe258e6df32f03b53deff",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_cpu\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 534,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "b522f9a1c3342b79f593ce1f98e638c0bc43822648bb79b334b72fe3342ad2b3",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 589,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "80caf16fc9822ec0bbdbd865f156ec54e77c568381284b81b6d0d256659b3750",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"pricing-api latency high CPU 96%\"}"
+        },
+        "tokensIn": 642,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "fe35e93a84f61c74e17b080fcb04f394f37c7891cd03316b4fac0f4eff14a72e",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"pricing-api\",\"replicas\":6}"
+        },
+        "tokensIn": 767,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "27f17ee937d63c28aa75c61978942b80ec1f09f7b20cb49d7bcb8c831b2fcddc",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We observed high latency and CPU usage on pricing-api due to increased traffic from a flash sale. The service was running with 3 replicas, below the recommended 6 replicas for such traffic. We have scaled the pricing-api service to 6 replicas to handle the load and reduce latency.\"}"
+        },
+        "tokensIn": 810,
+        "tokensOut": 70
+      }
+    },
+    {
+      "key": "aeac38eef33e03c4a388d61ad830c0b1d19e5d91faeae48da03ce2932e07aee6",
+      "turn": 13,
+      "response": {
+        "text": "The pricing-api service showed increasing latency (up to 2600 ms) and high CPU usage (96%) over the past hour, with a constant 3 replicas running. Logs indicated a flash sale causing 2x traffic and a runbook recommendation to run 6 replicas during sales. I scaled the pricing-api service from 3 to 6 replicas to handle the increased load and reduce latency. A status update was posted to inform customers of the mitigation.",
+        "tokensIn": 893,
+        "tokensOut": 93
+      }
+    }
+  ]
+}

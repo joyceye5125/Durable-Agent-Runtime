@@ -1,0 +1,136 @@
+{
+  "config_label": "weak-model",
+  "task_id": "incident_dns_failure",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "e902a1553c56f907d9306fe4ab57d9fe1cd263f3131f0d39d3d35e98d3014e91",
+  "recorded_at": "2026-09-12T22:30:07.053Z",
+  "entries": [
+    {
+      "key": "6e0e6baade2d235a3be87ea502882a67b226bc1f72224b17b7194dcc5612061f",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"outbound_http_errors\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 788,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "be4b5f381bb093f8ad9dc4ae37280ef8309b122ef8cf91ce8f8f5ebed67015ee",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"outbound http error partner-sync\"}"
+        },
+        "tokensIn": 845,
+        "tokensOut": 19
+      }
+    },
+    {
+      "key": "0087bbb461f23efd1cbb75910ae25b99d5a2e08e11ad6b6da1b22d22f1933d01",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"partner-sync getaddrinfo EAI_AGAIN\"}"
+        },
+        "tokensIn": 936,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "c365fcb29494fe3c85a4b29af2478b4af9e8b3cb29b81c6355f060c35837012f",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"coredns_servfail_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1047,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "89e22e82a3950a923783be7e8790c16ca5c9d6334b54e33995457ec0a98d5440",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"coredns\"}"
+        },
+        "tokensIn": 1108,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "806d9c0f5fbeaa933430736e513cb2518b4b9e227de390152d50e590e968bec3",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"outbound_http_errors\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1144,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "c7ffbeb3f5e3c9351d801d3d771ce2754332f0c3a657ed4021aa008a22f50920",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"coredns_servfail_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1201,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "cf40d1aa7a25f5d78de20df018a382e011fe41b3472800d3aed6ef4c08d90160",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Partner-sync service outbound HTTP errors to partners are high (64%) due to DNS resolution failures (getaddrinfo EAI_AGAIN). CoreDNS service shows elevated SERVFAIL ratio and restart did not improve it. Please investigate DNS infrastructure issues.\"}"
+        },
+        "tokensIn": 1262,
+        "tokensOut": 62
+      }
+    },
+    {
+      "key": "dad07d9b7dc0b2b3757a798511c75e7fd0fc0fffa009cced4ae4884afff739ea",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are experiencing high outbound HTTP errors to partner integrations due to DNS resolution issues. Our team is investigating the DNS infrastructure. We apologize for the disruption and will update soon.\"}"
+        },
+        "tokensIn": 1347,
+        "tokensOut": 47
+      }
+    },
+    {
+      "key": "3ddae223768926ae3364a28a17163d4b68383f3aac4f4d260a76d8254b850b50",
+      "turn": 19,
+      "response": {
+        "text": "The root cause is DNS resolution failures (getaddrinfo EAI_AGAIN) causing partner-sync outbound HTTP errors. CoreDNS service showed elevated SERVFAIL ratio and restarting it did not help. I have paged the on-call engineer to investigate DNS infrastructure issues. The affected service is partner-sync. A public status update has been posted.",
+        "tokensIn": 1407,
+        "tokensOut": 68
+      }
+    }
+  ]
+}

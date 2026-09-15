@@ -1,0 +1,136 @@
+{
+  "config_label": "status-early",
+  "task_id": "incident_cert_expiry",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4b9140b1ed8e0b227987537032b250ec208630bd67dbe1414d61fb7668885a19",
+  "recorded_at": "2026-09-13T05:43:58.132Z",
+  "entries": [
+    {
+      "key": "a629401253e12ed9cc7e308add4364e6347b0a2aa5c239622ba0cc914f9af729",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Investigating: HTTPS synthetic checks to api.example.com are failing from all regions. Diagnosis in progress.\"}"
+        },
+        "tokensIn": 808,
+        "tokensOut": 33
+      }
+    },
+    {
+      "key": "ebcedf85489906b649e606e1d7465c3bd966d233d17d2f12c1d9aaef98d03931",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"synthetic_https_success\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 854,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "e96fd708f2b90eb482375cbd92a6579e0ce35851a617d9a8375e4788de922083",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_requests_per_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 905,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "0710e666fec00f8087baa17834e35bb283f8bb69c8a71b2bc4b65104c6aa02a3",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"edge-proxy\"}"
+        },
+        "tokensIn": 956,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "4cff65fc3558075e79467f45e7a486176a071f6c1ce94b590c90e070ba913c4e",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"cert-manager\"}"
+        },
+        "tokensIn": 1055,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "c553e8b53052ace02e8106c81296f9b58cc397aba04e2f7911222fddc236098d",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"cert-manager\"}"
+        },
+        "tokensIn": 1187,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "62f8f1c4ea67785660e5dd384266b93c1720fed651a35898889e2edd8d683ed2",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"cert-manager\"}"
+        },
+        "tokensIn": 1221,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "c5c7a7b6690d59102d4a10391a98bdaea019b50fdec4ae53f8f0d28f32fbaa30",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Certificate renewal for api.example.com is failing due to DNS-01 challenge rejection (API token revoked). Synthetic HTTPS checks and API traffic are down. Manual intervention required to restore certificate renewal.\"}"
+        },
+        "tokensIn": 1387,
+        "tokensOut": 51
+      }
+    },
+    {
+      "key": "19376f85a5d45ea823284894872788ac4eb6c105bc2ba233f3c47e097c30a498",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident update: HTTPS failures for api.example.com are due to an expired TLS certificate. Automated renewal is failing because the DNS-01 challenge API token is revoked. Human intervention is required and on-call has been paged.\"}"
+        },
+        "tokensIn": 1461,
+        "tokensOut": 57
+      }
+    },
+    {
+      "key": "eb4b028d1bc1c817e0ceee843199d2c3fdeafa4819f1e3ba952a4471eb693f25",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The TLS certificate for api.example.com expired, and cert-manager is unable to renew it because the DNS-01 challenge API token is revoked.\nAction taken: Restarted cert-manager (no effect), then paged the on-call engineer for manual intervention.\nAffected service: api (and edge-proxy).",
+        "tokensIn": 1531,
+        "tokensOut": 64
+      }
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_dependency_hang",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:31:30.281Z",
+  "entries": [
+    {
+      "key": "5dc2d41555d02ff617f5f6d3bb2d6c7332a2cfc1f78a84c34f41f528e4efad56",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"gateway_5xx_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 468,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "d38c0d8bcbeb5e120ee3fe17cce72e13434268c6cfc70e05226d49078c295993",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"gateway 5xx error\"}"
+        },
+        "tokensIn": 527,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "14d63557b76f118b7aa7d74fb9a614e430965fea8d2cb83d87520288129250d1",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"gateway\"}"
+        },
+        "tokensIn": 613,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "090c0cfc3ecf01a08cd69561573572af50f430001ca7a481e3d714aa21af55f8",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"gateway_5xx_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 645,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "215b9da3552496debb40ba6b5f614d1b81ec8309c27a9a38f8933302c1c6620c",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Gateway service 5xx rate is high at 12% and thread pool is at 100%. Logs show thread pool exhaustion and deadlock in recommendations service causing request handlers to block. Restarted gateway service to clear thread pool. Recommend investigating recommendations service deadlock further.\"}"
+        },
+        "tokensIn": 704,
+        "tokensOut": 68
+      }
+    },
+    {
+      "key": "dd3d073eb5fdc07de6eaba8d9f4030788777ec4a45bfa97ac7f0204ccb526447",
+      "turn": 11,
+      "response": {
+        "text": "The gateway service 5xx error rate was at 12% with the thread pool fully exhausted. Logs indicated the gateway thread pool was maxed out with many threads waiting on the recommendations service, which had a deadlock causing request handlers to block. I restarted the gateway service to clear the thread pool and reduce errors. I have also paged the on-call engineer to investigate the deadlock issue in the recommendations service further.",
+        "tokensIn": 796,
+        "tokensOut": 86
+      }
+    }
+  ]
+}

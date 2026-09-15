@@ -1,0 +1,123 @@
+{
+  "config_label": "status-early",
+  "task_id": "incident_orphan_lock",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4b9140b1ed8e0b227987537032b250ec208630bd67dbe1414d61fb7668885a19",
+  "recorded_at": "2026-09-13T08:00:06.040Z",
+  "entries": [
+    {
+      "key": "c1031175ddd4343183566afa70e0df0a4caf1284e25dee149c39f354edebd3ad",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Investigating elevated inventory_sync_last_success_age_s alert. Storefront stock counts may be stale. Diagnosis in progress.\"}"
+        },
+        "tokensIn": 811,
+        "tokensOut": 36
+      }
+    },
+    {
+      "key": "a41e23ce76684b936b0f2c4fca73b816f2f5a1937718b0f1a474eb877526164b",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 860,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "e9252d983de5fe8bc53a649f8bbf8a4be2728fe2344d53ee08aa4f007122e47a",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"storefront_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 918,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "bb9cfd6bb14cf3aa855a6a685151eb597c2800c4e820e8a46f3677b0b5390b72",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"inventory-sync error\"}"
+        },
+        "tokensIn": 975,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "29f7a3142f933b0f81bff13cd46e48e00cd4335936cf31394108be1a8da95ce5",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"postgres advisory lock\"}"
+        },
+        "tokensIn": 1093,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "1001328f171186f76b4741fb56cf9dc5cdd041fdd2a991cac917fb34bf2096c6",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"inventory-sync\"}"
+        },
+        "tokensIn": 1232,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "11d44432213dab2a227179e759ccaa718c7408246d6fd5b85ae5086c399e792a",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1266,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "0af0a3c2d61e82dbb83ca86becf814f42fcbef14fb87d1e7e3f2afec38dafae9",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Inventory sync issue resolved. Service was stuck due to a held advisory lock; inventory-sync has been restarted and stock counts are updating again.\"}"
+        },
+        "tokensIn": 1322,
+        "tokensOut": 40
+      }
+    },
+    {
+      "key": "79fbecf47206cbf0d3ef3822a5ccde6a1f46891011a22bb092c7c7d5f6bcb2cb",
+      "turn": 17,
+      "response": {
+        "text": "Root cause: The inventory-sync service was unable to update stock counts because it was stuck waiting for a Postgres advisory lock left held after a worker panic.\n\nAction taken: Restarted the inventory-sync service to clear the stuck lock and restore normal sync operation.\n\nAffected service: inventory-sync.",
+        "tokensIn": 1375,
+        "tokensOut": 58
+      }
+    }
+  ]
+}

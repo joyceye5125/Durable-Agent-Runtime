@@ -1,0 +1,218 @@
+{
+  "config_label": "no-escalation",
+  "task_id": "incident_websocket_limit",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "28197b75a4e4fd6f25a9969b97c76246558aa3c6ac57ba09568d72954cdaf856",
+  "recorded_at": "2026-09-13T03:42:16.167Z",
+  "entries": [
+    {
+      "key": "4444ee5ce2c8cb0e2b91ba2e93839708a1f23c064d8c81791d1188b15449890f",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connection_rejections\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 766,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "efd106868f563a5293218dc0549f877b101d3b60c908382d672b44e7e6b5d204",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connections\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 820,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "2812d1fa789010ef750c6f40b95112f1d42cd17b0525aa569aad2c1262d3e872",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 872,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "b939dba62607b92fcbec72b795088abef63072400e60522b8a14467f6fc6abaa",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"realtime error\"}"
+        },
+        "tokensIn": 925,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "f827ab14e31052f8f7a3f0c801faecc766d7a318ec4b95d84942eb448d018075",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"realtime\",\"replicas\":8}"
+        },
+        "tokensIn": 1025,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "6ce7c26ed1f6e8cfdcb1254c08582a33255ec040003e1d3de7953d5d1fb92c6b",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connection_rejections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1068,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "f85dbc0d8e6a29625d97c30221777e120d747fd1bf576f76894c0c89f8aed224",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1122,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "3d82ceca869ae8ae6acc64754d7f1f0c5b2d4e4364b69cfad6e642c2402915c1",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1174,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "9f115536b3d303cf3753e8b4fe7bfed66ec9d75ea91f420817bafc44b6ac0b87",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"realtime connection rejection\"}"
+        },
+        "tokensIn": 1227,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "f60ca386c19e8d687b71bc15d949379581ed1f5d0deaa904f54f4f5748ee47ff",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"redis-pubsub error\"}"
+        },
+        "tokensIn": 1354,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "263c8a2bcb453da9f414759d39eae5fe15ac129317350b8007fe7bc40e625cbc",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"api error\"}"
+        },
+        "tokensIn": 1407,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "fe295028c2a5f6eed10f7ad4e38b8c19e32174a2881e6789e11cb1c270b92b44",
+      "turn": 23,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"realtime scaled\"}"
+        },
+        "tokensIn": 1451,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "ace28844e50db1909dec0cb73dae00313da6ae86171c7c6b7a4415b1566b230d",
+      "turn": 25,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"realtime max connections\"}"
+        },
+        "tokensIn": 1577,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "8e8120f769a95bbb01ff652615fa8ba8b5c75c95311b1493f53455a3234d7600",
+      "turn": 27,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"realtime limit\"}"
+        },
+        "tokensIn": 1704,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "2fe26d48c5ca82053d6dd3c95d87342b3f0c6ce4a2c467877658bcdfafcee177",
+      "turn": 29,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"realtime config\"}"
+        },
+        "tokensIn": 1830,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "778a46509936ec40a968a8ca7cfa4039afc2f189d479df5e4bdf0b1e6d845916",
+      "turn": 31,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Scaled realtime service to 8 replicas as recommended, but connection rejections persist and logs indicate the service is still at its max connection limit. Further investigation or configuration change is required beyond current automation.\"}"
+        },
+        "tokensIn": 1956,
+        "tokensOut": 53
+      }
+    }
+  ]
+}

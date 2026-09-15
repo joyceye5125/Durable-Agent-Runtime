@@ -1,0 +1,136 @@
+{
+  "config_label": "no-escalation",
+  "task_id": "incident_db_connections",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "28197b75a4e4fd6f25a9969b97c76246558aa3c6ac57ba09568d72954cdaf856",
+  "recorded_at": "2026-09-13T03:34:39.531Z",
+  "entries": [
+    {
+      "key": "b48076518126cab78fe16a8bbd2db8021d4bb414ffecf4c0ead36295403fca4e",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_connections\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 763,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "98cda64622b931fc343e53bacda9dfa025e9838ef578d9130f5288e6c4d015c9",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 810,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "de23c11515fe32f8d4e9d0ee4dacdbadbe3bf1b232d7a75f4244204b6f154735",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"too many clients\"}"
+        },
+        "tokensIn": 863,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "1828a3bebbe0cb19ac300b6e98c2cb9f0050a5ec31a2a618044763ff06fd233e",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"reporting-job connection\"}"
+        },
+        "tokensIn": 946,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "481787049905127be8141467014eaf9883771ddab49d320cc9aa77ad4ae1d9e6",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"reporting-job\"}"
+        },
+        "tokensIn": 1062,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "5e6a2684684987acc68709c6bc9f7baae683556b05d0c34c4343aada79aa618c",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_connections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1098,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "bd0264f610d5e992a21febfb63d9a069a69f936337c7aa55ac0d515721ad4e49",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1145,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "093b8330a32c9a4c055548df16cbccd730017bfa274a9355c859aebde8d966a1",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"checkout ERROR\"}"
+        },
+        "tokensIn": 1200,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "a349c48e1a8316dd4a168dbd2a101c6c772abee74a897001856adee54d60fd3e",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: checkout errors due to database connection exhaustion. Reporting-job was using excessive connections and has been restarted. Systems are recovering.\"}"
+        },
+        "tokensIn": 1252,
+        "tokensOut": 39
+      }
+    },
+    {
+      "key": "cf168865a2dd3ea70902bd5306a6de7948f9981a03e1bb2fe1ddfb088312aeb9",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The reporting-job service leaked database connections, consuming 340 out of 400 available Postgres connections and causing checkout requests to fail with \"too many clients\" errors.\n\nAction taken: Restarted the reporting-job service to release the stuck connections.\n\nAffected service: checkout (impacted by Postgres connection exhaustion).",
+        "tokensIn": 1304,
+        "tokensOut": 65
+      }
+    }
+  ]
+}

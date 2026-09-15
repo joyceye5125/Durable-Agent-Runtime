@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_cron_stuck",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T13:51:21.258Z",
+  "entries": [
+    {
+      "key": "976645f94138b84f8dfa32ba952cb2996e7c4edb5f32b790abbcdf9888f24afc",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"billing_cron_lock_wait_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 795,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "8ff7f27b869397720b05428171ab8b7e9aac14a544f2969a64f65a41339a3692",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"billing-cron error\"}"
+        },
+        "tokensIn": 853,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "0f7f83e25884d05ce88f3588821f0b6a5025be4a104886f41ac6d8c246d6d3eb",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"postgres lock\"}"
+        },
+        "tokensIn": 999,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "d9a4d06b9d64f55365a91de6d8e4a557ed382fa0de2dbf6540a9f0e19ee81208",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"billing-cron\"}"
+        },
+        "tokensIn": 1096,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "526e12bbc9ea0aba36d3b0acfd4375180067365613031921465556e089cd86aa",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"invoices_generated_today\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1132,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "6e961fb088c7e4dfce80fcf3d10ac67a65e962a5c54612558916c15bc05bc9aa",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Invoice generation was delayed due to a stuck lock after a host decommission. Service has been restored and invoices are now being generated.\"}"
+        },
+        "tokensIn": 1184,
+        "tokensOut": 39
+      }
+    }
+  ]
+}

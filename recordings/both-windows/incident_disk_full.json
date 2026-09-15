@@ -1,0 +1,136 @@
+{
+  "config_label": "both-windows",
+  "task_id": "incident_disk_full",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "da0cdfc5b92ab330d67c566b641281c3b5c2ff73079adb94125b08ee4bc6298c",
+  "recorded_at": "2026-09-14T02:43:14.284Z",
+  "entries": [
+    {
+      "key": "873b5ecf04a92db1d340a7b86e84dc8a8862286c9f639c3abeb103f0e6a9a641",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"disk_usage_data\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 827,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "ca6c112c0a577830fbecdcc2e41886691c7c34055f914a3aa0b38146a370230c",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"disk_usage_data\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 882,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "29bc9699b23f0c4bb6e542f6e35824f4e31348b6c5b0a2d39dc3874f81a2ac62",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_rotator_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 937,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "e7b3a4bd861056f90093c6fb155dfea25d372090ec71434ffa0126f18be269e8",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_rotator_last_success_age_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 997,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "9a2dfe0dfba2ac2f38c31342cc3912e07c95550e35f1aa54a9e472d826633cc1",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-rotator error\"}"
+        },
+        "tokensIn": 1057,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "206ced0cf91182a01edaafb916a1853e7c72793cf186b9c1f7ff32a463dd9199",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"log-rotator\"}"
+        },
+        "tokensIn": 1222,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "c9a13c9b18826161f5f2acdc7e2d970c28651f7ecdae9737bff2c8515fa14dd2",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_rotator_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1260,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "d176befa8103fa5d95f859c8fd4b57c900c77fec55acd7438ec8a138d97d1eb7",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"disk_usage_data\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1318,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "d211aa5f9eb910050d76149f02dbd53b30dd32031cc78a9dbcd67bdbbadad832",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Resolved: /data disk usage on storage-1 dropped from 96% to normal after restoring log rotation. No further action required.\"}"
+        },
+        "tokensIn": 1373,
+        "tokensOut": 40
+      }
+    },
+    {
+      "key": "faade480d6bfa6bcc71ea383484561264ec800c96aad18bd4116d657fd56f07f",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The log-rotator service was stuck due to a stale lock file, preventing log cleanup and causing disk usage on /data to rise to 96%. \n\nAction taken: Restarted the log-rotator service, which cleared the stale lock and resumed log cleanup. Disk usage returned to normal.\n\nAffected service: log-rotator (impacting storage-1 /data partition).",
+        "tokensIn": 1426,
+        "tokensOut": 81
+      }
+    }
+  ]
+}

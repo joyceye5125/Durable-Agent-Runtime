@@ -1,0 +1,36 @@
+{
+  "config_label": "terse-prompt",
+  "task_id": "incident_log_flood",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4de4998fc1fa00bfe8d09053dba69e56943d04c1af09a216ca4696695daa35a6",
+  "recorded_at": "2026-09-12T22:33:53.387Z",
+  "entries": [
+    {
+      "key": "7b17021e7963b4ee9217bbed04b69a1ef7c730957443dae4d9a805c32383ccfd",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_pipeline_ingest_lag_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 473,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "404a88b38e1409fd6108e193abf7038651683fa99efabd878556115eca870fb4",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_lines_per_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 533,
+        "tokensOut": 22
+      }
+    }
+  ]
+}

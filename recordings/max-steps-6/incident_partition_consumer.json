@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_partition_consumer",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T15:00:09.632Z",
+  "entries": [
+    {
+      "key": "cae2de7f5a28ee63fa10aada249d8a328cbbc5d7ae4dce21f8f077882b666f58",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"kafka_consumer_lag_p7\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 797,
+        "tokensOut": 26
+      }
+    },
+    {
+      "key": "a698cc1b17900317a5c1bfc1c030ff4783b50c89a39784c9fbc80cd59a8f6832",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"events-consumer error\"}"
+        },
+        "tokensIn": 862,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "499a213e0cbedb7bd06905a9129c59905042dca337d03dc29b488583310087c3",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"kafka partition 7\"}"
+        },
+        "tokensIn": 959,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "5e54a09adac9a7340cd8197c7a473236fb9f794305d78f7c34698dea645eba4f",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"events-consumer\"}"
+        },
+        "tokensIn": 1078,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "4a10d894f76e3db8fc5601dff4a25569c20ca1ee4e541e58235a58eeb47e10e1",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"kafka_consumer_lag_p7\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1114,
+        "tokensOut": 26
+      }
+    },
+    {
+      "key": "6b7a0c3aff1627e39b74483a610a61b2cb5a898f3ab3d963e7c886c1ec6eb67a",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"events-consumer partition 7\"}"
+        },
+        "tokensIn": 1179,
+        "tokensOut": 19
+      }
+    }
+  ]
+}

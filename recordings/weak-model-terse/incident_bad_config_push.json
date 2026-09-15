@@ -1,0 +1,84 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_bad_config_push",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:31:06.243Z",
+  "entries": [
+    {
+      "key": "8adeb44c84b6c79438bb5b72bf34e0c73c9f909d265db8e8a738a65edbedd200",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"edge_429_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 463,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "087ab332390abca88c9d856d6d3a781fb44679d56b3ed180c7885ec25c704554",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"429 rate limit\"}"
+        },
+        "tokensIn": 520,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "b73ba8198d335ad881cde60879a021982f4097d490238b7df9b472c4d1ae6502",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"edge-proxy\"}"
+        },
+        "tokensIn": 648,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "aa153589bb2ddd1395a4f041522fbf5f571b2a4b69640f98dfdb91c151d605dd",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"edge_429_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 684,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "9f97224c5a30e34fc367129623d1550199fb2e00853cac48916c9becdd94ae5d",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Edge proxy service was restarted to clear potential stuck state causing high 429 rate, but the 429 rate remains high at 71%. Further investigation or configuration rollback may be needed.\"}"
+        },
+        "tokensIn": 760,
+        "tokensOut": 50
+      }
+    },
+    {
+      "key": "8016e287f45a6a0b2902bbfbfd5d5e2d0c7550266f22ba87a77ddc2aa772d343",
+      "turn": 11,
+      "response": {
+        "text": "The alert indicated a 71% rate limit (429) rate on the edge proxy. I checked the recent metric and logs, which showed a recent config change drastically lowering the rate limit from 50/s to 0.5/s per IP. I restarted the edge-proxy service to clear any stuck state, but the 429 rate remains high at 71%. I have paged the on-call engineer for further investigation or to consider rolling back the config change.",
+        "tokensIn": 833,
+        "tokensOut": 95
+      }
+    }
+  ]
+}

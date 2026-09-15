@@ -1,0 +1,136 @@
+{
+  "config_label": "no-escalation",
+  "task_id": "incident_gc_pauses",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "28197b75a4e4fd6f25a9969b97c76246558aa3c6ac57ba09568d72954cdaf856",
+  "recorded_at": "2026-09-13T03:36:11.304Z",
+  "entries": [
+    {
+      "key": "eb18d2667205dd0418fa5bafd9fd95d88b729bd4815c5bbe7589f24ecba8e770",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 776,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "3bc8ee1198bcef142483425625e0ded57e7c80c422e4efbc88f87d415cf264b8",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_query_latency_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 833,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "894d5944c70887396bd2978396e34dde3f158663890b94d27e9648f372744f41",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_gc_pause_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 884,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "b73d64a438680a5e639e1773668540f2ec71521226bd8c45abdc1033c48c49c9",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"ledger-service error\"}"
+        },
+        "tokensIn": 940,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "70a82e0272b5d5d630a7f28bd849f592005908544452d13cd56780c212d07d78",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1048,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "ce8038d127726b8a455a70acda4c5e705c6ab47f90cd7b7e2a010964f371215d",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"ledger-service\",\"replicas\":8}"
+        },
+        "tokensIn": 1101,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "2c78e40db1d16e85964650d5ba1051bbcc234920d33468d33037a2375b664ed2",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1144,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "42a42a63205fb8a1f96721385f677c8335906770fd0522ccbac1e75d257e4feb",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_gc_pause_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1200,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "4325b3f86d9010309a3c5bd56b17aa3aac426057e9a91b8b526ce474a12b97a8",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: ledger-service latency and GC pause returned to normal after scaling up to planned capacity. Root cause: under-provisioned replicas during high load.\"}"
+        },
+        "tokensIn": 1254,
+        "tokensOut": 44
+      }
+    },
+    {
+      "key": "03760bfb17685ab47259f21ca175cac43dfb99e30bf776090a121e50c313ef03",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The ledger-service was running with only 3 replicas during a high-load period, far below the planned minimum of 6–8. This caused excessive GC pauses and high request latency. \n\nAction taken: Scaled ledger-service to 8 replicas, which restored latency and GC pause metrics to normal.\n\nAffected service: ledger-service.",
+        "tokensIn": 1311,
+        "tokensOut": 70
+      }
+    }
+  ]
+}

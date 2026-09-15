@@ -1,0 +1,97 @@
+{
+  "config_label": "weak-model",
+  "task_id": "incident_flag_sync",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "e902a1553c56f907d9306fe4ab57d9fe1cd263f3131f0d39d3d35e98d3014e91",
+  "recorded_at": "2026-09-12T22:30:10.125Z",
+  "entries": [
+    {
+      "key": "e92b844994921f49f74dc695df7d134fc2a0b23ef09d7f31080010155c61b500",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"feature_flag_staleness_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 804,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "b4da0e8cbe48ef78b6515444b3e72cd6763c842f55937959fd1bce5eb0679b59",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"feature flag kill switch flipped\"}"
+        },
+        "tokensIn": 862,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "4b2aac12ba2b69e252d04d50a716a02a9ca798242126dd977005c9707c1cb1a1",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"flag-sync reconnect\"}"
+        },
+        "tokensIn": 974,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "0e13996d17108e81ba411a032f50836163f438a241b23847280148ce614eb256",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"flag-sync\"}"
+        },
+        "tokensIn": 1084,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "4b220abf89c5c09bb9dabd42851832c448e7d1c4ab79393144cdc13fb7570a6b",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"feature_flag_staleness_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1118,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "5b3176c66029fa85b398e2d49c08159c9b60cc34291e17389799fd4f486cf3ee",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Issue with feature flag staleness caused by flag-sync service losing connection to flag-store. Restarted flag-sync to restore fresh flag updates. Feature flag staleness metric is now back to normal.\"}"
+        },
+        "tokensIn": 1174,
+        "tokensOut": 53
+      }
+    },
+    {
+      "key": "e134af8b1abcc364869eadf52421d97e490d38944a6ff8f9cb4cf2d1bf3c4250",
+      "turn": 13,
+      "response": {
+        "text": "The root cause was the flag-sync service losing its watch stream connection to flag-store and not reconnecting, causing stale feature flags. I restarted the flag-sync service to restore fresh flag updates. The feature_flag_staleness_s metric is now back to normal. The affected service was flag-sync.",
+        "tokensIn": 1240,
+        "tokensOut": 60
+      }
+    }
+  ]
+}

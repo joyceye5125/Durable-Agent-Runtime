@@ -1,0 +1,123 @@
+{
+  "config_label": "act-fast",
+  "task_id": "incident_dns_failure",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "0ef91e9b98682226cadbfb1c89908a3fb998975183386666b8c4a385a298b100",
+  "recorded_at": "2026-09-13T04:20:25.434Z",
+  "entries": [
+    {
+      "key": "0a59441508546c807fb4532d0ce53b02615bca0fd8b5f4fec0c3a6c72c5ca3dd",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"outbound_http_errors\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 810,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "785a6a67b453b81675843680fc9131923d9e8bb3eb1ccad54fb3a4bcfae552f0",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"partner-sync error\"}"
+        },
+        "tokensIn": 867,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "31fcf61b66a4e317aec306cac8fa78184b2762b840d35db55b8e00dd30b1aa43",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"coredns error\"}"
+        },
+        "tokensIn": 955,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "5af2a446d7c5ce4f5af88e1ac772b92e293abc20067a506933a30bb604cacf53",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"coredns_servfail_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1101,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "c467471e57289e3cb5f43f0c744ac6ab99111af5f29546865029831eddc3d26d",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"coredns\"}"
+        },
+        "tokensIn": 1162,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "c50de48845f8ef8d086cc8dc10e824fbf5bd802e34531c491262d193ae2b8ccf",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"coredns_servfail_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1198,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "2ca8756a5b2e748fb6e2e605e69965e6235e359f24b69d842da94f3e7f2a9b26",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Partner integration failures are due to DNS resolution errors (SERVFAIL) for partners.acme-logistics.com. coredns restart did not resolve the issue; SERVFAIL ratio remains high. Likely root cause is upstream DNS or authoritative DNS for partner domain. Manual intervention required.\"}"
+        },
+        "tokensIn": 1278,
+        "tokensOut": 69
+      }
+    },
+    {
+      "key": "3a932f1f17b6026de3cb8484f4d2524991c30902f5b5f6633661600eb07aa396",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are experiencing elevated partner integration failures due to DNS resolution errors for partner endpoints. Engineering is investigating with upstream providers.\"}"
+        },
+        "tokensIn": 1368,
+        "tokensOut": 36
+      }
+    },
+    {
+      "key": "7d4f0c5b16215ddb70444aea68043ba7cd1ce1cfcd5b4002a3f7c18ab7c396c8",
+      "turn": 17,
+      "response": {
+        "text": "Root cause: DNS resolution errors (SERVFAIL) for partners.acme-logistics.com, likely due to issues with the upstream or authoritative DNS servers. Restarting coredns did not resolve the issue. \n\nAction: Paged the on-call engineer for manual intervention, as the root cause is outside the scope of available tools.\n\nAffected service: partner-sync (and partner integrations).",
+        "tokensIn": 1417,
+        "tokensOut": 77
+      }
+    }
+  ]
+}

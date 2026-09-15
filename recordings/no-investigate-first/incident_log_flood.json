@@ -1,0 +1,101 @@
+{
+  "config_label": "no-investigate-first",
+  "task_id": "incident_log_flood",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "2e253278b6d31fea20007b48521dc424d8a39dda9daa309713c13dc9654ce89d",
+  "recorded_at": "2026-09-12T22:40:44.632Z",
+  "entries": [
+    {
+      "key": "ff23b36bed7e95ecfa03ae0d9696dcfdfb0013b013db708ff6507dc4e6004e7f",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_lines_per_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 779,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "89add20e4ac76b6dfcb014ebc6a50ef5d0324890e1b23f758d6dc39b24400b19",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_pipeline_ingest_lag_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 833,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "e54dbb72350c4eba2836088af19118a0473ac05d024fa1ac02c33bfd6fbcb4e4",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-shipper error\"}"
+        },
+        "tokensIn": 893,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "1840d55a6e67d008f2a5318e9ffc3da663d3e8a9e01e88b0e5498710520664ba",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"checkout-api log\"}"
+        },
+        "tokensIn": 1015,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "968a2651cdf5520271365d627aa07922e4b5e32fac24b6ef00ca60237d260e9e",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log level TRACE\"}"
+        },
+        "tokensIn": 1152,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "d1c5964d337cfbd72e53a43977bca9dc6d51b71c6a9caaf45c2aae1d57ef4e6a",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"checkout-api\"}"
+        },
+        "tokensIn": 1272,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "7fb8a6d21268b7423eb1456814cbf3a1997d6be5a2f4a71368b13b86fb0a97ab",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_lines_per_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1306,
+        "tokensOut": 22
+      }
+    }
+  ]
+}

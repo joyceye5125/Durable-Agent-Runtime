@@ -1,0 +1,97 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_websocket_limit",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:32:32.567Z",
+  "entries": [
+    {
+      "key": "caa797d584820c8c7b49de6f6618f1e48108f9421de209c0e824ffeda1bea7bf",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connection_rejections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 465,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "7150da500cf18d98d681e7384fe387b1525afec1f10928d1fa8680595936db04",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"connection rejection\"}"
+        },
+        "tokensIn": 520,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "cf5df0a79d466898ee4bf620417f3b57649f821a5f16b8015e6da7a1f4836d43",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 581,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "bf5058d8ae8be9d9169026ea5da3c976c89235ac5a413edc318b0f472047a2ad",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 633,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "af908ce56ae27b1ea3941d3eaade1a78164622dcb7c394c8cdd431096840c1a2",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"realtime\",\"replicas\":5}"
+        },
+        "tokensIn": 686,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "18461187b832930702548d3a6281e066237d2a49098c148de540aa1d76259435",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We detected high connection rejections on the realtime service due to max connections per instance reached. We have scaled the realtime service from 3 to 5 replicas to handle more connections and reduce rejections. Monitoring the situation.\"}"
+        },
+        "tokensIn": 729,
+        "tokensOut": 57
+      }
+    },
+    {
+      "key": "d2be92189531858d6478742685bd619fd8b8504c184e439ffb45b0e9125be5a0",
+      "turn": 13,
+      "response": {
+        "text": "The alert indicated a high rate of connection rejections (3800/min) on the realtime service. Logs showed that all 3 replicas had reached their max connections limit (20000 each). The realtime_connections metric confirmed the service was at full capacity with 60000 connections total. To remediate, I scaled the realtime service from 3 to 5 replicas to increase capacity and reduce connection rejections. I also posted a status update to inform customers of the action taken. I will continue monitoring the metrics.",
+        "tokensIn": 799,
+        "tokensOut": 103
+      }
+    }
+  ]
+}

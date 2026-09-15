@@ -1,0 +1,136 @@
+{
+  "config_label": "no-verify",
+  "task_id": "incident_db_connections",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "04ab737ad1f65dd2dbadefdff745d309e6cf95ecc3a369e8acc26c5ece16149d",
+  "recorded_at": "2026-09-13T02:21:46.313Z",
+  "entries": [
+    {
+      "key": "2a31a97f02f34e186da266d5e27d1d4fe72882e64d6a7ee391f2a13caab8c081",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_connections\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 736,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "4f06bf91b7c3233dcede9d991c5c3616b293a2fd3bac966fb28ed56f54e7c366",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 783,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "ea07508acbbfc0dfd0d5dcd37b26e327474bbbdbea931a27cda0d56e6c302c54",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"too many clients\"}"
+        },
+        "tokensIn": 836,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "6b8b6f478a5b1a31f60c718a74e4c83b7ccffdd7131ecba13b2467e6c2ade43c",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"reporting-job error\"}"
+        },
+        "tokensIn": 919,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "9cc3bf27396e11e9366f71a61e5062de1447ed940e00795c56b19cf07389feed",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_cpu\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1060,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "4c5ea8d716e4cd44656fb98e73c503d7a4ee51677f8abb7e3ef2ee4b16e5ff01",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"reporting-job\"}"
+        },
+        "tokensIn": 1113,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "0c5a0b2fc24c70e85f4205aa751adbc16112a7f4ff923df19949d4cc1330ae5b",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_connections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1149,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "f147d54b7ef716b467ec64fcc72e5f6b78781d653e94c3c0e4aeb08f358f0d1d",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1196,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "f01700918deb5e31a7cd205d4e659608c13e3389182279546101c0b67e3df45b",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: checkout errors due to database connection exhaustion. Reporting job was restarted to release stuck connections. All services operating normally.\"}"
+        },
+        "tokensIn": 1251,
+        "tokensOut": 38
+      }
+    },
+    {
+      "key": "03093be5c332ca39dc9edfbff6aa339a14e1536aebaec0a3730613acc63cc72b",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The reporting-job service leaked database connections, consuming 340 out of 400 available and exhausting the Postgres connection pool. This caused checkout requests to fail with \"too many clients\" errors.\n\nAction taken: Restarted the reporting-job service to release stuck connections.\n\nAffected service: reporting-job (impacting checkout and Postgres).",
+        "tokensIn": 1302,
+        "tokensOut": 69
+      }
+    }
+  ]
+}

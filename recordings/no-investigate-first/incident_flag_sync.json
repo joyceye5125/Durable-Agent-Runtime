@@ -1,0 +1,110 @@
+{
+  "config_label": "no-investigate-first",
+  "task_id": "incident_flag_sync",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "2e253278b6d31fea20007b48521dc424d8a39dda9daa309713c13dc9654ce89d",
+  "recorded_at": "2026-09-12T22:39:47.772Z",
+  "entries": [
+    {
+      "key": "d20c4d0e081afe51768de9f27d603705bc561a7dae670e210048db1705ba6c43",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"flag-sync\"}"
+        },
+        "tokensIn": 784,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "899f1409c8a6fa64ef664c5054c5044073e7948a29a3bff5a5b891d614acfd0c",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"flag-store\"}"
+        },
+        "tokensIn": 893,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "b81f9780f70205cd8ac7a09f82c64cf034e38481df81e586641fcaabc7a89e77",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"flag-sync\"}"
+        },
+        "tokensIn": 1002,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "958295a1525d961c2b914850caf979f281e64aa500bfa4908000b7b1c3ae93fa",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"feature_flag_staleness_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1036,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "c3a69669f3baf1c809f4cc9d87c8b8c8f5932b8f45a97d8af70e5fbc98241b98",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"web\"}"
+        },
+        "tokensIn": 1092,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "4ceab07f578ace428960a31ae2b2f894333a346c615285ad84ae44bd8fd6564b",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1170,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "fec2d05acc41f444e6caf8e74ca127834e44368a83b3cd687b209aa5d6c1cf5b",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"The feature flag staleness issue for the new pricing page has been resolved. Users should now see the correct page. Root cause was a broken connection between flag-sync and flag-store, which has been remediated.\"}"
+        },
+        "tokensIn": 1225,
+        "tokensOut": 57
+      }
+    },
+    {
+      "key": "4deb6a57053cde58c4ebf533c9cf9427977f944808775465704d9fe057790614",
+      "turn": 15,
+      "response": {
+        "text": "Root cause: The flag-sync service lost its connection to flag-store and stopped syncing flag updates, causing stale feature flags to be served by the web service. \n\nAction taken: Restarted the flag-sync service to restore the connection and flag propagation.\n\nAffected service: flag-sync.",
+        "tokensIn": 1295,
+        "tokensOut": 56
+      }
+    }
+  ]
+}

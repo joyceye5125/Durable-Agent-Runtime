@@ -1,0 +1,84 @@
+{
+  "config_label": "terse-prompt",
+  "task_id": "incident_queue_backlog",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4de4998fc1fa00bfe8d09053dba69e56943d04c1af09a216ca4696695daa35a6",
+  "recorded_at": "2026-09-14T01:29:00.316Z",
+  "entries": [
+    {
+      "key": "91c49c261c3d56617c1f43eeddbd033cc5cbb52453b132ac59e7833459932437",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_worker_throughput\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 469,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "0324d97ad191f46d8c697d747b2b15c7544dd2f085f65241aff384d7ec22a0a4",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"email-worker error\"}"
+        },
+        "tokensIn": 522,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "b6bae79fcfcc5388a011a6b1ba7607c44dad70a370867a79821c527fb6f7da88",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"email-worker\"}"
+        },
+        "tokensIn": 631,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "abb256d383c14e803b67eeda47e10c2cba608a5570989170ad21d3d09e69e163",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_worker_throughput\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 665,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "adb84f1e7804a382e5ab2fe13952ec524c5b80105a60afc8735c5949c9f2455d",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 720,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "934c2a814f7890e96554623d95ce6aee34f7828a1f15f043feb0015e7e7a71c2",
+      "turn": 11,
+      "response": {
+        "text": "Diagnosis:\n- The email queue depth was very high (91,000) and growing, with password-reset emails delayed.\n- The `email_worker_throughput` metric showed 0 emails processed in the past hour.\n- Logs indicated the email-worker was blocked on a stale connection and had not processed messages.\n\nRemediation:\n- I restarted the `email-worker` service.\n- After the restart, throughput resumed (1,900–2,100 emails processed in recent minutes).\n- The email queue depth is now rapidly decreasing.\n\nSummary:\nThe email-worker was stuck due to a stale connection. Restarting the service restored normal processing, and the backlog is clearing. No further action is needed unless the issue recurs.",
+        "tokensIn": 772,
+        "tokensOut": 145
+      }
+    }
+  ]
+}

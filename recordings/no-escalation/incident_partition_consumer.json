@@ -1,0 +1,110 @@
+{
+  "config_label": "no-escalation",
+  "task_id": "incident_partition_consumer",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "28197b75a4e4fd6f25a9969b97c76246558aa3c6ac57ba09568d72954cdaf856",
+  "recorded_at": "2026-09-13T03:38:50.718Z",
+  "entries": [
+    {
+      "key": "d1edbfc4e94a2a5c2429aa7249785bf8d6ae92325c14af533654c99d48713c65",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"events-consumer partition 7 error\"}"
+        },
+        "tokensIn": 772,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "0131c28ff6c419cc81c790e1c0abf0203f97db6e6f5d6b441d4200f0b525e9c0",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"kafka partition 7\"}"
+        },
+        "tokensIn": 872,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "ce7eb175ae300c32d2e442d5a6d98fe1a9dc024fa6a533e986fc3200470aa0df",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"events-consumer\"}"
+        },
+        "tokensIn": 991,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "5c09e9bee5767288e39ec26a842cc96c3373dad78b46b0788cbbad5eeaf23ca7",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"kafka_consumer_lag_p7\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1027,
+        "tokensOut": 26
+      }
+    },
+    {
+      "key": "c22c036e6c47fa0c058aad0ec15ca9ba5d5a65eb7feca0353f53fc5bac0aebea",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"events-consumer poison message\"}"
+        },
+        "tokensIn": 1092,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "58cf6b907b1466cde2b3d18f3fc16c1281898ea0b19f181d71d16fa6033b23b8",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"events-consumer is stuck retrying a poison message with unknown schema (v9) on Kafka partition 7, causing consumer lag. Restart did not resolve. Manual intervention required to handle or skip the poison message.\"}"
+        },
+        "tokensIn": 1232,
+        "tokensOut": 57
+      }
+    },
+    {
+      "key": "eea44a847ebc250d60464fedf89ad1804a0e1473effdd99e1bf6e185c283a716",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are investigating elevated Kafka consumer lag for one partition due to a stuck message. Our engineering team has been paged and is working to resolve the issue.\"}"
+        },
+        "tokensIn": 1310,
+        "tokensOut": 44
+      }
+    },
+    {
+      "key": "6102031068c6a00197a00b97090c476c7bc68e8578cf465d330345df2043a46f",
+      "turn": 15,
+      "response": {
+        "text": "Root cause: A poison message with an unknown schema (v9) at a specific offset in Kafka partition 7 is causing the events-consumer service to retry indefinitely, resulting in high consumer lag for that partition. \n\nAction taken: Restarted the events-consumer service (no effect), paged the on-call engineer for manual intervention, and posted a status update.\n\nAffected service: events-consumer.",
+        "tokensIn": 1367,
+        "tokensOut": 82
+      }
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_cron_stuck",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:31:25.375Z",
+  "entries": [
+    {
+      "key": "953eb4aac190c9b39da064cadaaeac52fe5a1696cb5617e28744f86f5af9ff7a",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"invoices_generated_today\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 469,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "8e13a015c3d6e628c27f57450b221b1f2ef10a7fe07a34475ea5d7501804f7c6",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"invoices generated error\"}"
+        },
+        "tokensIn": 520,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "dd11c5d791e81ce252aefe55298f18e44502b2ebe88929cea3aec9baaf7ea17c",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"billing-cron\"}"
+        },
+        "tokensIn": 648,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "ebd8370cfbde2dd412bb09ec56461ed1d665dfdf974c6d0044a3f4c6b78ec9d6",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"invoices_generated_today\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 684,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "50a8ea820cb08658b10bb24732fe3ad4d4864293ed4df3c1f9d2f9706fbe0550",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Issue with invoice generation caused by billing-cron service waiting on a stale lock from a decommissioned host. Restarted billing-cron service to clear the lock. Invoice generation has resumed and is now back to expected levels.\"}"
+        },
+        "tokensIn": 736,
+        "tokensOut": 58
+      }
+    },
+    {
+      "key": "c45c8a5fc070a9d50c8f954e5eb7b4a22226a3623de034e4a8ca7ff6152889d6",
+      "turn": 11,
+      "response": {
+        "text": "The alert showed that no invoices were generated today, expected around 4,000 by 10:00 UTC. I checked the invoices_generated_today metric and confirmed it was zero for the past hour. Logs from the billing-cron service revealed it was waiting on a lock held by a decommissioned host, causing the job to stall. I restarted the billing-cron service to clear the stale lock. After the restart, invoice generation resumed and metrics show invoices are now being generated as expected. I also posted a status update to inform customers of the incident and resolution.",
+        "tokensIn": 807,
+        "tokensOut": 115
+      }
+    }
+  ]
+}

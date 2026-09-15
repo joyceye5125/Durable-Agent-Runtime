@@ -1,0 +1,71 @@
+{
+  "config_label": "terse-prompt",
+  "task_id": "incident_orphan_lock",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4de4998fc1fa00bfe8d09053dba69e56943d04c1af09a216ca4696695daa35a6",
+  "recorded_at": "2026-09-14T02:42:02.543Z",
+  "entries": [
+    {
+      "key": "47d6bc4693c9271f41ccd54d636586b22cf60e63eff784329b3daa99bd3f4294",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 464,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "331b13ffd20e43d2fb390b5db6ae241ea9338250ab24791feae21bf66b7ab0bc",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"inventory-sync error\"}"
+        },
+        "tokensIn": 522,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "393d629d8432786a78036a925022ce8f05d657821b366c60d619b042157ebe19",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"inventory-sync\"}"
+        },
+        "tokensIn": 640,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "b00fde1e5ac5bf5e4423ca23e713d762ba6a51052d0f9d8d39821816d029b6e0",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inventory_sync_last_success_age_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 674,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "f2aea87bae9b6aa49aa2c3399497863e420d2c0140aa42e092b3e2096617ce2a",
+      "turn": 9,
+      "response": {
+        "text": "Diagnosis:\n- The `inventory-sync` service had not successfully synced for over an hour (last success age was 4200 seconds).\n- Logs showed the service panicked mid-transaction, leaving an advisory lock held, and subsequent sync attempts failed to acquire this lock, causing repeated skips.\n\nRemediation:\n- I restarted the `inventory-sync` service to clear the stuck lock and reset its state.\n- After the restart, the metric `inventory_sync_last_success_age_s` dropped to 30 and then 25 seconds, indicating successful syncs have resumed.\n\nSummary: The issue was a stuck advisory lock due to a service panic. Restarting `inventory-sync` resolved the problem and stock counts are now updating. No further action is needed at this time.",
+        "tokensIn": 730,
+        "tokensOut": 153
+      }
+    }
+  ]
+}

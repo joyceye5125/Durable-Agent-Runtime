@@ -1,0 +1,123 @@
+{
+  "config_label": "terse-prompt",
+  "task_id": "incident_healthcheck_dependency",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4de4998fc1fa00bfe8d09053dba69e56943d04c1af09a216ca4696695daa35a6",
+  "recorded_at": "2026-09-12T22:34:05.332Z",
+  "entries": [
+    {
+      "key": "22f2dda027324f2b3e8667e13163425c1578746e8770041ed7bb0a2b9ab6038c",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"api error\"}"
+        },
+        "tokensIn": 476,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "971008330c89184f9236be44664be6add4c833261f5c681dd8e99c38930c5d79",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"config-service error\"}"
+        },
+        "tokensIn": 609,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "f27ea8e58abc23dc3a45c07db480f7a0726e2950cc77a51216f0d7dfc0ef9e1a",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"config_service_up\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 697,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "83f469fe8763c476c2db4ce3b4cf322dac169eb92e86ae4db024b4f43907b14f",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"config-service\"}"
+        },
+        "tokensIn": 746,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "7feafdad086b21c7f622b51d135480360cea4a4f177ed87262359d2060a334e8",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_healthy_instances\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 780,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "c62c8f85c66cfcf673c25dbe88e7c9e85e5f5e220dfdd580b7d52de88cf1ff6b",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"config_service_up\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 831,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "bdcaa46fd9c1991c6a7ab87a78f71496cc8ec9ed6206848957a563370692e442",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_healthy_instances\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 880,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "dd383552c94bd2f8ff0ceca4185c8a723b242e34398df3622c02d640e8c178e2",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 950,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "96e9e81b396bdeb154778417d45dc9452e77772ad01cb745957c6ebc05035e50",
+      "turn": 17,
+      "response": {
+        "text": "Diagnosis:\n- The root cause was the `config-service` crashing due to \"too many open files,\" making it unreachable.\n- This caused the `api` service health checks to fail, leading the load balancer to eject most API instances, dropping healthy capacity to 3 of 12.\n\nRemediation:\n- I restarted the `config-service`, which restored its availability.\n- After the restart, the number of healthy API instances recovered to normal (12/12), and API latency dropped back to normal levels.\n\nSummary:\n- Issue was caused by a resource exhaustion (\"too many open files\") in `config-service`.\n- Restarting `config-service` resolved the incident and restored full API capacity. No further action is needed at this time, but monitoring for recurrence is recommended.",
+        "tokensIn": 1003,
+        "tokensOut": 157
+      }
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "config_label": "no-investigate-first",
+  "task_id": "incident_split_brain",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "2e253278b6d31fea20007b48521dc424d8a39dda9daa309713c13dc9654ce89d",
+  "recorded_at": "2026-09-12T22:43:47.444Z",
+  "entries": [
+    {
+      "key": "ac7fc81970901968921c78e50189c8a3fe8ac4fccd011d3f5d25f0a597069769",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"scheduler_leaders\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 770,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "4d615280139f280fcf32f86890a09ead66c45c92604bab4f39bd3fac491c2d1e",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"scheduler leader election\"}"
+        },
+        "tokensIn": 819,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "783a0d40cd1252e4d72ddcea97ae204e92fa70452429c67d4b3feeb9e4379bfc",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"scheduler\"}"
+        },
+        "tokensIn": 916,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "520af333c534dfeeaebb60ab408c211c3dd35a411b243d3bd7e05d92ae1991f5",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"duplicate_job_executions\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 948,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "90f20a70e4ec3fa9bb0fb6d0f2012ef4feb09548d994b2eb6749ea1fb435dfb6",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"scheduler_leaders\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1001,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "d8f854d35a53b92e63c9e02722d0462e4a2bc298e9408081e461e0a69c7913e6",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: duplicate job executions due to scheduler leader election issue. Service has been restored and duplicate reports have stopped.\"}"
+        },
+        "tokensIn": 1050,
+        "tokensOut": 36
+      }
+    },
+    {
+      "key": "11f13c2283db0a0ae9c40aebc49bfc0bc9ea8b9373ce1b47264b08a33d0a1e7f",
+      "turn": 13,
+      "response": {
+        "text": "Root cause: Both scheduler instances held leadership due to a failed leader election, causing duplicate job executions and reports.\nAction taken: Restarted the scheduler service to restore correct leader election.\nAffected service: scheduler.",
+        "tokensIn": 1099,
+        "tokensOut": 42
+      }
+    }
+  ]
+}

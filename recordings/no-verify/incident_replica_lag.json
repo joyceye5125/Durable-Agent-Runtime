@@ -1,0 +1,110 @@
+{
+  "config_label": "no-verify",
+  "task_id": "incident_replica_lag",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "04ab737ad1f65dd2dbadefdff745d309e6cf95ecc3a369e8acc26c5ece16149d",
+  "recorded_at": "2026-09-13T03:20:47.393Z",
+  "entries": [
+    {
+      "key": "ccd6954d40714a0b278cd9c0e81d5265bc82e1157bcd8828bc329189a359c709",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_replica_lag_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 743,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "53e696490ae29b676073757997c4d085f2e855fe414df135285b1ebbf3945964",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"replica-1\"}"
+        },
+        "tokensIn": 798,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "3c55f73a07a411323cc68ca45c343224751bfc3b2ec9bc8ddada8ae894a5dca0",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"analytics-etl\"}"
+        },
+        "tokensIn": 895,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "69bbe6f7aecb159967c8b873223e8916eadc6211e310d30fb3c4c9f42cbceff9",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_primary_cpu\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 991,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "729a1a6a036d5e9a026551a9925bbd5bf8423296dbf9c068f87ebf2fdc09c55b",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"analytics-etl\"}"
+        },
+        "tokensIn": 1046,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "3cac73e0cd12e7fdcd98de7aa0406d2ba9c0631a21fbafa9405815f29b626fee",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_replica_lag_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1082,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "80e7ec405ec61408db39fd99274cae2ad5eeae06aed6bda676ce178ecaddda56",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Resolved an issue where dashboards showed stale data due to high replica lag. The root cause was a long-running analytics-etl query blocking replication. Service has been restarted and data freshness is restored.\"}"
+        },
+        "tokensIn": 1137,
+        "tokensOut": 51
+      }
+    },
+    {
+      "key": "7fbd65b1f2880848c3a85b6d9a2e1b9e499abe52bdef3ac26a96e8da5c3411fd",
+      "turn": 15,
+      "response": {
+        "text": "Root cause: A long-running analytics-etl query was blocking replication on postgres-replica, causing high replica lag and stale data in dashboards. \n\nAction taken: Restarted the analytics-etl service to terminate the blocking query, which allowed replication to catch up.\n\nAffected service: postgres-replica (with impact on dashboards).",
+        "tokensIn": 1201,
+        "tokensOut": 67
+      }
+    }
+  ]
+}

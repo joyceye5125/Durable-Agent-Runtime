@@ -1,0 +1,110 @@
+{
+  "config_label": "terse-prompt",
+  "task_id": "incident_model_server_hang",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4de4998fc1fa00bfe8d09053dba69e56943d04c1af09a216ca4696695daa35a6",
+  "recorded_at": "2026-09-14T02:42:02.398Z",
+  "entries": [
+    {
+      "key": "458fa4262cbc550c117cfc78c72d5b7ff715a1ae83e7a939294b389ae6419184",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_check_timeout_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 470,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "13939f524eae794ea880cbb267890026e287a2256faed099d78126b30bb7fd08",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_model_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 529,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "36a28970e40813703e730d672f01fac258cc607a86771a9c3b0f200a6d276bd5",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"feature_store_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 589,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "f597d8744bc05ac85060936b25f2e49c13f99a2039314349704b34ade1fc636a",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"fraud-check timeout\"}"
+        },
+        "tokensIn": 644,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "31bda95cb69a67ca11c804bb6ee68a03948bcbcc7b40e69abaa97b53aeba9161",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"fraud-model\"}"
+        },
+        "tokensIn": 754,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "b0dfa84b656835a54334ff00fd14b1247d91e1dc01407e44fcb63bdb0be1887b",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"fraud_check_timeout_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 790,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "1fcc76cf1e41e9aad04fb211a3f004d9d3830ef295d53c5fc73d055c4ca7cd8b",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: Fraud check timeouts caused orders to be held for manual review. The issue was traced to a hung inference worker in the fraud-model service, which has been restarted. Systems are now operating normally.\"}"
+        },
+        "tokensIn": 849,
+        "tokensOut": 55
+      }
+    },
+    {
+      "key": "2ec53360c26b0140b8590def1cad027f3a1fd0a065d31cac4477ea3fccae178d",
+      "turn": 15,
+      "response": {
+        "text": "Diagnosis:\n- The fraud_check_timeout_rate spiked to 41%, causing orders to be held for manual review.\n- The fraud-model service showed consistently high latency (2000ms p99), while the feature-store was healthy.\n- Logs revealed CUDA errors and inference worker hangs in fraud-model, leading to timeouts in fraud-check.\n\nRemediation:\n- I restarted the fraud-model service to clear the hung workers.\n- After the restart, the fraud_check_timeout_rate dropped back to normal levels (0.1%).\n- I posted a public status update indicating the incident is resolved.\n\nSummary: The issue was caused by a hung inference worker in fraud-model. Restarting the service restored normal operation.",
+        "tokensIn": 917,
+        "tokensOut": 141
+      }
+    }
+  ]
+}

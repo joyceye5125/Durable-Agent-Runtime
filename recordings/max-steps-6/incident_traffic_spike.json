@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_traffic_spike",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-14T02:44:41.340Z",
+  "entries": [
+    {
+      "key": "8e0a790c1f536de764c9922af5a7d5f5217eaff310ce2a333f21ef79da78f9aa",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_cpu_utilization\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 803,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "b58524c5eaed45aca92338077f0ff2229900bf5bea0eb37c6f15c1060876944b",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 860,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "f4a7e81ad1dcf5eca8820ee9ea36ef0ccdfc5e4a9446c9c0a40a3fd594b0f11a",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 911,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "00556fce1aa13f1cb604465faf2b4d622d6046316ef68be9036508f9dd6466d9",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"web error\"}"
+        },
+        "tokensIn": 967,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "3ffd9294ec9a533515706d92d0ae7d65ae4692236713351d6cc1c3f20dccfd83",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"web\",\"replicas\":12}"
+        },
+        "tokensIn": 1064,
+        "tokensOut": 19
+      }
+    },
+    {
+      "key": "70f0b3cbef117cc5f97cce575a1b983b4205e1d769e16e748c141087d5ba0936",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_cpu_utilization\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1105,
+        "tokensOut": 22
+      }
+    }
+  ]
+}

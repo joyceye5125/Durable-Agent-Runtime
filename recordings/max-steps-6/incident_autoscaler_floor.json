@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_autoscaler_floor",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T12:43:09.637Z",
+  "entries": [
+    {
+      "key": "a5222c9ee5c99330623c021684ac1bdcfd05cbcf77a982db542b527138e42f6b",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"search_index_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 797,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "42e7610382dc78941b2c814142e252885bb5a2a1664814f7a4ad28bc8c1670d1",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"search_api_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 852,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "5da935a21fb3cc6dc546475c7d80be96e655bf9b740feb1c06dae4212dbd6b1a",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"search_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 905,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "850dbc26201bb0fe83f46ddca703ffd354e4e216da3f5ac1b773d3ebf961f891",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"search-api error\"}"
+        },
+        "tokensIn": 959,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "e5d0548ece15324efd4cadeb09cc098d4615ffd448487d3283a6b5994cc02fdb",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"search-api\",\"replicas\":6}"
+        },
+        "tokensIn": 1098,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "6c03bebe4c51da23e8bb50d38f932cfffc78f479ee097464b06fc3104ac9148e",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"search_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1141,
+        "tokensOut": 23
+      }
+    }
+  ]
+}

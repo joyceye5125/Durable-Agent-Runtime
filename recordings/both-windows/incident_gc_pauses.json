@@ -1,0 +1,162 @@
+{
+  "config_label": "both-windows",
+  "task_id": "incident_gc_pauses",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "da0cdfc5b92ab330d67c566b641281c3b5c2ff73079adb94125b08ee4bc6298c",
+  "recorded_at": "2026-09-13T04:09:08.425Z",
+  "entries": [
+    {
+      "key": "fb6d6f60000c832dafb58409e11ba831f89231e080e168217b55eb4aa22427dd",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 823,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "4b3c00c9900a6b8f99e338efb635f53965132d4160a0d5c4b52776d15764a3f4",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 881,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "87e7eec273f8337fd484b680be8be71eb2402f2d1db178e0521c9b4e9d91c28c",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_query_latency_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 938,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "23fc4fac8421eebe3372442835030e4b233ba97dff062785f837ca100858a77e",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_gc_pause_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 989,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "ae6d6d105a6a9f50bd6acdfbeea215206c3562820265a922a2b4cef450fa7179",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_gc_pause_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1045,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "8f0cf99f5e438cf946f89c5c32c16e8d70e1c681214fa408b43ee5342ac673fc",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1101,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "fd77f6a77b94880f3f71fa65ce5efb1fcffd07e2d08e2c1b0ce78f7923b7b10c",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"ledger-service error\"}"
+        },
+        "tokensIn": 1154,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "e881576b6780b59f5fc46d483fae27b22db53b63302eedf97f46736ceb7cccbe",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"ledger-service\",\"replicas\":8}"
+        },
+        "tokensIn": 1262,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "848b857416a76c4a950e8862c97c119ca0a78e1e670a4cec306d617d556cf1c3",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1305,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "845112aee2775877f0cf75774cb58144b108431b555f88a7fed735a50f58e7f6",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"ledger_service_gc_pause_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1361,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "21157220af06e3cf7d1ee4d8085f7c2b5880ccbb7e0103f15bc7b4247a861eef",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Ledger service latency has returned to normal after scaling up to handle increased load. Monitoring for stability.\"}"
+        },
+        "tokensIn": 1415,
+        "tokensOut": 32
+      }
+    },
+    {
+      "key": "9341ea180efc32abc3231041ea3b3c4b26e876bdc1c69b47f28ef542001050bd",
+      "turn": 23,
+      "response": {
+        "text": "Root cause: The ledger-service was under-provisioned during a period of high load, leading to excessive GC pauses and high latency. \nAction taken: Scaled the ledger-service from 3 to 8 replicas, as indicated by capacity planning and logs.\nAffected service: ledger-service.",
+        "tokensIn": 1460,
+        "tokensOut": 59
+      }
+    }
+  ]
+}

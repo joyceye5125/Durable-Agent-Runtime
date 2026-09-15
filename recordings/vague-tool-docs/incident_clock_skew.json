@@ -1,0 +1,97 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_clock_skew",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T09:57:32.962Z",
+  "entries": [
+    {
+      "key": "ed818387ff22388ca9ef98b6b41041e8205ea1ad35e7fe686b170e62a5b27119",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 662,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "e153b576d7bddf896b2d4694ac2900973a5c8375b39b52a360d0368d83d4d6b4",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"ntp-agent error\"}"
+        },
+        "tokensIn": 714,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "a6e413e67016b89e2e8c1a1c350924a828088433cdd3cf449498c4386e51ed81",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"ntp-agent\"}"
+        },
+        "tokensIn": 831,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "8ea2228acb778315ff4ba98831190678390f4717a1e2af19c8187c2dceb7c494",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_clock_offset_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 867,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "bff4be1013ec66a811789f421a5a3300c02ef3b55d94c070b355836fde1de2eb",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"auth_401_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 919,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "1a1206e9f02947769c9a7105240dc37e43cc1d00cee20fd8a3b53edc2a583bb1",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Resolved: ntp-agent failure caused clock skew, resulting in invalid auth tokens and high 401 rate. ntp-agent restarted, clocks resynced, and 401s have returned to normal.\"}"
+        },
+        "tokensIn": 976,
+        "tokensOut": 53
+      }
+    },
+    {
+      "key": "619c831a210e755c0196df83ff4e13ddd33ea12e6176fea030863bed982cea86",
+      "turn": 13,
+      "response": {
+        "text": "Root cause: The ntp-agent failed after a config reload, causing the auth service clock to drift by ~94 seconds. This led to tokens being issued with a \"not yet valid\" time, resulting in a high auth_401_rate.\n\nAction taken: Restarted the ntp-agent, which resynced the clocks. This resolved the token validation errors and normalized the 401 rate.\n\nAffected service: auth (with root cause in ntp-agent).",
+        "tokensIn": 1042,
+        "tokensOut": 93
+      }
+    }
+  ]
+}

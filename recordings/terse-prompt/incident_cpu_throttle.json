@@ -1,0 +1,149 @@
+{
+  "config_label": "terse-prompt",
+  "task_id": "incident_cpu_throttle",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4de4998fc1fa00bfe8d09053dba69e56943d04c1af09a216ca4696695daa35a6",
+  "recorded_at": "2026-09-14T01:28:37.224Z",
+  "entries": [
+    {
+      "key": "1bb48752b22923db01640d49b34e14875ce2eab39a9ee61ba2fd4946c6e7124e",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 479,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "c4c28e8789b058e6178b64ac2e465a9d70be874af552e2430be062e4e31d16b6",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_cpu_throttled_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 537,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "94e85452f938b170b370c4d7637fa5f53c6ca47e278bd4202f22cb74431bf2fd",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 600,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "85a1dce5a988d54a69930f299d0bd0a0b261a59daa3118013963021538c2e3e7",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"object_store_put_latency_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 653,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "b68d91254923764bafe15a9601a7d910491a66a550f6524b8b43e178ad12d303",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"image-api\",\"replicas\":4}"
+        },
+        "tokensIn": 706,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "0fbe04f4ac18eeec5d980ce305f9d171b7d7e6007cd0514eb146d19d073de5db",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are investigating elevated latency and upload timeouts for image uploads. Mitigation steps are in progress.\"}"
+        },
+        "tokensIn": 749,
+        "tokensOut": 33
+      }
+    },
+    {
+      "key": "96f0958a775d00298b9327f2b78530c1eb136bcdbb68bc309fc62bcda42b1502",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"image-api error\"}"
+        },
+        "tokensIn": 795,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "636e6826863818103379e2c8621d0de95f9f68dfb71d69aa23be208545d0a592",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"image-api\",\"replicas\":5}"
+        },
+        "tokensIn": 957,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "a0760a902d4b6c6ac48aab898de7d6f93397690d389e2ffcc471edd660d586c3",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Mitigation in progress: image upload latency was caused by CPU throttling during a large bulk import. We have increased capacity and are monitoring recovery.\"}"
+        },
+        "tokensIn": 1000,
+        "tokensOut": 42
+      }
+    },
+    {
+      "key": "ffb16518f5f395ed79e235d887adfc0037671ee12e91cfa19626aa25dce7f382",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1055,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "af914a9c4975afebd31a61ccac540eea32e87739637668e88ad6d715da8f7f94",
+      "turn": 21,
+      "response": {
+        "text": "Diagnosis:\n- The image-api service was experiencing high p99 latency (5200ms) and upload timeouts.\n- Metrics showed severe CPU throttling (up to 71%) on all replicas, with only 2 replicas running.\n- Object store latency was normal, indicating the bottleneck was isolated to image-api.\n- Logs revealed a large bulk import (180k images) was underway, and the runbook recommends at least 5 replicas during such events.\n\nRemediation:\n- I scaled the image-api service from 2 to 5 replicas to address CPU throttling and meet runbook guidance.\n- Posted public status updates to inform customers of the issue and mitigation steps.\n- After scaling, p99 latency dropped rapidly (from 5200ms to 380ms), confirming recovery.\n\nSummary: The issue was caused by insufficient image-api capacity during a bulk import. Scaling to 5 replicas resolved the latency and timeout problems.",
+        "tokensIn": 1112,
+        "tokensOut": 188
+      }
+    }
+  ]
+}

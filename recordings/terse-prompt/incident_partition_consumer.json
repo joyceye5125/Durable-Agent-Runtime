@@ -1,0 +1,110 @@
+{
+  "config_label": "terse-prompt",
+  "task_id": "incident_partition_consumer",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4de4998fc1fa00bfe8d09053dba69e56943d04c1af09a216ca4696695daa35a6",
+  "recorded_at": "2026-09-14T02:42:10.194Z",
+  "entries": [
+    {
+      "key": "caeb098ee470591cc02941abaece5eb24a79508d179d2bcfa02c37737a3bc382",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"kafka_consumer_lag_p7\"}"
+        },
+        "tokensIn": 471,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "9234cb007e76e34434e9291ccd412b02d11f07828691b68bef9658dbfd8d972b",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"events-consumer poison message\"}"
+        },
+        "tokensIn": 593,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "5048246de1d4c7b943dddcf635eedcea6046533a5bc8a4d1b1fa92f58f4aa8d3",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"events-consumer\"}"
+        },
+        "tokensIn": 691,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "ec3ba11dad5156146ff803a1d6461ee2a7fb29061fa2154566a213049aa33d49",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"kafka_consumer_lag_p7\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 727,
+        "tokensOut": 26
+      }
+    },
+    {
+      "key": "db5acf1b24a908a35137c21674d12009c1b00cc4ed6c8ecf4ea6579345e0681b",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"kafka_consumer_lag_p7\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 792,
+        "tokensOut": 26
+      }
+    },
+    {
+      "key": "61c9abadc0700618c141ea5717aae97f2766750e54e9f671c8cd5abdf208ea21",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"kafka_consumer_lag_other\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 857,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "0eec98883f7accbc3807b3ff81a70115c60287366d9de41fed151ea40b0d1152",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Kafka consumer lag on partition 7 is stuck at ~1.4M due to a poison message (schema v9 unknown) at offset 88123410. Restarting events-consumer did not resolve the issue. Manual intervention required to handle or skip the poison message.\"}"
+        },
+        "tokensIn": 914,
+        "tokensOut": 69
+      }
+    },
+    {
+      "key": "dea9be9236ea5bbc6dbe63c689fb2d1ef0d422bf0f6ba7f22375d832d4e2bf13",
+      "turn": 15,
+      "response": {
+        "text": "Diagnosis:\n- The high Kafka consumer lag on partition 7 (~1.4M) is due to a poison message at offset 88123410, with an unknown schema (v9). The events-consumer service is retrying this message indefinitely, causing the lag to accumulate. All other partitions and services are healthy.\n\nRemediation steps taken:\n1. Searched logs and confirmed the poison message is blocking progress on partition 7.\n2. Restarted the events-consumer service, but the lag persisted, confirming the issue is with the message itself, not a transient consumer error.\n3. Paged the on-call engineer, as manual intervention is required to handle or skip the poison message (e.g., advancing the consumer offset or updating schema handling).\n\nSummary: The lag is caused by a poison message that the consumer cannot process. Automated remediation is not possible; human intervention is required.",
+        "tokensIn": 1004,
+        "tokensOut": 180
+      }
+    }
+  ]
+}

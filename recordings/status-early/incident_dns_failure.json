@@ -1,0 +1,149 @@
+{
+  "config_label": "status-early",
+  "task_id": "incident_dns_failure",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4b9140b1ed8e0b227987537032b250ec208630bd67dbe1414d61fb7668885a19",
+  "recorded_at": "2026-09-13T06:03:41.034Z",
+  "entries": [
+    {
+      "key": "112e8bf59b11bf557dd06018bd0f17713bcce47a9a876c37ba86d21e7ea2d9aa",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Investigating elevated outbound HTTP errors to partners. Partner integrations may be impacted.\"}"
+        },
+        "tokensIn": 809,
+        "tokensOut": 28
+      }
+    },
+    {
+      "key": "eef954f5774f23b21db397dfff1512de6538eeb6bf170bc99958d82c567eb246",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"outbound_http_errors\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 850,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "90544908247d1a3447e23af6ef19f6246c4c829d7860cb4f776382a30c6d4afe",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"partner-sync error\"}"
+        },
+        "tokensIn": 907,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "fff8e50d725b7b9c04e02a114161ed462d7ea7454f315399a786b99f87eb957d",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"coredns error\"}"
+        },
+        "tokensIn": 995,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "12be380aad69cdf8162749a42e59bf87c57fa7cb072f31530abb349dbc99563f",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"coredns_servfail_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1141,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "d6997356a74ed155ceaaf3e99b77ca30934c020c7be8332f6d27a79e1d871143",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"coredns\"}"
+        },
+        "tokensIn": 1202,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "7de576534d1fa79d91ff4e947dc14014180bb05f79c52570bc752e93dca38913",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"coredns_servfail_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1238,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "1addac38b823f2ae95b354fed120745b5d62b72656b8c0a47dc25ceeccbe5244",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"outbound_http_errors\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1299,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "ce6be238d491ec0e1ab167d68b5ed9e8ad154b11b6f0beb51e54fe1d9bc52961",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Partner integration failures are due to DNS SERVFAILs from the authoritative nameserver for acme-logistics.com, as seen in coredns logs and elevated coredns_servfail_ratio. Restarting coredns did not help. The root cause appears to be external DNS issues beyond our control. Manual intervention or escalation to the partner's DNS provider may be required.\"}"
+        },
+        "tokensIn": 1356,
+        "tokensOut": 88
+      }
+    },
+    {
+      "key": "8d6797fd3c389ec2b54e2f53d34346de605a1123868eb87cbbf5adc67e6aa264",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Partner integration failures are due to DNS resolution errors with the partner's domain. Engineering is investigating with the partner's DNS provider.\"}"
+        },
+        "tokensIn": 1468,
+        "tokensOut": 38
+      }
+    },
+    {
+      "key": "e22af837e020fcf3312d61eb64d57e97a32e79572e2cb4a232593c2caa62885f",
+      "turn": 21,
+      "response": {
+        "text": "Root cause: DNS SERVFAIL errors from the authoritative nameserver for acme-logistics.com are causing partner-sync to fail outbound HTTP requests, resulting in high outbound_http_errors. Restarting coredns did not resolve the issue, confirming the problem is with the partner's DNS, not our infrastructure.\n\nAction taken: Restarted coredns (no effect), paged the on-call engineer for escalation to the partner's DNS provider.\n\nAffected service: partner-sync (and partner integrations generally).",
+        "tokensIn": 1519,
+        "tokensOut": 99
+      }
+    }
+  ]
+}

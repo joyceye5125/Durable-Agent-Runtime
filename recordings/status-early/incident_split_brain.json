@@ -1,0 +1,110 @@
+{
+  "config_label": "status-early",
+  "task_id": "incident_split_brain",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4b9140b1ed8e0b227987537032b250ec208630bd67dbe1414d61fb7668885a19",
+  "recorded_at": "2026-09-13T08:17:46.682Z",
+  "entries": [
+    {
+      "key": "a4a25969fc0522c0887669da1182e933b769122893d7aa56cfb8795fc6e36f1c",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Investigating elevated duplicate job executions impacting report delivery. Diagnosis in progress.\"}"
+        },
+        "tokensIn": 811,
+        "tokensOut": 27
+      }
+    },
+    {
+      "key": "7ac450dcb4d4e39aaf2c738b586a4a1158d200b60bde816ed6d12db42524d30d",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"scheduler_leaders\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 851,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "50387f035a3f2d295935ea4c86bf46804dcc4474ae78cd3f4dc312656c8bec95",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"scheduler leader election\"}"
+        },
+        "tokensIn": 900,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "249e29b5adf69bb0c2cca31ee8c9cb720b6d285f04ab4442772b5df12f1f4219",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"etcd error\"}"
+        },
+        "tokensIn": 997,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "49f1ddf74558af65a37aaae3730cc03233c877ccce66a5c01d1a997a8443fe5f",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"scheduler\"}"
+        },
+        "tokensIn": 1068,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "0a2a863142e89eba1610f8826c5a8bee47629a8307d0ecbbb6d89080eee79413",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"duplicate_job_executions\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1100,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "5c7614a2c9337c3c3be936a479754bf38ca799b6a76e7b989b678cd019ceab03",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Duplicate job execution issue resolved. Scheduler leadership restored to single instance; duplicate reports no longer being sent.\"}"
+        },
+        "tokensIn": 1153,
+        "tokensOut": 33
+      }
+    },
+    {
+      "key": "aba7adb88f3aa4e873f117f0c05866619aebd782a25cc6b211c23a3376b030c1",
+      "turn": 15,
+      "response": {
+        "text": "Root cause: Both scheduler instances held leadership after an etcd network partition, causing duplicate job executions and reports.\nAction taken: Restarted the scheduler service to restore correct leader election.\nAffected service: scheduler.",
+        "tokensIn": 1199,
+        "tokensOut": 42
+      }
+    }
+  ]
+}

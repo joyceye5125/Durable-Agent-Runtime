@@ -1,0 +1,84 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_traffic_spike",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:32:24.683Z",
+  "entries": [
+    {
+      "key": "84a54d4b6c9aa8ea23767381a18bd5bfb22c581195b5d207275c50c71e1ecc85",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_cpu_utilization\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 477,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "d0174ea04e8d6550718d8b47559a006d7a483b964364c45b093dcb55e2f8f2b9",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 534,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "80daa7793abb56fd679a60ff23e1224db16985936e7d4a3471dd52b44486cfe3",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"web high cpu\"}"
+        },
+        "tokensIn": 585,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "312a79514b2274a66f5ec40a176504422e058fa959c7ee4ae12420f4c08db368",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"web\",\"replicas\":12}"
+        },
+        "tokensIn": 703,
+        "tokensOut": 19
+      }
+    },
+    {
+      "key": "d1a7b5552df1b483b7e80155c2f879492264240c645a6e8b20b08f4af273c475",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We observed high CPU utilization (97%) and increased p99 latency (2.3s) on the web service due to a surge in request rate. We have scaled the web service replicas from 4 to 12 to handle the load and reduce latency. Monitoring continues.\"}"
+        },
+        "tokensIn": 744,
+        "tokensOut": 68
+      }
+    },
+    {
+      "key": "751f15038fe3107a42fd93f80f1dba27bcbe79fd012ba7c074add5f97623ad59",
+      "turn": 11,
+      "response": {
+        "text": "The web service CPU utilization was at 97% with p99 latency at 2.3s due to a surge in request rate saturating all 4 replicas. I scaled the web service replicas from 4 to 12 as per capacity planning to handle the increased load and reduce latency. A status update was posted to inform customers. Monitoring will continue.",
+        "tokensIn": 825,
+        "tokensOut": 73
+      }
+    }
+  ]
+}

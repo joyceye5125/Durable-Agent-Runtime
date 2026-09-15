@@ -1,0 +1,136 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_upstream_quota",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T12:43:05.725Z",
+  "entries": [
+    {
+      "key": "c90a46a46ab4c3581357fed1e02e1447f8b600b74aac068200e3eb5b13189349",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_service_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 659,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "f87bfd28b68b43ea1ff0b309bac41ecb9420ea78549aed44cb23cd7cb0043f62",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_cache_hit_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 716,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "7ea23ae1e9ca2e114ce5fd31a9897c7386056cff5b594f7c149cf8aaf4d7b5ff",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"maps_api_calls_per_min\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 769,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "fd202048b4370eab9b2595c07c12d33d3df0d5cb6eb245bb7d5c726d783ca864",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"geo-cache\"}"
+        },
+        "tokensIn": 825,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "5b764ba2a64c01ebe6b65a22722a927dc2ccb3e686e2f1cd393c1e494ff4261f",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"geo-cache\"}"
+        },
+        "tokensIn": 941,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "dd68970026b03a9ff2116b24f69897add4fcabf8c6f7164034c3b131355ba6bf",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_cache_hit_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 975,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "53488d1b0cf3ef9e3b5808337d09629b5e1c3434b9468ab9a644416464c9c06d",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_service_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1030,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "233c2528d4e175ed857f4ac3df5547b1295bd8a213dcb265ab56d4f4f97db7fb",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"maps_api_calls_per_min\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1087,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "3007a3df65717c94f5f9de5979299630e4c3f8acf371d4afc8f5b14ea905f37c",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"geo-cache was OOM and unavailable, causing high geo_service_error_rate and excessive maps API calls. geo-cache restarted, metrics normalizing.\"}"
+        },
+        "tokensIn": 1143,
+        "tokensOut": 41
+      }
+    },
+    {
+      "key": "ecd35e960a6b18d435cecf8142b4b2bf0eba50f12cdf04ae86526b8bed6ce65b",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: geo-cache experienced an out-of-memory (OOM) event and became unavailable, causing geo-service to bypass the cache and overload the upstream maps API, resulting in 429 errors and a high error rate.\n\nAction taken: Restarted geo-cache, which restored cache availability and normalized error rates and API call volume.\n\nAffected service: geo-service.",
+        "tokensIn": 1197,
+        "tokensOut": 71
+      }
+    }
+  ]
+}

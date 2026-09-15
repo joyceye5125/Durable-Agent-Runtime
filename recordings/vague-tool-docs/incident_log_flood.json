@@ -1,0 +1,136 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_log_flood",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T11:38:15.937Z",
+  "entries": [
+    {
+      "key": "7afd81bf96c340a1a23d6f36cfb5889f741d06343de4c7304407ad80d753feaa",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_pipeline_ingest_lag_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 667,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "cb55adea72aa2107ef192595e791672c1b9d49c05d28cd2e5e0d7087060c3564",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_lines_per_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 727,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "b16f04825e4ab82317eea9ae162d30ed0c74cd59b8dd64d6d2a71ff19cb5140a",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-shipper error\"}"
+        },
+        "tokensIn": 781,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "b1517193702fb117130ec7c27509cd02d9a20411c674717abce734ae9058ed34",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-store error\"}"
+        },
+        "tokensIn": 903,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "2f773dfdd992dcba2f2b11b6fbb88717edbf334dd6983fff3ba3e9a817044ee6",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"checkout-api TRACE\"}"
+        },
+        "tokensIn": 1023,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "7997c4d2e5b2126a6864997c725caed782761c160480864b1844ec8febd22211",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"checkout-api\"}"
+        },
+        "tokensIn": 1137,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "29d536b6a5bd5c05727e4474e121f70b6099e09a3100e1d0364bb54a135c3f0a",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_lines_per_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1171,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "2b49a3cb5ee83b6c45e4a6092fe95affd1d8cc7ebdc853b61d47b0cad796cdce",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_pipeline_ingest_lag_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1225,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "33b8762a055c8be65759894801d81d4956b96fa6ceed47f9f2baa74ed181b81f",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Resolved: Excessive log volume from checkout-api (TRACE level enabled) caused log pipeline lag. Restarted checkout-api to restore normal log levels and pipeline performance.\"}"
+        },
+        "tokensIn": 1283,
+        "tokensOut": 45
+      }
+    },
+    {
+      "key": "8dda185346465427ce5f4c402c67036a77829727fc2a4449de3feaea7f2a5a3a",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The checkout-api service had its log level set to TRACE, causing a massive spike in log volume and overwhelming the log pipeline, resulting in a 30-minute ingest lag.\nAction taken: Restarted checkout-api to reset the log level and reduce log volume.\nAffected service: checkout-api (impacting the entire log pipeline).",
+        "tokensIn": 1341,
+        "tokensOut": 68
+      }
+    }
+  ]
+}

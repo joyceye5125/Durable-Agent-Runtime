@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_split_brain",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T15:00:21.936Z",
+  "entries": [
+    {
+      "key": "b9b78007369049570fe8ca4f3ce4eba09c2544ea2481c594cdb284b6ab6812c9",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"scheduler_leaders\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 790,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "b4e5f1b65693d986731361b82c512552dfeeac86e75929464268a9663c12aed4",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"scheduler leader\"}"
+        },
+        "tokensIn": 839,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "388ed2da4a0a77fd4fba1497d56eac4c66ec8c6dbbe41a2913533bd0c7489742",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"etcd error\"}"
+        },
+        "tokensIn": 935,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "512d11329c493e9a78f8dee0e62e90d31d7d8c3368489ca859f83d8a3efb020c",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"scheduler\"}"
+        },
+        "tokensIn": 1006,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "ddf53b017a960f51cdbde1d347488474c9e13f2628973ba020e9dc62b57469a9",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"duplicate_job_executions\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1038,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "9e8e9ee6c82b0ed93504edaf9e9a00906c146a2476932a43c338723eb3b5396f",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"scheduler_leaders\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1091,
+        "tokensOut": 21
+      }
+    }
+  ]
+}

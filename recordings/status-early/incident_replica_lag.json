@@ -1,0 +1,123 @@
+{
+  "config_label": "status-early",
+  "task_id": "incident_replica_lag",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4b9140b1ed8e0b227987537032b250ec208630bd67dbe1414d61fb7668885a19",
+  "recorded_at": "2026-09-13T08:17:42.103Z",
+  "entries": [
+    {
+      "key": "c70959d85ee6ee42fc080661e8ad64f44f738a9141af5fdb592d41fbb57e0130",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Investigating elevated replica lag on postgres-replica (replica-1), causing stale data in dashboards. Diagnosis in progress.\"}"
+        },
+        "tokensIn": 816,
+        "tokensOut": 39
+      }
+    },
+    {
+      "key": "8b7832568e9a0cb7013f38d8ae4dc3db299a0ab026b8a1a95518f20d75a8a3ab",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_replica_lag_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 868,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "7b0bb619af60b680be794602426b3904299036e0da2affb516e8d9f5aea38f68",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"replica-1 error\"}"
+        },
+        "tokensIn": 923,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "a3a9ef62a5b91e2df09bd13accf383afd57d31a731b14fbbab222db923d07bae",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"postgres-replica conflict\"}"
+        },
+        "tokensIn": 1021,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "a998d2d70df384a82d4ec34e8102c4f07fe5fe0936917e78e08a36a7ce8ddca1",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"analytics-etl pid 8812\"}"
+        },
+        "tokensIn": 1138,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "49e16283e540a05804f14cbb506724d9f3fc7bb699318f342262a3dff9e1681b",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"analytics-etl\"}"
+        },
+        "tokensIn": 1238,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "26e2da4e742d25af62c6d623eff68f3f286b1233b643f8449261332c05b5fdbe",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_replica_lag_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1274,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "0edd851f45daf864301f1bdf6c9ff9d4eb3119f186bda508a626e90ec77521a3",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Replica lag on postgres-replica (replica-1) has cleared after restarting analytics-etl, which had a long-running query blocking replication. Dashboards should now show up-to-date data.\"}"
+        },
+        "tokensIn": 1329,
+        "tokensOut": 53
+      }
+    },
+    {
+      "key": "1a65236f373216311d8da93c4c7525f1cac6aaa9b04687dbb9e667ee7bfb4993",
+      "turn": 17,
+      "response": {
+        "text": "Root cause: A long-running query from analytics-etl (pid 8812) was blocking replication on postgres-replica (replica-1), causing high replica lag and stale data in dashboards.\n\nAction taken: Restarted the analytics-etl service to terminate the blocking query.\n\nAffected service: postgres-replica.",
+        "tokensIn": 1395,
+        "tokensOut": 66
+      }
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "config_label": "no-escalation",
+  "task_id": "incident_dns_failure",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "28197b75a4e4fd6f25a9969b97c76246558aa3c6ac57ba09568d72954cdaf856",
+  "recorded_at": "2026-09-14T01:31:59.773Z",
+  "entries": [
+    {
+      "key": "8b186ec516285f481aaecb0ac30e47758b63107bd2680b922e06243f906a334f",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"outbound_http_errors\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 763,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "b3d52619f405593c5efb8055911e1572405a1d3f1f5631844a4eb1aff3596b2f",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"partner-sync error\"}"
+        },
+        "tokensIn": 820,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "2da5a79d77362c911c5a451270349b3a0ea72cd29045f77cdd8be7ff6c521771",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"coredns error\"}"
+        },
+        "tokensIn": 908,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "89765c46acd59b7fe41b9bb3b0e1b3caef04a13b5455c8e5700122bd0c05c48d",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"coredns_servfail_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1054,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "19f7360de8c011b7aeb354daf50074d4b97c2804cd735a0d28040f3fe31d0855",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"coredns\"}"
+        },
+        "tokensIn": 1115,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "d7ead0fece944fc0c7a53b3ba6306c95041d57cd5f26c73818afa8a22bccaba4",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"coredns_servfail_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1151,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "d424b2b59590bccfa380f413b62309b5776c6a6b0f0149248b81cb51923b7204",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Partner integrations are failing due to persistent DNS SERVFAILs from the authoritative nameserver for partners.acme-logistics.com. Restarting coredns did not resolve the issue. Manual intervention is required to investigate the upstream DNS or partner domain.\"}"
+        },
+        "tokensIn": 1231,
+        "tokensOut": 62
+      }
+    },
+    {
+      "key": "a4a35a2535a4c615f5fd1d411d21cfa94e48dc0bb2c1dedccd8282df80cac048",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are experiencing elevated errors with partner integrations due to DNS resolution failures for partner domains. Our engineering team is investigating with urgency.\"}"
+        },
+        "tokensIn": 1316,
+        "tokensOut": 38
+      }
+    },
+    {
+      "key": "9376f1bb93d8a92ca22fb418d9105f1ade63d813f7cd411a07ada3d56a503328",
+      "turn": 17,
+      "response": {
+        "text": "Root cause: Persistent DNS SERVFAILs when resolving partners.acme-logistics.com, likely due to issues with the upstream authoritative nameserver (ns1.acme-dns.net), are causing outbound HTTP errors in the partner-sync service. Restarting coredns did not resolve the issue.\n\nAction taken: Restarted coredns (no effect), paged the on-call engineer, and posted a status update.\n\nAffected service: partner-sync (and partner integrations).",
+        "tokensIn": 1367,
+        "tokensOut": 94
+      }
+    }
+  ]
+}

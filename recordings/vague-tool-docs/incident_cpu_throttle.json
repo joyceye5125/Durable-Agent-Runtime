@@ -1,0 +1,97 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_cpu_throttle",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T09:57:44.190Z",
+  "entries": [
+    {
+      "key": "093b9fdbc53d90209b8a54f4bb69ca31e78e9ea9eaeaea8ee000f838b4e4dcf7",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_cpu_throttled_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 673,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "ea9aa3b6cd3a1b35d429914594c9edc630a931eba66c8df6e2d472e1c203de29",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 736,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "c5a420ef72887d3d53ebbf737a2d015a7235d8a4acf5ca75ab5b6e28d9468925",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"object_store_put_latency_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 789,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "fc00e493fbe51b11b75c826a86c98c63e0b6b2c6c0c83f4e1b9e805d0dfc8ea7",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"image-api\",\"replicas\":4}"
+        },
+        "tokensIn": 842,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "65a02c20c04236d290766ca52eba044902bac0b165a575a5664512d8eb272da3",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"image_api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 885,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "d940b7521fa757b6e3ae63d12a80557703ac7e270a8f225e48a01463c8f797f2",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Scaled image-api from 2 to 4 replicas to address high latency and CPU throttling. Latency is improving.\"}"
+        },
+        "tokensIn": 943,
+        "tokensOut": 37
+      }
+    },
+    {
+      "key": "c890e6e29168ff8d3af384a46504af8a456cd0e87198937d6485f44f1b0192b3",
+      "turn": 13,
+      "response": {
+        "text": "Root cause: The image-api service was experiencing high CPU throttling, leading to elevated latency and upload timeouts.\nAction taken: Scaled image-api from 2 to 4 replicas to reduce CPU contention and improve latency.\nAffected service: image-api.",
+        "tokensIn": 993,
+        "tokensOut": 52
+      }
+    }
+  ]
+}

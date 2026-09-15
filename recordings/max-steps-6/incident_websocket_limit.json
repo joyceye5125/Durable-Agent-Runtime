@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_websocket_limit",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T16:00:31.145Z",
+  "entries": [
+    {
+      "key": "1d19f5dba504fee9512d4d0c353518b4ff3636b3c23a2e7f9174dca2494a1703",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connection_rejections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 791,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "078e34545ff405ec65eb7f29afc86e1bb5a2f3144a558faa91753c73c11d2871",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 846,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "f343e985acda3177997981fd38abb47b70ce5c19369b93eca957dfa2def13e07",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_replicas\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 898,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "7f8d087276dab37c544151897444e3fac8909f00c7ea1d89dd324a704bd00a60",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"realtime error\"}"
+        },
+        "tokensIn": 951,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "db8f71fcda0e435a2fe489de55d5f03e4fae314a14eaafa8b7d0f07e78f5f3d8",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"realtime\",\"replicas\":8}"
+        },
+        "tokensIn": 1051,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "4cd6e46847cae41492f93bfa33b06c63d064fc6cc4cbb2a38be09c53ad70a503",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"realtime_connection_rejections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1094,
+        "tokensOut": 23
+      }
+    }
+  ]
+}

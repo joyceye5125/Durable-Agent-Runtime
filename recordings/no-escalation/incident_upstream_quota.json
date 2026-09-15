@@ -1,0 +1,136 @@
+{
+  "config_label": "no-escalation",
+  "task_id": "incident_upstream_quota",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "28197b75a4e4fd6f25a9969b97c76246558aa3c6ac57ba09568d72954cdaf856",
+  "recorded_at": "2026-09-13T03:40:36.534Z",
+  "entries": [
+    {
+      "key": "85e79e3fa5bd112cd0d18b08110d0b189ee9e31bd691c8eed0b1dc6ccb639ef0",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_service_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 766,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "22f2dfad3d4942ac305512ae37cbcd47aad8545749628c6cb6f781db3cee58bb",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"maps_api_calls_per_min\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 823,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "974da7477a151654f28c923999a8ceadc44ae18645718007baf6104e32bb5223",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_cache_hit_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 879,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "5411c04f53ddc4cc5f834f80f07095cf5c5f96f0e1a6ae0be02d63b16972103f",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"geo-cache error\"}"
+        },
+        "tokensIn": 932,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "8311c54d55a0de3a42ba9c2d5ce3b348f9404359c3e9c4f8693ffe90d0ea354a",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"geo-cache\"}"
+        },
+        "tokensIn": 1049,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "5da9c012448b89f65d4a3ebe1c3d6f5388dbc02c804da3552faec4bbb7781bd0",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_cache_hit_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1083,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "c9d33871446688e3fcc5854862ffaa88b409fb59fefe8b92abfe5c1ecffe21f8",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"geo_service_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1138,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "a9fd0748f92fad7ab4b041f8225e26b935e2496703386f2150eb2eba9cafdc5f",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"maps_api_calls_per_min\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1195,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "c6464ff7cf214bc70175f430ba46738d411e3a9a678986cab74cc1e6721f39d9",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: geo-service error rate and upstream API usage have returned to normal after restoring geo-cache. No further impact expected.\"}"
+        },
+        "tokensIn": 1251,
+        "tokensOut": 38
+      }
+    },
+    {
+      "key": "cba8ee60314f44a332b0fefe12671fdaa802dde0518d7cd7fbaffb9b38adbbf3",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The geo-cache service experienced an OOM event and became unavailable, causing geo-service to bypass the cache and overload the upstream maps API, resulting in 429 errors and a high error rate. \n\nAction taken: Restarted geo-cache to restore caching functionality.\n\nAffected service: geo-service.",
+        "tokensIn": 1302,
+        "tokensOut": 61
+      }
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "config_label": "no-verify",
+  "task_id": "incident_traffic_spike",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "04ab737ad1f65dd2dbadefdff745d309e6cf95ecc3a369e8acc26c5ece16149d",
+  "recorded_at": "2026-09-13T03:22:03.006Z",
+  "entries": [
+    {
+      "key": "2a84c9260b044d6035875ddd325fbfd13cf822d19d25e6dd29582094cad10c33",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_cpu_utilization\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 751,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "0af95a2f813ad787a9f01df948e089b5d75d88585c452c5e1de88e62cc7ed9a1",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 808,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "3d93bb3afbc83a17652b0ccd26ab541fe582efd9bf9861c9a5cb0ef9cee39a8a",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 859,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "992adaababfc41603ab8d22680d9f4770a1948b9c18007ce4b80e9a649e79c70",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_cpu\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 914,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "57d2e7cdace03cd838f2a704c6da5532fef77dd910c01f639412c28f4c12bf01",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"web error\"}"
+        },
+        "tokensIn": 967,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "53f1a72f55f1b6d1481f3567c852e3e900988f069698aa4e4048c6f598e79dca",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"web\",\"replicas\":12}"
+        },
+        "tokensIn": 1064,
+        "tokensOut": 19
+      }
+    },
+    {
+      "key": "c1e0d5ed76f7d239bac29ebd01c3714283ea5f3593f350e523bd64d75a89cff3",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_cpu_utilization\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1105,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "c16f2f2ba6028db700e138b43d9747644a8acfbc1e47d0c5b239d7c59841db99",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"web_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1162,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "273e3d05a8a17c8cb3507486777ad11899aed6094c1ba61e8e346fbd6c5500eb",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: web service experienced high CPU and latency due to traffic surge. Capacity increased to restore normal performance.\"}"
+        },
+        "tokensIn": 1216,
+        "tokensOut": 35
+      }
+    },
+    {
+      "key": "4a65c135b938d50ab3d970618a65a5350934ad92bf94f129186b6cbcb5a4b61b",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: The web service was overloaded due to a traffic surge, saturating all replicas and causing high CPU utilization and latency.\nAction taken: Scaled the web service from 4 to 12 replicas to match capacity planning for peak loads.\nAffected service: web.",
+        "tokensIn": 1264,
+        "tokensOut": 55
+      }
+    }
+  ]
+}

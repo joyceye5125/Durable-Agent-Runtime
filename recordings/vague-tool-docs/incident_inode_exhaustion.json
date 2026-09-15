@@ -1,0 +1,123 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_inode_exhaustion",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T11:22:58.390Z",
+  "entries": [
+    {
+      "key": "ceece1805e22e4a05efe58b10325396c49a99c87ded27d80f15940eb4e70cc96",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inode_usage_var\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 675,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "22f930187eb58e788ff9cba85b9882aeb765a9c958ac90dbecff8545c2ffdff9",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"disk_usage_var\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 728,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "9c83c88a8c7677e513852935064ea6ffba4783921464f2ac7d7e3ce008ae2209",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"app_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 783,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "852ac7cb29a04f68445bf51a6fbf06535221e213b36ec96c2634e1802eb3e21a",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"tmp-cleaner\"}"
+        },
+        "tokensIn": 838,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "cea0027962b073b2a07a98a68170febe20e60e871c8052276fa61214f8f0179e",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"tmp-cleaner\"}"
+        },
+        "tokensIn": 902,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "8e4aa6979df1e45021b0604b421370913eb8ed966d112fa107736b3f5a1711b3",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"inode_usage_var\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 938,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "c151814c7cc1ec1ffaa169c951846e22d48c39c1880062a1b6864e46d1b75995",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"app_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 991,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "7103d5012ffc22ba4bd88da97547c18cb40e4c21845967ece105bda5af81d26e",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Resolved inode exhaustion on app-3 by restarting tmp-cleaner, which had crashed. Inode and error rates are back to normal.\"}"
+        },
+        "tokensIn": 1046,
+        "tokensOut": 40
+      }
+    },
+    {
+      "key": "26ab9d0f6f88a7f8d0b5c3d073321d5586049a233a3d544d82790a3aa498dc4e",
+      "turn": 17,
+      "response": {
+        "text": "Root cause: The tmp-cleaner service had crashed due to a config parse error, causing inode exhaustion on app-3. \nAction taken: Restarted tmp-cleaner, which cleared unused files and freed inodes.\nAffected service: tmp-cleaner (impacting app).",
+        "tokensIn": 1099,
+        "tokensOut": 56
+      }
+    }
+  ]
+}

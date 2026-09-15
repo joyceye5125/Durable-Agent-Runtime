@@ -1,0 +1,110 @@
+{
+  "config_label": "no-caution",
+  "task_id": "incident_split_brain",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "735e03f703dd19ab918608ab16e8a756c77285f35b60bcabe42cd675c9d41b76",
+  "recorded_at": "2026-09-13T03:49:06.417Z",
+  "entries": [
+    {
+      "key": "48456c34e492ad6404d66819a2042a186105edbdfd14f266d94b1340ede02587",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"scheduler_leaders\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 749,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "467e9ff66533fa960e65e96f1addd3bb93cd2b532ddbd523ed5fb34d38c42168",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"scheduler leader election\"}"
+        },
+        "tokensIn": 798,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "b0468bca73bee975391e7cf8c55a137abdb481b6d0809a10ae0f050817de858a",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"scheduler error\"}"
+        },
+        "tokensIn": 895,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "5dddce2ea383e38200f187c89ea4fa376cb66c2ffd3dc642de637c5c565a07b9",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"scheduler\"}"
+        },
+        "tokensIn": 991,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "448c39e9eca6e45ea64de94c5c5d732ad4c8d6cf6ed63c94bd189fc22a7fb0cb",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"duplicate_job_executions\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1023,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "32fe8d18e9710abb1a7a39138e2d2230faccb9d09b45032ca2b16c3a6a276222",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"scheduler_leaders\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1076,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "40733207c6bbd731270c555045b391e859b9f7f2812610f841f083ecc657bf09",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Incident resolved: duplicate job executions caused by split-brain in scheduler leadership. Leadership restored to single node and duplicate reports have stopped.\"}"
+        },
+        "tokensIn": 1125,
+        "tokensOut": 39
+      }
+    },
+    {
+      "key": "a64f2f46a9d96784eb3916bef407209a01d08467cd5df8a7d72cac2864d86a9e",
+      "turn": 15,
+      "response": {
+        "text": "Root cause: Both scheduler-a and scheduler-b held leadership due to a failed leader step-down, causing duplicate job executions.\nAction taken: Restarted the scheduler service to restore single leadership.\nAffected service: scheduler.",
+        "tokensIn": 1177,
+        "tokensOut": 43
+      }
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "config_label": "terse-prompt",
+  "task_id": "incident_bad_config_push",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4de4998fc1fa00bfe8d09053dba69e56943d04c1af09a216ca4696695daa35a6",
+  "recorded_at": "2026-09-12T22:32:50.725Z",
+  "entries": [
+    {
+      "key": "aae01a90226488abce01f66d63f8b1c57b0c6f8897b840af1dce59c494c5bdcb",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"edge_429_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 463,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "e0f357104283e7d5fc3b4c9cac9d2208468bea2480302ccddfc524d2d0dbf490",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_requests_per_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 518,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "b3dd46309c515009ecc0257114be8763f3b8107e3073b51b573394a85936847f",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"rate limit\"}"
+        },
+        "tokensIn": 570,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "66ebce0af1f00c79af376f4df03e5dbd90f38cae50796d0e4a3f5f16eea83fd9",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"edge-proxy error\"}"
+        },
+        "tokensIn": 668,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "19b9ecca548e9f4f0c46f0e563e8ff58acb56553902db33f3d7ec839ace66bbe",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"config-service error\"}"
+        },
+        "tokensIn": 797,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "cd3768621b92d589a1a23ab9158b3c7a942b2ea5acfaafacec76d17167300613",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"deploy-bot\"}"
+        },
+        "tokensIn": 896,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "383dfc7bf137b507651f640c6686dbe238d3a4b3e37b8b2ab65f527144ebac72",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"config-service\"}"
+        },
+        "tokensIn": 971,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "60ca2764713f2358ca7da0a1d603f76b37cc7ecc222a8ca3cfaf22960a3075db",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are investigating elevated rate-limiting errors affecting most customer requests. Our team is working to restore normal service.\"}"
+        },
+        "tokensIn": 1005,
+        "tokensOut": 36
+      }
+    },
+    {
+      "key": "c23659bc19776c8654b99319469c4ac41ed7f9804eeafe505379e9b5438b7c7c",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"edge-proxy rate_limit.per_ip was drastically reduced from 50/s to 0.5/s by deploy-bot, causing 71% of requests to be rate-limited. Config-service has been restarted, but urgent review and rollback of the rate limit change is needed.\"}"
+        },
+        "tokensIn": 1054,
+        "tokensOut": 70
+      }
+    },
+    {
+      "key": "cc18496bb694802a3e6005dcaf5c66a8c26b1f28136eee9801e26529158b288d",
+      "turn": 19,
+      "response": {
+        "text": "Diagnosis:\n- The edge_429_rate spiked to 71%, meaning most customer requests are being rate-limited.\n- Logs show that a config change was pushed by deploy-bot, reducing edge-proxy's per-IP rate limit from 50/s to 0.5/s.\n- This config change immediately preceded the spike in 429 errors.\n\nActions taken:\n1. Restarted the config-service to ensure no config propagation issues.\n2. Posted a public status update to inform customers of the ongoing issue.\n3. Paged the on-call engineer, highlighting the drastic rate limit reduction and recommending urgent review and rollback.\n\nNext steps:\n- On-call should urgently revert the rate limit change to restore normal traffic flow.",
+        "tokensIn": 1147,
+        "tokensOut": 145
+      }
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "config_label": "no-escalation",
+  "task_id": "incident_queue_backlog",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "28197b75a4e4fd6f25a9969b97c76246558aa3c6ac57ba09568d72954cdaf856",
+  "recorded_at": "2026-09-13T03:38:55.437Z",
+  "entries": [
+    {
+      "key": "66340b98f51fd690e51bcc520aae65fedae0d8dbe54fca98820808092ba77247",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_worker_throughput\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 770,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "e6d05b028a5e728cfa3c6f14be39e70d938d740b449d2f20288cbac116e5aa7c",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"email-worker error\"}"
+        },
+        "tokensIn": 823,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "60a15fff867a87af1b30dce445c048c7bba4d97c16758505a55ab941d84a060a",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"email-worker\"}"
+        },
+        "tokensIn": 932,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "900b7bb211309ce0c86e9682f14eddb02b55a0bd8d7f96c09c8c5feff676c714",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_worker_throughput\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 966,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "9a3b4a8cc118825d5b19552e9e97d388b60d98e3d22c42df4b48585e30494d46",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_queue_depth\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1021,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "9934a48ee72f7827a4871e12bd141a3c68e58c39d913acf0915a3c78a7a9ae14",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"smtp_relay_errors\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1073,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "698f7c456853588934bbd727a9d1ac5f744dcfcfc209b698187cd04849381fe2",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Password reset email delays resolved. Email processing has resumed and queue is clearing. No further issues detected.\"}"
+        },
+        "tokensIn": 1124,
+        "tokensOut": 33
+      }
+    },
+    {
+      "key": "c41d6d5c36fb845ed9239073fbed512d092990a52b02a9cb74e57a3699d8a445",
+      "turn": 15,
+      "response": {
+        "text": "Root cause: The email-worker service was blocked due to a stale connection, causing it to stop processing emails and resulting in a growing email queue.\nAction taken: Restarted the email-worker service, which restored throughput and is clearing the queue.\nAffected service: email-worker.",
+        "tokensIn": 1170,
+        "tokensOut": 55
+      }
+    }
+  ]
+}

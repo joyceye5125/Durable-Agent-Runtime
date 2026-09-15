@@ -1,0 +1,84 @@
+{
+  "config_label": "weak-model-terse",
+  "task_id": "incident_bad_deploy",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "config_hash": "d4b3e28539bfb009d81fb657144cfd12611c93725bce5aea9d1d48b96cf8dfcb",
+  "recorded_at": "2026-09-12T22:31:10.952Z",
+  "entries": [
+    {
+      "key": "69930ac3d100da9b3bf46a480ccb8a87d0d680b2ef769454c3c88d6923e849c0",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 469,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "0e18eb255cec6b81e6720b879cec33eb69a5a637a8b2cef73dd0e1b08d14551d",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"error\"}"
+        },
+        "tokensIn": 524,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "0d859af2c03244f36e683f948b2d51c1967e595469260879bd1f82b2609bd5db",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"api\"}"
+        },
+        "tokensIn": 647,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "69630d5dfc123390a84c85cf70f5c9ec13fe4cf3a1e2a2301b5320260300e940",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 679,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "f845cd4edf309f01a8436ca876646a1b2d561cda3e47167fc53ca8fc45b2f59c",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"High API error rate (18%) detected since 14:02 UTC due to NullPointerException in CheckoutHandler.applyCoupon. Restarted the API service to clear the error state. Monitoring for recovery.\"}"
+        },
+        "tokensIn": 734,
+        "tokensOut": 54
+      }
+    },
+    {
+      "key": "a9ca8e23257cbec8ca1d98104e20e39db6a6527d6d790cc3a5d506ec284f8a8f",
+      "turn": 11,
+      "response": {
+        "text": "The API error rate spiked to 18% since 14:02 UTC, caused by NullPointerExceptions in the CheckoutHandler.applyCoupon method. I searched the logs and confirmed the errors. I then restarted the API service to clear any stuck state causing the errors. The error rate remains high immediately after restart, so I have paged the on-call engineer to investigate further while monitoring the situation.",
+        "tokensIn": 811,
+        "tokensOut": 81
+      }
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "config_label": "terse-prompt",
+  "task_id": "incident_cache_and_capacity",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4de4998fc1fa00bfe8d09053dba69e56943d04c1af09a216ca4696695daa35a6",
+  "recorded_at": "2026-09-12T22:32:56.119Z",
+  "entries": [
+    {
+      "key": "bfdb0d34b1b7302af28074eb7881b894aaacdb3801eca191bf57113502ebebfe",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 476,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "c92ce28abf32139b68974ee98923742393228e63e1f59d755c6f90dac751f602",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_cpu\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 534,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "942c8527a41d0914f1384a7ba9ae8446c51108a465d2c3616ce673a2179657cb",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"pricing_api_replicas\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 589,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "2095839a85952fbfa15d290ab0ee044a41c772eef91f64c50f7b6353d859a56a",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"price_cache_hit_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 642,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "2f83b0a3ee3e8f333b7a73a0b4d689d41d27973d257243d924cfe4a580634e43",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"pricing-api error\"}"
+        },
+        "tokensIn": 693,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "25561566e4a31365300e769a8ce786a45bdf58eb88388069a733bedad0c677a4",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "scale_service",
+          "argsRaw": "{\"name\":\"pricing-api\",\"replicas\":6}"
+        },
+        "tokensIn": 813,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "300be39848594f283e92dd861de3be6b285c00491a34bb4adad5886789c36f2d",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"price-cache\"}"
+        },
+        "tokensIn": 856,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "bff7d95ab5a1b181cc60b172a6811cc16481838efe98f87f33b9f27271d7af04",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are experiencing elevated latency on our pricing API due to high load and a cache issue. We are scaling up capacity and restoring cache functionality. Updates to follow.\"}"
+        },
+        "tokensIn": 890,
+        "tokensOut": 45
+      }
+    },
+    {
+      "key": "72ce5881b048c3ce991bf040c9746e06a5fc937528bac53dae3de873f33dcfb8",
+      "turn": 17,
+      "response": {
+        "text": "Diagnosis:\n- The pricing API latency (p99) has increased to 2600ms, and CPU usage is at 96%.\n- The number of replicas for pricing-api was 3, but logs indicate flash sale traffic (2x normal) and a runbook recommendation to use 6 replicas during sales.\n- The price-cache hit ratio is 0% for the past hour, and logs show the cache is stuck in a loading state after a failed snapshot restore, causing 100% cache misses and forcing the API to compute prices from the catalog.\n\nRemediation steps taken:\n1. Scaled the pricing-api service from 3 to 6 replicas to handle increased load.\n2. Restarted the price-cache service to recover it from the stuck state and restore cache functionality.\n3. Posted a public status update informing customers of the elevated latency and ongoing remediation.\n\nNext steps: Monitor the impact of these actions on latency, CPU, and cache hit ratio.",
+        "tokensIn": 948,
+        "tokensOut": 194
+      }
+    }
+  ]
+}

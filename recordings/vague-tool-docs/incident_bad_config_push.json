@@ -1,0 +1,188 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_bad_config_push",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T09:25:33.096Z",
+  "entries": [
+    {
+      "key": "b5b641644c7f9f974db0599979c7f4e795a3ff65fcf708d62d151ac9ad2a3eea",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"edge_429_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 657,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "ebc63a1275a7218543fd550d72a3e7dadcb1c3c92c757b71557313493b05aa6a",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_requests_per_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 712,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "e191a9896f51cbea371b37217ced90f8866c6ff5a77e6f23697ab3c04764f2f5",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"edge-proxy error\"}"
+        },
+        "tokensIn": 764,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "c5089d8d8d20c10bd886ab4bca9fab83ed7b79315c91aa48dc1fe5efe3015e48",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"config-service error\"}"
+        },
+        "tokensIn": 893,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "4800733473aaf6e3effc033e7fd9c90479b0cc2cdca966bda9415f0326b45909",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"api error\"}"
+        },
+        "tokensIn": 992,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "7ca3ace36fb1996b8e620cd45e1ab97ae5160c1f48808a0bd60e4da0eb0e82e3",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"rate_limit\"}"
+        },
+        "tokensIn": 1043,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "58c96f1bbeb3fd3c1dec32cced386f0ee4b0a269ff924696308a757373245120",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"deploy-bot\"}"
+        },
+        "tokensIn": 1141,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "8b6dbf087b92653cb6d795e87e3bea88c65e069f662b509d44616d3959cc7601",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"config-service\"}"
+        },
+        "tokensIn": 1216,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "152aef44a96eed3e551fd7fa7916da9ebfaf5a3ad4db1bd6d8372485ca417408",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Restarted config-service to address misconfigured edge-proxy rate limit. Verifying if 429 rate returns to normal.\"}"
+        },
+        "tokensIn": 1250,
+        "tokensOut": 37
+      }
+    },
+    {
+      "key": "7ff83d5eceb1f235dd1160b33ad1e0bf40a9df44d23ee7c3bdb13c9af2872319",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"edge_429_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1300,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "402467e3beae98b32179a5b93e7dd947a34bdc5784bf74a3fa9fc70c9cffe545",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_requests_per_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1357,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "6306e0e8c6289e1cc0444c5110f10eaf65f5cdbee12de1acf7ad319dfd7e64ad",
+      "turn": 23,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Edge-proxy rate_limit.per_ip was changed from 50/s to 0.5/s by deploy-bot, causing 71% of requests to be rate-limited. Restarting config-service did not revert the config. Manual intervention needed to restore correct rate limit in edge-proxy config.\"}"
+        },
+        "tokensIn": 1408,
+        "tokensOut": 74
+      }
+    },
+    {
+      "key": "cacfcb79718d8217490f7658bce020c938042953c0f3179c8e1506e4b8467486",
+      "turn": 25,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Paged on-call: edge-proxy rate limit was set to 0.5/s per IP by deploy-bot, causing high 429s. Config-service restart did not resolve. Manual config correction required.\"}"
+        },
+        "tokensIn": 1505,
+        "tokensOut": 55
+      }
+    },
+    {
+      "key": "1b9b6b5fadeebafa97ce8ebfb65a3d2b05d65c974c3e5bd7c95ea6d9aea8f1e7",
+      "turn": 27,
+      "response": {
+        "text": "Root cause: The edge-proxy rate_limit.per_ip was misconfigured from 50/s to 0.5/s by deploy-bot, causing most requests to be rate-limited (71% 429 rate). \n\nAction taken: Restarted config-service to attempt config reload, but the rate limit did not revert. Paged on-call for manual correction.\n\nAffected service: edge-proxy.",
+        "tokensIn": 1573,
+        "tokensOut": 81
+      }
+    }
+  ]
+}

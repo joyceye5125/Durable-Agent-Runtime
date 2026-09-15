@@ -1,0 +1,136 @@
+{
+  "config_label": "no-investigate-first",
+  "task_id": "incident_bad_config_push",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "2e253278b6d31fea20007b48521dc424d8a39dda9daa309713c13dc9654ce89d",
+  "recorded_at": "2026-09-12T22:36:09.462Z",
+  "entries": [
+    {
+      "key": "3d9ad0acd9d26dd7be6e7bb4c619041a9ae2271fbdb33efb18d3fc60a61990c5",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_requests_per_s\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 769,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "0a422b0f86d8e60df5e2511941d207b30a7672419dd6e313680bd70d0f1f1ee8",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"edge_429_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 820,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "04b6299ded4cf3f677251b7ca5e2cb9424bf2c303d07326ffb7029fb0ad53ce2",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"edge-proxy 429\"}"
+        },
+        "tokensIn": 877,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "67e66dc7cc4f9889b636ee13c8e29517c08a30b07e5dd034f262ff351e15c8a4",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"config-service CR-7781\"}"
+        },
+        "tokensIn": 1007,
+        "tokensOut": 19
+      }
+    },
+    {
+      "key": "af963036681d12a98b9bd8aaf1df645b21af22dc0d4ab689f64c9d4cde6fe46e",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"config-service rate_limit\"}"
+        },
+        "tokensIn": 1109,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "ac7851b067e9980fc5ea7e652fd64a32fc65fb9a20b626a12f0bb1433e262616",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"deploy-bot\"}"
+        },
+        "tokensIn": 1233,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "39eac00c59e13333414556073cb9fa2f1685e63a16bc5ba11e3da089e7b7b570",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"edge-proxy config revision\"}"
+        },
+        "tokensIn": 1308,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "b8c1a38d9289b314325ac26008bf53dc0755d25efa006881c2bc926baa377ff2",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"A recent automated config change (CR-7781) reduced edge-proxy rate_limit.per_ip from 50/s to 0.5/s, causing 71% of requests to be rate-limited. This config change is the root cause and cannot be reverted with available tools. Immediate human intervention required.\"}"
+        },
+        "tokensIn": 1438,
+        "tokensOut": 76
+      }
+    },
+    {
+      "key": "9db26177a5f3303d6396fddfcd7851c5c486cb00c81534a3d4909efe99569aa4",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are experiencing elevated rate-limiting at the edge due to a recent configuration change. Our engineering team is investigating and working to resolve the issue.\"}"
+        },
+        "tokensIn": 1536,
+        "tokensOut": 43
+      }
+    },
+    {
+      "key": "2a4c2b49df6aa573474142e065bc660ae600279a61c53eb29a42650efeaea34c",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: An automated config change (CR-7781) reduced the edge-proxy rate limit per IP from 50/s to 0.5/s, causing excessive rate-limiting.\nAction: Paged the on-call engineer, as reverting the config is not possible with available tools.\nAffected service: edge-proxy.",
+        "tokensIn": 1592,
+        "tokensOut": 68
+      }
+    }
+  ]
+}

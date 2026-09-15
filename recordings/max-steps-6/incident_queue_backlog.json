@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_queue_backlog",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T15:00:11.157Z",
+  "entries": [
+    {
+      "key": "6601d2127fb77cd8955d7132c90c1b816b9cbc15f0a447529b67b6222dcd9ed7",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_worker_throughput\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 795,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "d2ac42ec5cb1e055580dd5aa2cdb3867a4c2f6a7581b63eadb1c656dc26e2b7e",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"smtp_relay_errors\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 848,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "f7f8e6fe57880e52af294f099a6cc17d0b51397bdf37b6ccd762cd4a98d616c9",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"email-worker error\"}"
+        },
+        "tokensIn": 899,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "867f600d39aa4564241b517707920a3b9bb1a697fd0d9d2c03bbd371250b2eb7",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"redis-queue error\"}"
+        },
+        "tokensIn": 1008,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "5d11082c5783213bec69775362c59718d8f9c0bf86fb73a72b96125c53aeb88e",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"email-worker\"}"
+        },
+        "tokensIn": 1128,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "23338f7a997d494b0f95ef682bbed1b49aeafcbc79aed30988dab0efbe1c1520",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"email_worker_throughput\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1162,
+        "tokensOut": 23
+      }
+    }
+  ]
+}

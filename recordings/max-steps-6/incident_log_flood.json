@@ -1,0 +1,88 @@
+{
+  "config_label": "max-steps-6",
+  "task_id": "incident_log_flood",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "e6b5b15a0dd3a2e30f6e73dd5dd0988c244f2fd8220573cd2694fbbc0e1d2b7c",
+  "recorded_at": "2026-09-13T14:38:47.153Z",
+  "entries": [
+    {
+      "key": "9717d1652f915800bb9f59795c6e70a289e38b7cd5820d77ef88f6d906fca2ac",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_pipeline_ingest_lag_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 799,
+        "tokensOut": 25
+      }
+    },
+    {
+      "key": "99761510ec8874a56e14fc572b21ca24748eb4fba627f7a94f049a67d557e259",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"log_lines_per_s\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 859,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "bcb899d34f3d4c2f2c17b260f60e154097ca22f6d8c189332c6884cf78515db4",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-shipper error\"}"
+        },
+        "tokensIn": 913,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "b4b7ed0bfd7b745c87691ae4d28580c29cf86521ea14c36100dcb740bcaaeea8",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-store error\"}"
+        },
+        "tokensIn": 1035,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "76c582718acd3e5cd2927dbb8f794c4be701523446baeafd0af7b5561aa21429",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"checkout-api TRACE\"}"
+        },
+        "tokensIn": 1155,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "86c93af964ffa5de65fe451f88f6fe168cdb9e36103361bb4121d4b44d637796",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"log-store slow\"}"
+        },
+        "tokensIn": 1269,
+        "tokensOut": 16
+      }
+    }
+  ]
+}

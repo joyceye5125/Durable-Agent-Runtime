@@ -1,0 +1,162 @@
+{
+  "config_label": "status-early",
+  "task_id": "incident_healthcheck_dependency",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "4b9140b1ed8e0b227987537032b250ec208630bd67dbe1414d61fb7668885a19",
+  "recorded_at": "2026-09-13T07:00:48.599Z",
+  "entries": [
+    {
+      "key": "c4bef86bf93718e03d6565171a88529b3183393179a6cb8c574a11d5165a432e",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Investigating degraded api service: only 3 of 12 instances are healthy. Diagnosis in progress.\"}"
+        },
+        "tokensIn": 823,
+        "tokensOut": 33
+      }
+    },
+    {
+      "key": "20fce0178d9b42497bc4ac2196ecb333c1e962e4e8e19d42f0f7f060fc560e09",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_healthy_instances\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 869,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "d3291be69680dc064edf0b977b1ceefbef0addc78292a3150ae091a610d84c91",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_latency_p99_ms\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 920,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "bbd14b77eb6dca5cd7fabdf5a625bb4984cb5ee78d8e2b42d83311dee011a5e1",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"api error\"}"
+        },
+        "tokensIn": 973,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "14bc7d89282b0569091612ff9767e6131e7678109c056dc3c6c56f5ba1524224",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"config_service_up\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 1106,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "88899de1765a9829ba81f5e8b4be11327f43ef1845a0e837a871d985ffdd8f55",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"too many open files\"}"
+        },
+        "tokensIn": 1155,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "6831a492263c2ac3c398e966d449fa6c4036c24ca2b87d6d9b9a75c9a6130c84",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"config-service\"}"
+        },
+        "tokensIn": 1213,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "8992299ac7910faa5ede610534e114e669ba4d4bb1b075f9df0862b79905e7ae",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"config_service_up\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1247,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "b9fc4545de052e71f0f2ba88d2c58b3ff6aa531bf2f2e11de168bc1a1ded92ea",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_healthy_instances\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1296,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "6beb12d597042af773f5176da132a79f0cb2763e4804b8a63fd1f94a6a3a532f",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1347,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "f24135c107561a84ebfdb4728015291560c30de7455679445d71dbc7ce35d19f",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"api service recovered: all instances healthy and latency returning to normal after config-service restart. Monitoring for stability.\"}"
+        },
+        "tokensIn": 1400,
+        "tokensOut": 34
+      }
+    },
+    {
+      "key": "c888f2a5362134c4a29c0a4c645a3ca5ee7220d8256dfec36e085c9e0b438c60",
+      "turn": 23,
+      "response": {
+        "text": "Root cause: The config-service crashed due to \"too many open files,\" causing api health checks to fail and instances to be ejected by the load balancer.\nAction taken: Restarted the config-service, which restored its availability and allowed api instances to recover.\nAffected service: api (dependency: config-service).",
+        "tokensIn": 1447,
+        "tokensOut": 64
+      }
+    }
+  ]
+}

@@ -1,0 +1,175 @@
+{
+  "config_label": "double-check",
+  "task_id": "incident_dns_failure",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "18d4ef692a4e6f1c85f7366a9ee5cbc7fabf6a754350cac299ec615e26a65168",
+  "recorded_at": "2026-09-13T03:55:47.008Z",
+  "entries": [
+    {
+      "key": "38fc1cdab5f83f48115eb7e73c1c0baa5eada96999d1771c66e7ccc08a132dae",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"outbound_http_errors\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 808,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "6b5320b02fcf243ee959067625cc1ea0f066991723ac2dfffd17efa6419c3988",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"coredns_servfail_ratio\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 865,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "dd6b36357f30d47058de4aabe36dcf1020b7492106a306b53eff306b70cadb77",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"partner-sync error\"}"
+        },
+        "tokensIn": 926,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "623c6aa3a0bb16be2b7efa54a9f03940bba222a6304f5edf347d2666b0ba5504",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"coredns error\"}"
+        },
+        "tokensIn": 1014,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "2b83174e498f973ffec88220e6d68c090c919420b4b98496c3b649e4d76d8cf2",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"api error\"}"
+        },
+        "tokensIn": 1160,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "18a01eff537633b11b7b64e29e46d3c0b2a97ba106eea6335854af9e8dc7784e",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"coredns SERVFAIL\"}"
+        },
+        "tokensIn": 1264,
+        "tokensOut": 18
+      }
+    },
+    {
+      "key": "25d0dd60ad475e54745410318429069267f0efdb65f3864f3e78ad4c0ac99761",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"coredns_servfail_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1351,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "33adda54972d7c56bad17eace8e3f35f36f9c36ec5446e9e422b26893e64e6f8",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"outbound_http_errors\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1412,
+        "tokensOut": 22
+      }
+    },
+    {
+      "key": "904af6f2b0eb33c2df9a0e435c12e932ed996a1331c3d8d6c982f62c6576ce8b",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"coredns\"}"
+        },
+        "tokensIn": 1469,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "84c7298222227143989e8427edb92374796c29d47c6a43b644ad082f9d2dce69",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"coredns_servfail_ratio\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1505,
+        "tokensOut": 24
+      }
+    },
+    {
+      "key": "edbfecf8882942892435a924721a61159603fd28bc867cb09bdc6f348260f5d8",
+      "turn": 21,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"Partner integration failures are due to DNS SERVFAILs from the authoritative nameserver for acme-logistics.com, as seen in coredns logs. Restarting coredns did not help. The root cause is external DNS resolution failure, which cannot be remediated with available tools.\"}"
+        },
+        "tokensIn": 1585,
+        "tokensOut": 72
+      }
+    },
+    {
+      "key": "d168a6740976ecf51f500c5f9611038fdb8284eb21604be124e3618422f9270c",
+      "turn": 23,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"We are experiencing elevated partner integration failures due to upstream DNS issues affecting resolution of partner domains. Our engineering team is investigating with upstream providers.\"}"
+        },
+        "tokensIn": 1679,
+        "tokensOut": 40
+      }
+    },
+    {
+      "key": "728d9df3f38f7448f0a7d8c03378ad7e5813d1585272298615bed3e4152d29d3",
+      "turn": 25,
+      "response": {
+        "text": "The root cause is DNS SERVFAILs from the authoritative nameserver for acme-logistics.com, which is causing outbound HTTP errors for partner integrations. Restarting coredns did not resolve the issue, confirming the problem is with the upstream DNS provider and not within our control. The affected service is partner-sync. I have paged the on-call engineer and posted a status update.",
+        "tokensIn": 1732,
+        "tokensOut": 78
+      }
+    }
+  ]
+}

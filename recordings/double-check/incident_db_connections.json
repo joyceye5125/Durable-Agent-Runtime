@@ -1,0 +1,149 @@
+{
+  "config_label": "double-check",
+  "task_id": "incident_db_connections",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "18d4ef692a4e6f1c85f7366a9ee5cbc7fabf6a754350cac299ec615e26a65168",
+  "recorded_at": "2026-09-13T03:53:46.004Z",
+  "entries": [
+    {
+      "key": "938ce45a21ca60d7b181b08a6ba3e92cf752ba62676d963d213b95585c209ec4",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_connections\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 808,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "721c147e883ffc6225a913b54e038341eae7b3c321ec7eb1fb89b31602bc102d",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_error_rate\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 855,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "2abfcf664b3a51f06529305dcfb38db6b6236b42367bca4cf9f9dc2cdc8da3fd",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_cpu\",\"window\":\"1h\"}"
+        },
+        "tokensIn": 908,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "ec4c3231e31cc4fca360a468edda12c56e6f5ed4fd5ca62a11f55ef1bfe301b1",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"too many clients\"}"
+        },
+        "tokensIn": 961,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "7bf09db9d847f008677b1e2e8e4096dfaa5b0c36700a4eb4799dd553872c41db",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"reporting-job connection\"}"
+        },
+        "tokensIn": 1044,
+        "tokensOut": 17
+      }
+    },
+    {
+      "key": "ab1687fd6faae90c263ddb4a40b316736dc53dcad06b447cd45994471ba68003",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_connections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1160,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "a20551d4408de8b1add01b74f8f90f68878988a817416c94360d8f6600ccb91b",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"reporting-job\"}"
+        },
+        "tokensIn": 1207,
+        "tokensOut": 16
+      }
+    },
+    {
+      "key": "f6018f5669591d8beb10510ccca15894459e606ba599dd018a448e83e6576208",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_connections\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1243,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "8ed2c52a5fac57d9055cf154115eb1a50d963104cedfa1c53fc29a6f6054f3b9",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"checkout_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1290,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "ac8968f134145b65eccdf99eaee26d772bde1384b19c85eeaefaae91ba794ddd",
+      "turn": 19,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Checkout errors due to database connection exhaustion have been resolved. Root cause: reporting-job leaked connections. Remediation applied.\"}"
+        },
+        "tokensIn": 1345,
+        "tokensOut": 36
+      }
+    },
+    {
+      "key": "c333e93295b8f0758f97b56a4191e693fd4064d6471aa54ef3d906e1b97a9970",
+      "turn": 21,
+      "response": {
+        "text": "Root cause: The reporting-job service leaked database connections, consuming 340 out of 400 available connections and exhausting the Postgres connection pool. This caused checkout requests to fail with \"too many clients\" errors.\n\nAction taken: Restarted the reporting-job service to release the leaked connections.\n\nAffected service: postgres (impacting checkout).",
+        "tokensIn": 1394,
+        "tokensOut": 67
+      }
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "config_label": "vague-tool-docs",
+  "task_id": "incident_bad_deploy",
+  "provider": "openai",
+  "model": "gpt-4.1",
+  "config_hash": "70d578856c3b30b368fa288062a645998556450c0dba0623ddad13aa98e27059",
+  "recorded_at": "2026-09-13T09:25:51.388Z",
+  "entries": [
+    {
+      "key": "3f01268c9e338ad860af0bc308de5af3e1103eff454240717356a96380c1b518",
+      "turn": 1,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 663,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "c1d395a6f623181287c163d95436c5f61a1468e60a4b0cc2b4a8ebcdc8d1a8f6",
+      "turn": 3,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_latency_p99_ms\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 718,
+        "tokensOut": 23
+      }
+    },
+    {
+      "key": "df32fb7d97700a740d2201f55ba3afb663fcaca3650c8daee89ad78d6ddd2539",
+      "turn": 5,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"postgres_cpu\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 771,
+        "tokensOut": 20
+      }
+    },
+    {
+      "key": "302b866ced594b40947941cbaba2a7c2a35a08664a4b8b9bbbd0793a010a081a",
+      "turn": 7,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"error\"}"
+        },
+        "tokensIn": 824,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "dce682ac4eaa4867ed8ac9fd0d694884e0e5db9ca8a4129293142f7362d6e0e3",
+      "turn": 9,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "search_logs",
+          "argsRaw": "{\"query\":\"CheckoutHandler\"}"
+        },
+        "tokensIn": 947,
+        "tokensOut": 15
+      }
+    },
+    {
+      "key": "501ec2325a596890e7bd8f94b44f2d4c32a2a0a15f6184b75b400ab3b04cb260",
+      "turn": 11,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "restart_service",
+          "argsRaw": "{\"name\":\"api\"}"
+        },
+        "tokensIn": 1113,
+        "tokensOut": 14
+      }
+    },
+    {
+      "key": "e83aa467714e7b544bce17c59054f8f360ac4ac257501ac3179fcfb9a333fba3",
+      "turn": 13,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "get_metric",
+          "argsRaw": "{\"name\":\"api_error_rate\",\"window\":\"5m\"}"
+        },
+        "tokensIn": 1145,
+        "tokensOut": 21
+      }
+    },
+    {
+      "key": "5fcb3accb411747b64cf850503aa26a96c68878934cdd0b56fdbc7313efc50ff",
+      "turn": 15,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "page_oncall",
+          "argsRaw": "{\"message\":\"api_error_rate remains at 18% after restart. Root cause appears to be a NullPointerException in CheckoutHandler.applyCoupon after rollout of api v2.41.0. Recommend rollback or hotfix. Restart did not resolve.\"}"
+        },
+        "tokensIn": 1219,
+        "tokensOut": 61
+      }
+    },
+    {
+      "key": "e5700f6584e8ae457a5997c3929e19bebcfc4dddaa9c4ff1bef1b8a63983c874",
+      "turn": 17,
+      "response": {
+        "text": "",
+        "toolCall": {
+          "name": "post_status",
+          "argsRaw": "{\"message\":\"Paged on-call: api error rate remains high after restart. NullPointerException in CheckoutHandler.applyCoupon after v2.41.0 rollout is likely root cause. Manual intervention needed.\"}"
+        },
+        "tokensIn": 1302,
+        "tokensOut": 50
+      }
+    },
+    {
+      "key": "8f46e560099f1ba127e6bfc1080bf8cb48c79d0f3418cc62abdb908bcbeaec3e",
+      "turn": 19,
+      "response": {
+        "text": "Root cause: A NullPointerException in CheckoutHandler.applyCoupon in the api service, starting immediately after the rollout of api v2.41.0, is causing a sustained high error rate. Restarting the api service did not resolve the issue.\n\nAction taken: Restarted the api service (no effect), then paged the on-call engineer with findings and recommendation for rollback or hotfix.\n\nAffected service: api.",
+        "tokensIn": 1365,
+        "tokensOut": 85
+      }
+    }
+  ]
+}
