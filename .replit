@@ -1,8 +1,10 @@
-modules = ["nodejs-20", "postgresql-16"]
+modules = ["nodejs-22", "postgresql-16"]
 run = "npm start"
 
 [deployment]
-run = ["sh", "-c", "npm start"]
+build = ["sh", "-c", "npm install && npm run build"]
+run = ["sh", "-c", "npx tsx server/index.ts"]
+deploymentTarget = "autoscale"
 
 [[ports]]
 localPort = 3000
