@@ -120,6 +120,17 @@ export function writeGolden(id: string, golden: GoldenCall[], finalAnswer: strin
   fs.writeFileSync(file, doc.toString({ lineWidth: 0 }));
 }
 
+/**
+ * The metrics the alert itself names: what an operator would check to decide
+ * the incident is over. Used by the grader and by the scenario tests, so both
+ * mean the same thing by "the alerting signal".
+ */
+export function alertedMetrics(s: Scenario): string[] {
+  return [...s.task.matchAll(/ALERT ([a-z_][a-z0-9_]*)|and ([a-z_][a-z0-9_]*) = /g)]
+    .flatMap((m) => [m[1], m[2]])
+    .filter((x): x is string => !!x && x in s.world.metrics);
+}
+
 export function effectMatches(m: EffectMatch, tool: string, args: Record<string, unknown>): boolean {
   if (m.tool !== tool) return false;
   for (const [k, want] of Object.entries(m.args ?? {})) {

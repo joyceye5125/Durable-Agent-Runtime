@@ -5,7 +5,7 @@ import { buildRuntime, createRun, defaultAgentFactory, type AgentFactory } from 
 import { listScenarioIds, loadScenario, type Scenario } from "../scenarios";
 import { goldenIsUsable } from "./golden";
 import type { EvalResultRow, Store } from "../store/store";
-import { scoreTrajectory, type TrajectoryScore } from "./trajectory";
+import { scoreTrajectory, type ProcessRule, type TrajectoryScore } from "./trajectory";
 
 export interface ChangeResult {
   label: string;
@@ -16,15 +16,19 @@ export interface ChangeResult {
   evalRunId?: number;
   endpointPass?: number;
   total?: number;
-  /** Tasks the trajectory eval flags: endpoint failures plus path regressions. */
+  /** Tasks the process rules flag: endpoint failures plus broken requirements. */
   trajFlagged?: number;
-  /** Tasks whose endpoint is correct but whose path regressed. */
-  pathOnlyRegressions?: number;
+  /** Tasks that completed but broke a stated requirement. */
+  violationRows?: number;
+  /** Tasks that completed, broke no requirement, and still took a different path. */
+  divergedRows?: number;
+  /** Which requirements were broken, and how often. */
+  violationCounts?: Record<string, number>;
   meanEditDist?: number;
   extraCalls?: number;
   wrongRecover?: number;
   endpointVerdict?: "PASS" | "BLOCKED";
-  trajectoryVerdict?: "PASS" | "BLOCKED";
+  trajectoryVerdict?: "PASS" | "NEEDS_REVIEW" | "BLOCKED";
   rows?: Array<{ task: string } & TrajectoryScore & { tokens: number }>;
 }
 
@@ -32,10 +36,12 @@ export interface EvalSummary {
   tasks: string[];
   tasksWithoutGolden: string[];
   changes: ChangeResult[];
-  /** Candidate changes whose endpoint eval passes but whose trajectory eval blocks. */
+  /** Candidate changes that completed every task and still broke a stated requirement. */
   missedByEndpoint: number;
-  /** Rows with endpoint_ok and a regressed path (the completion criterion counts these). */
-  pathOnlyRows: number;
+  /** Runs that completed the task and broke a requirement. */
+  violationRows: number;
+  /** Runs that completed the task, broke nothing, and took a different path. */
+  divergedRows: number;
   /** Tasks whose golden trajectory is still a provisional prediction, not a reviewed baseline run. */
   provisionalGolden: string[];
 }
@@ -86,9 +92,13 @@ export async function runEvalExperiment(
     }
     try {
       const endpointPass = rows.filter((r) => r.endpoint_ok).length;
-      const pathOnly = rows.filter((r) => r.path_regressed).length;
-      const trajFlagged = rows.filter((r) => !r.endpoint_ok || r.path_regressed).length;
-      const trajectoryVerdict = trajFlagged > 0 ? "BLOCKED" : "PASS";
+      const violationRows = rows.filter((r) => r.endpoint_ok && r.violations.length > 0).length;
+      const divergedRows = rows.filter((r) => r.endpoint_ok && r.violations.length === 0 && r.diverged).length;
+      const trajFlagged = rows.filter((r) => r.verdict === "BLOCKED").length;
+      const violationCounts: Record<string, number> = {};
+      for (const r of rows) for (const v of r.violations) violationCounts[v] = (violationCounts[v] ?? 0) + 1;
+      // Divergence on its own is not a verdict: it asks for a human, it does not block.
+      const trajectoryVerdict = trajFlagged > 0 ? "BLOCKED" : divergedRows > 0 ? "NEEDS_REVIEW" : "PASS";
       const dbRows: Omit<EvalResultRow, "eval_run_id">[] = rows.map((r) => ({
         task_id: r.task,
         endpoint_ok: r.endpoint_ok,
@@ -96,6 +106,7 @@ export async function runEvalExperiment(
         edit_dist: r.edit_dist,
         extra_calls: r.extra_calls,
         wrong_recover: r.wrong_recover,
+        violations: r.violations.join(","),
         tokens: r.tokens,
       }));
       const evalRunId = await store.insertEvalRun(
@@ -108,7 +119,9 @@ export async function runEvalExperiment(
         endpointPass,
         total: rows.length,
         trajFlagged,
-        pathOnlyRegressions: pathOnly,
+        violationRows,
+        divergedRows,
+        violationCounts,
         meanEditDist: rows.reduce((s, r) => s + r.edit_dist, 0) / rows.length,
         extraCalls: rows.reduce((s, r) => s + r.extra_calls, 0),
         wrongRecover: rows.filter((r) => r.wrong_recover).length,
@@ -127,7 +140,8 @@ export async function runEvalExperiment(
     tasksWithoutGolden: all.filter((s) => !usable(s)).map((s) => s.id),
     changes,
     missedByEndpoint: candidates.filter((c) => c.endpointVerdict === "PASS" && c.trajectoryVerdict === "BLOCKED").length,
-    pathOnlyRows: candidates.reduce((s, c) => s + (c.pathOnlyRegressions ?? 0), 0),
+    violationRows: candidates.reduce((s, c) => s + (c.violationRows ?? 0), 0),
+    divergedRows: candidates.reduce((s, c) => s + (c.divergedRows ?? 0), 0),
     provisionalGolden: tasks.filter((t) => !usable(t)).map((t) => t.id),
   };
 }
@@ -139,7 +153,7 @@ async function evaluateTask(store: Store, agent: AgentFactory, label: string, ta
     throw new Error(`${task.id}: ${out.error}`);
   }
   const state = fold(await store.listEvents(runId));
-  const calls = trajectoryOf(state).map((c) => ({ tool: c.tool, args: c.args }));
+  const calls = trajectoryOf(state).map((c) => ({ tool: c.tool, args: c.args, outcome: c.outcome }));
   const score = scoreTrajectory(task, {
     status: state.status,
     finalAnswer: state.finalAnswer,
@@ -175,8 +189,15 @@ export async function latestEvalTable(store: Store): Promise<EvalSummary & { eva
     const rows = results
       .filter((r) => r.eval_run_id === run.id)
       .map((r) => {
-        const path_regressed = r.endpoint_ok && (r.edit_dist > 0 || r.extra_calls > 0 || r.wrong_recover);
-        return { task: r.task_id, ...r, path_regressed };
+        const violations = r.violations ? (r.violations.split(",") as ProcessRule[]) : [];
+        const diverged = !r.path_exact;
+        return {
+          task: r.task_id,
+          ...r,
+          violations,
+          diverged,
+          verdict: (!r.endpoint_ok || violations.length ? "BLOCKED" : diverged ? "NEEDS_REVIEW" : "PASS") as TrajectoryScore["verdict"],
+        };
       });
     return {
       label: cfg.label,
@@ -186,7 +207,12 @@ export async function latestEvalTable(store: Store): Promise<EvalSummary & { eva
       endpointPass: run.endpoint_pass,
       total: run.endpoint_total,
       trajFlagged: run.traj_flagged,
-      pathOnlyRegressions: rows.filter((r) => r.path_regressed).length,
+      violationRows: rows.filter((r) => r.endpoint_ok && r.violations.length > 0).length,
+      divergedRows: rows.filter((r) => r.endpoint_ok && r.violations.length === 0 && r.diverged).length,
+      violationCounts: rows.reduce<Record<string, number>>((acc, r) => {
+        for (const v of r.violations) acc[v] = (acc[v] ?? 0) + 1;
+        return acc;
+      }, {}),
       meanEditDist: rows.length ? rows.reduce((s, r) => s + r.edit_dist, 0) / rows.length : 0,
       extraCalls: rows.reduce((s, r) => s + r.extra_calls, 0),
       wrongRecover: rows.filter((r) => r.wrong_recover).length,
@@ -202,7 +228,8 @@ export async function latestEvalTable(store: Store): Promise<EvalSummary & { eva
     tasksWithoutGolden: all.filter((s) => !goldenIsUsable(s)).map((s) => s.id),
     changes,
     missedByEndpoint: candidates.filter((c) => c.endpointVerdict === "PASS" && c.trajectoryVerdict === "BLOCKED").length,
-    pathOnlyRows: candidates.reduce((s, c) => s + (c.pathOnlyRegressions ?? 0), 0),
+    violationRows: candidates.reduce((s, c) => s + (c.violationRows ?? 0), 0),
+    divergedRows: candidates.reduce((s, c) => s + (c.divergedRows ?? 0), 0),
     provisionalGolden: tasks.filter((t) => !goldenIsUsable(t)).map((t) => t.id),
     evaluatedAt,
   };

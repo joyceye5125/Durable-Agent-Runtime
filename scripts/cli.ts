@@ -323,7 +323,7 @@ async function experiment(store: Store) {
       return;
     }
     console.log(`tasks with golden: ${table.tasks.length}; without: ${table.tasksWithoutGolden.length}`);
-    console.log("change".padEnd(22), "endpoint".padEnd(9), "edit".padEnd(6), "extra".padEnd(6), "wrong→ok".padEnd(9), "path-only".padEnd(10), "endpoint-eval / trajectory-eval");
+    console.log("change".padEnd(22), "endpoint".padEnd(9), "edit".padEnd(6), "extra".padEnd(6), "broke a rule".padEnd(13), "diverged only".padEnd(14), "endpoint-eval / process-eval");
     for (const c of table.changes) {
       if (c.status !== "evaluated") {
         console.log(c.label.padEnd(22), c.missing?.length ? `not recorded (${c.missing.length} tasks missing)` : (c.error ?? "not recorded"));
@@ -334,16 +334,20 @@ async function experiment(store: Store) {
         `${c.endpointPass}/${c.total}`.padEnd(9),
         c.meanEditDist!.toFixed(2).padEnd(6),
         String(c.extraCalls).padEnd(6),
-        String(c.wrongRecover).padEnd(9),
-        String(c.pathOnlyRegressions).padEnd(10),
+        String(c.violationRows).padEnd(13),
+        String(c.divergedRows).padEnd(14),
         `${c.endpointVerdict} / ${c.trajectoryVerdict}`,
       );
     }
     for (const c of run.changes.filter((x) => x.status === "error")) console.log(`error in ${c.label}: ${c.error}`);
-    console.log(`\ncandidates the endpoint eval passes but the trajectory eval blocks: ${table.missedByEndpoint}`);
-    console.log(`rows with a correct endpoint and a regressed path: ${table.pathOnlyRows}`);
+    const counts: Record<string, number> = {};
+    for (const c of table.changes) for (const [k, n] of Object.entries(c.violationCounts ?? {})) counts[k] = (counts[k] ?? 0) + n;
+    console.log(`\ncandidates that completed every task and still broke a stated requirement: ${table.missedByEndpoint}`);
+    console.log(`runs that completed the task and broke a requirement: ${table.violationRows}`);
+    console.log(`runs that completed the task, broke nothing, and took a different path: ${table.divergedRows}`);
+    for (const [rule, n] of Object.entries(counts).sort((a, b) => b[1] - a[1])) console.log(`  ${rule}: ${n}`);
     const evaluated = table.changes.filter((c) => c.label !== "baseline" && c.status === "evaluated");
-    const cell = `${evaluated.length}${evaluated.length === CANDIDATES.length ? "" : ` of ${CANDIDATES.length}`} candidate changes on ${table.tasks.length} tasks → endpoint eval missed **${table.missedByEndpoint}**, trajectory eval caught **${table.missedByEndpoint}**. ${table.pathOnlyRows} task runs kept a correct answer on a worse path.${table.provisionalGolden.length ? ` (${table.provisionalGolden.length} golden trajectories still provisional.)` : ""}`;
+    const cell = `${evaluated.length}${evaluated.length === CANDIDATES.length ? "" : ` of ${CANDIDATES.length}`} candidate changes on ${table.tasks.length} tasks → **${table.missedByEndpoint}** completed every task and still broke a stated requirement, which the endpoint checks pass. **${table.violationRows}** runs completed the task and broke a requirement; a further **${table.divergedRows}** completed it, broke none, and took a different path (reported, not judged).`;
     if (evaluated.length === 0) {
       console.log("\nNo candidate has been recorded yet, so nothing was measured. README left alone.");
       console.log("Record one with: npm run record -- --config <label>");

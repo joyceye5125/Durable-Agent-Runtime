@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS eval_results (
   edit_dist     INT NOT NULL,
   extra_calls   INT NOT NULL,
   wrong_recover BOOLEAN NOT NULL,
+  violations    TEXT NOT NULL DEFAULT '',
   tokens        INT NOT NULL,
   PRIMARY KEY (eval_run_id, task_id)
 );

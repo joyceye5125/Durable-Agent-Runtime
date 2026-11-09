@@ -60,7 +60,7 @@ export function ConclusionBar({
 
       <div className="card">
         <div className="card-head">
-          <span className="label">C4 · trajectory eval</span>
+          <span className="label">C4 · process eval</span>
           <button disabled={!!busy || results?.seeding || !table?.tasks.length} onClick={onEval}>
             {busy === "eval" ? "running…" : "Run again"}
           </button>
@@ -70,14 +70,15 @@ export function ConclusionBar({
             <div className="stat">
               <b className={table.missedByEndpoint > 0 ? "bad" : "good"}>{table.missedByEndpoint}</b>
               <span>
-                of {evaluated.length} config changes passed the endpoint eval and were blocked by the trajectory eval
+                of {evaluated.length} config changes completed every task and still broke a stated requirement — the endpoint checks pass them
               </span>
             </div>
             <div className="sub">
-              <b>{table.pathOnlyRows}</b> task runs kept a correct final answer on a worse path.
+              <b>{table.violationRows}</b> runs completed the task and broke a requirement. A further <b>{table.divergedRows}</b> completed it,
+              broke none, and took a different path — reported, not judged.
             </div>
             <div className="meta mono muted">
-              {table.tasks.length} tasks with reviewed golden trajectories
+              {table.tasks.length} tasks with reviewed reference paths
               {candidates.length > evaluated.length && <> · {candidates.length - evaluated.length} candidates not recorded</>}
             </div>
           </>

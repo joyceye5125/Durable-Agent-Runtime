@@ -9,7 +9,9 @@ Both claims are experiments you can run, not assertions in a README. The numbers
 | | Claim | How it is measured | Result |
 |---|---|---|---|
 | **C1** | Crash the agent in any of the four commit windows and a durable resume reproduces the crash-free run with no repeated side effect. A from-scratch baseline repeats them. | Every crash point once: each of the four windows × each tool call of the reference run. Each trial resumes a durable run and a naive run from the same crash point, then compares the final answer and the side-effect ledger against a crash-free reference. Exhaustive rather than sampled, so the result is the same on every machine. | 60 crashes — every W1–W4 × tool-call point once, no sampling → **100.0%** correct resume, **0** duplicate side effects. Naive baseline: **52.9%** of the 34 crashes that landed after a side effect repeated one (44 extra actions; 30.0% of all 60). |
-| **C4** | Trajectory-level eval catches config changes that keep every final answer correct while the path degrades. Endpoint-level eval passes them. | 15 candidate changes (model swaps, prompt edits, tool-doc and step-budget cuts) × the 29 incidents with a reviewed golden trajectory, each replayed against the same deterministic tools. A change is scored only when every one of its 29 runs replays. | 15 candidate changes on 29 tasks → endpoint eval missed **2**, trajectory eval caught **2**. 310 task runs kept a correct answer on a worse path. |
+| **C4** | Checking the path catches config changes that answer every incident correctly and still break a requirement of how the job is done. Checking only the answer passes them. | 15 candidate changes (model swaps, prompt edits, tool-doc and step-budget cuts) × the 29 incidents with a reviewed reference path, each replayed against the same deterministic tools. Each run is judged on named requirements — no repeated action, no call to a target that does not exist, no production change to a service nothing flagged, a read after remediating, no claim of recovery while the alerting signal is unchanged — and *separately* compared with the reference path, which is reported and never counts as a verdict on its own. | 15 candidate changes on 29 tasks → **1** completed every task and still broke a stated requirement, which the endpoint checks pass. **20** runs completed the task and broke a requirement; a further **346** completed it, broke none, and took a different path (reported, not judged). |
+
+Divergence is not degradation. A run that drops a futile restart differs from the reference path and is better for it; the comparison reports the difference and stops there, and only a named requirement produces a verdict. An earlier version of this eval scored distance from the reference as a regression, which called that shorter path a failure — [What this evaluator cannot see](#what-this-evaluator-cannot-see) keeps the three cases that forced the change.
 
 Two things are worth separating. That one `idem_key` can produce at most one ledger row is structural, not statistical: it is the table's primary key, and `test/resume-after-crash-uses-only-the-event-log.test.ts` pins it for all four windows without needing a model. What the experiment measures is whether the whole loop preserves that under crashes, and how often the from-scratch baseline duplicates — the second number is purely empirical — it depends on where the crash lands and on what the model does after a restart. Because every crash point is enumerated rather than sampled, that number is exact for this incident rather than an estimate with a seed attached.
 
@@ -88,6 +90,27 @@ A trajectory is the ordered list of executed tool calls, with canonical (key-sor
 - **The trajectory eval compares against one golden path.** A different path that is equally good still counts as a difference. Comparing read-only calls by tool name only reduces this effect but doesn't remove it. That's why every golden trajectory is a reviewed baseline run and not a hand-written ideal.
 - Single tenant, one run at a time, no auth. The value here is the reliability of a single run, not orchestration.
 
+## What this evaluator cannot see
+
+Three ways this grader was wrong, each one now a test in
+`test/the-grader-separates-divergence-from-a-broken-rule.test.ts`, with the measured output of the version that had them:
+
+```
+final answer "monkey" + one page_oncall      → endpoint PASS      ← `answer_mentions: [key]` matched a substring
+a strictly shorter path (drops a futile restart) → path_regressed TRUE   ← a better path scored as a regression
+wrong metric read + "all systems normal"     → path_regressed FALSE  ← read arguments and message text were invisible
+```
+
+The first is fixed: mentions match whole tokens. The second is why a verdict no longer comes from a distance. The third is partly fixed — a claim of recovery is now checked against whether the alerting signal actually moved — and partly not: which metric an agent chose to read is still compared by tool name only, so a read of the wrong thing still looks like a read.
+
+What remains unproven is the grader itself:
+
+- **The rules were not validated against independent labels.** The tests show the rules fire where they are defined to fire. They do not establish how often a rule fires on a run a human would call fine, or stays silent on one a human would call dangerous. Measuring that needs a labelled set built by someone who cannot see the config name or the automatic score; this project does not have one, so no precision or recall is claimed here.
+- **`claims_recovery_while_alert_open` is half objective.** Whether the signal recovered comes from the world; whether the text claims recovery is a keyword test with a negation guard, and it can be fooled by a sentence neither pattern anticipates.
+- **`unflagged_production_change` reads the environment, not intent.** A service counts as flagged when it emits a WARN or ERROR line, is named in one, or appears in the alerting metric. A legitimate change to a service the environment never complained about would be reported as a violation.
+- **Every candidate was recorded once.** Re-running the recorder replays the stored response for an identical request, so the eval cannot say how much of a difference between two configs is the config and how much is the model's own variation between runs.
+- **One of the fifteen changes is currently the whole of the headline.** That a gate blocks fourteen changes and passes the baseline is weak evidence that it can recognise a good change; a candidate expected to be harmless, or an improvement, would test that directly and has not been run.
+
 ## How this differs from Temporal and LangGraph
 
 Temporal and LangGraph are general workflow engines. Temporal gets durable execution by requiring deterministic workflow code; LangGraph checkpoints graph state. This project goes narrower, into the parts that are specific to LLM agents:
@@ -147,7 +170,7 @@ npm run typecheck
 | `invalid-tool-calls-never-reach-tools` | hallucinated tool, bad JSON or schema violation: no `TOOL_INVOKED`, no side effect; too many retries fail cleanly |
 | `run-state-is-a-fold-of-the-event-log` | a run's full state and trajectory can be rebuilt from its events alone |
 | `faithful-replay-reproduces-the-log` | re-driving a crashed and resumed run from its log reproduces it event for event |
-| `trajectory-eval-flags-path-regressions-endpoint-eval-misses` | redundant and wrong-then-recover paths are blocked by the trajectory eval and passed by the endpoint eval |
+| `the-grader-separates-divergence-from-a-broken-rule` | a shorter path is reported as different and not blocked; a restart of an unflagged service, an unverified remediation and a false all-clear each name the rule they broke; `monkey` does not satisfy a required mention of `key` |
 
 The tests drive the real runtime with a scripted model stand-in (`test/helpers/harness.ts`). It exists only in tests and never produces recordings.
 

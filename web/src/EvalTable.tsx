@@ -13,8 +13,10 @@ export function EvalTable({ table, busy, onRerun }: { table: Table | null; busy:
         <div>
           <h2>Endpoint eval vs trajectory eval</h2>
           <p className="muted">
-            One row per config change, replayed on {n || "the"} tasks against the golden trajectory. Highlighted rows keep every answer
-            correct while the path got worse.
+            One row per config change, replayed on {n || "the"} tasks. <b>Broke a rule</b> counts runs that completed the task and still
+            broke a requirement stated in advance. <b>Diverged only</b> counts runs that completed it, broke none, and simply took a
+            different path — different is not worse, so those are reported, not judged. Highlighted rows pass every endpoint check and
+            break a requirement anyway.
           </p>
         </div>
         <button disabled={busy || !n} onClick={onRerun}>
@@ -47,10 +49,10 @@ export function EvalTable({ table, busy, onRerun }: { table: Table | null; busy:
                 <th>endpoint pass</th>
                 <th>mean edit dist</th>
                 <th>extra calls</th>
-                <th>wrong→recover</th>
-                <th>path-only regressions</th>
+                <th>broke a rule</th>
+                <th>diverged only</th>
                 <th>endpoint eval</th>
-                <th>trajectory eval</th>
+                <th>process eval</th>
               </tr>
             </thead>
             <tbody>
@@ -79,12 +81,19 @@ export function EvalTable({ table, busy, onRerun }: { table: Table | null; busy:
                       </td>
                       <td>{c.meanEditDist?.toFixed(2)}</td>
                       <td>{c.extraCalls}</td>
-                      <td>{c.wrongRecover}</td>
-                      <td>{c.pathOnlyRegressions}</td>
+                      <td className={c.violationRows ? "bad" : ""}>{c.violationRows}</td>
+                      <td>{c.divergedRows}</td>
                       <td className={c.endpointVerdict === "PASS" ? "ok" : "bad"}>{c.endpointVerdict}</td>
-                      <td className={c.trajectoryVerdict === "PASS" ? "ok" : "bad"}>
+                      <td className={c.trajectoryVerdict === "PASS" ? "ok" : c.trajectoryVerdict === "NEEDS_REVIEW" ? "" : "bad"}>
                         {c.trajectoryVerdict}
                         {missed && <div className="tag">missed by endpoint eval</div>}
+                        {!!Object.keys(c.violationCounts ?? {}).length && (
+                          <div className="desc">
+                            {Object.entries(c.violationCounts!)
+                              .map(([k, v]) => `${k} ×${v}`)
+                              .join(", ")}
+                          </div>
+                        )}
                       </td>
                     </tr>
                     {open === c.label && (
@@ -98,19 +107,19 @@ export function EvalTable({ table, busy, onRerun }: { table: Table | null; busy:
                                 <th>path exact</th>
                                 <th>edit</th>
                                 <th>extra</th>
-                                <th>wrong→recover</th>
+                                <th>broke</th>
                                 <th>tokens</th>
                               </tr>
                             </thead>
                             <tbody>
                               {c.rows?.map((r) => (
-                                <tr key={r.task} className={r.path_regressed ? "missed" : ""}>
+                                <tr key={r.task} className={r.violations.length ? "missed" : ""}>
                                   <td>{r.task}</td>
                                   <td className={r.endpoint_ok ? "ok" : "bad"}>{r.endpoint_ok ? "ok" : "FAIL"}</td>
                                   <td>{r.path_exact ? "yes" : "no"}</td>
                                   <td>{r.edit_dist}</td>
                                   <td>{r.extra_calls}</td>
-                                  <td>{r.wrong_recover ? "yes" : ""}</td>
+                                  <td>{r.violations.join(", ")}</td>
                                   <td>{r.tokens}</td>
                                 </tr>
                               ))}

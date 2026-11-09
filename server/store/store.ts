@@ -41,7 +41,7 @@ export interface EvalRunRow {
   endpoint_pass: number;
   endpoint_total: number;
   traj_flagged: number;
-  verdict: "PASS" | "BLOCKED";
+  verdict: "PASS" | "NEEDS_REVIEW" | "BLOCKED";
 }
 
 export interface EvalResultRow {
@@ -52,6 +52,8 @@ export interface EvalResultRow {
   edit_dist: number;
   extra_calls: number;
   wrong_recover: boolean;
+  /** Comma-separated ProcessRule codes the run broke; empty when it broke none. */
+  violations: string;
   tokens: number;
 }
 
@@ -250,9 +252,9 @@ export class Store {
     const id = Number(rows[0].id);
     for (const x of results) {
       await this.q(
-        `INSERT INTO eval_results (eval_run_id, task_id, endpoint_ok, path_exact, edit_dist, extra_calls, wrong_recover, tokens)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-        [id, x.task_id, x.endpoint_ok, x.path_exact, x.edit_dist, x.extra_calls, x.wrong_recover, x.tokens],
+        `INSERT INTO eval_results (eval_run_id, task_id, endpoint_ok, path_exact, edit_dist, extra_calls, wrong_recover, violations, tokens)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        [id, x.task_id, x.endpoint_ok, x.path_exact, x.edit_dist, x.extra_calls, x.wrong_recover, x.violations, x.tokens],
       );
     }
     return id;
@@ -267,7 +269,7 @@ export class Store {
       endpoint_pass: Number(r.endpoint_pass),
       endpoint_total: Number(r.endpoint_total),
       traj_flagged: Number(r.traj_flagged),
-      verdict: r.verdict as "PASS" | "BLOCKED",
+      verdict: r.verdict as "PASS" | "NEEDS_REVIEW" | "BLOCKED",
     }));
   }
 
@@ -283,6 +285,7 @@ export class Store {
       edit_dist: Number(r.edit_dist),
       extra_calls: Number(r.extra_calls),
       wrong_recover: bool(r.wrong_recover),
+      violations: String(r.violations ?? ""),
       tokens: Number(r.tokens),
     }));
   }

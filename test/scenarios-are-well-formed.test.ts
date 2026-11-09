@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { listScenarioIds, loadScenario, type Scenario } from "../server/scenarios";
+import { alertedMetrics, listScenarioIds, loadScenario, type Scenario } from "../server/scenarios";
 import { currentWorld, getTool, runTool } from "../server/tools/registry";
 
 /**
@@ -113,13 +113,6 @@ describe.each(scenarios.map((s) => [s.id, s] as const))("%s", (_id, s) => {
     expect(readsChange || escalateOnly, "required remediation has no observable effect").toBe(true);
   });
 });
-
-/** The metrics the alert itself names: the ones the agent will check to decide it is done. */
-function alertedMetrics(s: Scenario): string[] {
-  return [...s.task.matchAll(/ALERT ([a-z_][a-z0-9_]*)|and ([a-z_][a-z0-9_]*) = /g)]
-    .flatMap((m) => [m[1], m[2]])
-    .filter((x): x is string => !!x && x in s.world.metrics);
-}
 
 /** Every matcher an effect waits on, whether it waits on one or on all of several. */
 function triggersOf(s: Scenario) {

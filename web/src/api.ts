@@ -46,7 +46,9 @@ export interface EvalRow {
   edit_dist: number;
   extra_calls: number;
   wrong_recover: boolean;
-  path_regressed: boolean;
+  diverged: boolean;
+  violations: string[];
+  verdict: "PASS" | "NEEDS_REVIEW" | "BLOCKED";
   tokens: number;
 }
 
@@ -57,12 +59,14 @@ export interface ChangeResult {
   missing?: string[];
   endpointPass?: number;
   total?: number;
-  pathOnlyRegressions?: number;
+  violationRows?: number;
+  divergedRows?: number;
+  violationCounts?: Record<string, number>;
   meanEditDist?: number;
   extraCalls?: number;
   wrongRecover?: number;
   endpointVerdict?: "PASS" | "BLOCKED";
-  trajectoryVerdict?: "PASS" | "BLOCKED";
+  trajectoryVerdict?: "PASS" | "NEEDS_REVIEW" | "BLOCKED";
   rows?: EvalRow[];
 }
 
@@ -71,7 +75,8 @@ export interface EvalTable {
   tasksWithoutGolden: string[];
   changes: ChangeResult[];
   missedByEndpoint: number;
-  pathOnlyRows: number;
+  violationRows: number;
+  divergedRows: number;
   provisionalGolden: string[];
   evaluatedAt?: string;
 }
